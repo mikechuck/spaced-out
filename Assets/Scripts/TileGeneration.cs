@@ -15,6 +15,9 @@ public class TileGeneration : MonoBehaviour
 	private TerrainType[] terrainTypes;
 
 	[SerializeField]
+	private Wave[] waves;
+
+	[SerializeField]
 	NoiseMapGeneration noiseMapGeneration;
 
 	[SerializeField]
@@ -46,8 +49,12 @@ public class TileGeneration : MonoBehaviour
 		int tileDepth = (int)Mathf.Sqrt(meshVertices.Length);
 		int tileWidth = tileDepth;
 
+		// calculate the offsets based on the tile position
+		float offsetX = -this.gameObject.transform.position.x;
+		float offsetZ = -this.gameObject.transform.position.z;
+
 		// Calculate the offsets based on the tile position
-		float[,] heightMap = this.noiseMapGeneration.GenerateNoiseMap(tileDepth, tileWidth, this.mapScale);
+		float[,] heightMap = this.noiseMapGeneration.GenerateNoiseMap(tileDepth, tileWidth, this.mapScale, offsetX, offsetZ, waves);
 
 		// Generate a heightMap using noise
 		Texture2D tileTexture = BuildTexture(heightMap);
@@ -68,7 +75,7 @@ public class TileGeneration : MonoBehaviour
 				float height = heightMap[zIndex, xIndex];
 				// choose a terrain type according to the height value
 				TerrainType terrainType = ChooseTerrainType(height);
-				// assign as color a shade of grey proportional to the height value
+				// assign as color proportional to the height value
 				colorMap[colorIndex] = terrainType.color;
 			}
 		}
@@ -83,7 +90,6 @@ public class TileGeneration : MonoBehaviour
 	}
 
 	TerrainType ChooseTerrainType(float height) {
-		Debug.Log("terrain");
 		// for each terrain type, check if the height is lower than the terrain type
 		foreach(TerrainType terrainType in terrainTypes) {
 			// return the first terrain type whose height is higher than the generated one
