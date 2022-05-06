@@ -46,6 +46,7 @@ public class MapGenerator : MonoBehaviour
 
 	public void DrawMapInEditor() {
 		MapData mapData = GenerateMapData(Vector2.zero);
+		TreeSpawner treeSpawner = FindObjectOfType<TreeSpawner>();
 
 		MapDisplay display = FindObjectOfType<MapDisplay>();
 		if (drawMode == DrawMode.NoiseMode) {
@@ -55,6 +56,8 @@ public class MapGenerator : MonoBehaviour
 		} else if (drawMode == DrawMode.FalloffMap) {
 			display.DrawTexture(TextureGenerator.TextureFromHeightMap(FalloffGenerator.GenerateFalloffMap(mapChunkSize)));
 		}
+
+		treeSpawner.SpawnTrees(mapData, terrainData, textureData);
 	}
 
 	public void RandomizeSeed() {
