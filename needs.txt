@@ -1,0 +1,17 @@
+Models:
+- tree1
+- pine tree
+- player
+- axe
+- chest
+- pick
+- person (npc)
+- cow
+- chicken
+- enemy
+- sword
+- food
+- rocks (big and small)
+- shield
+- armor (?)
+- spawn bases
