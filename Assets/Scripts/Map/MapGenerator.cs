@@ -14,7 +14,7 @@ public class MapGenerator : MonoBehaviour
 	public DrawMode drawMode;
 	public const int mapChunkSize = 241;
 	[Range(0,6)]
-	public int editorPreviewLOD;	
+	public int editorPreviewLOD = 0;	
 	public bool autoUpdate;
 	float[,] falloffMap;
 	public Material terrainMaterial;
@@ -24,14 +24,15 @@ public class MapGenerator : MonoBehaviour
 	public NoiseData noiseData;
 	public TextureData textureData;
 
-	void Awake() {
-		// Create Map
+	public MapData InitiateMapGeneration() {
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
 		MapData mapData = GenerateMapData(Vector2.zero);
 		MapDisplay display = FindObjectOfType<MapDisplay>();
 
 		display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, terrainData.meshHeightMultiplier, terrainData.meshHeightCurve, editorPreviewLOD));
-		display.DrawTexture(TextureGenerator.TextureFromHeightMap(FalloffGenerator.GenerateFalloffMap(mapChunkSize)));
+		textureData.ApplyToMaterial(terrainMaterial);
+
+		return mapData;
 	}
 
 	void OnValuesUpdated() {
@@ -46,8 +47,6 @@ public class MapGenerator : MonoBehaviour
 
 	public void DrawMapInEditor() {
 		MapData mapData = GenerateMapData(Vector2.zero);
-		TreeSpawner treeSpawner = FindObjectOfType<TreeSpawner>();
-
 		MapDisplay display = FindObjectOfType<MapDisplay>();
 		if (drawMode == DrawMode.NoiseMode) {
 			display.DrawTexture(TextureGenerator.TextureFromHeightMap(mapData.heightMap));
@@ -57,6 +56,7 @@ public class MapGenerator : MonoBehaviour
 			display.DrawTexture(TextureGenerator.TextureFromHeightMap(FalloffGenerator.GenerateFalloffMap(mapChunkSize)));
 		}
 
+		TreeSpawner treeSpawner = FindObjectOfType<TreeSpawner>();
 		treeSpawner.SpawnTrees(mapData, terrainData, textureData);
 	}
 

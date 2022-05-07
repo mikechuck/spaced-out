@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,13 +13,30 @@ public class PlayerController : MonoBehaviour
 	public float verticalSpeed = 1f;
 	private float xRotation = 0.0f;
 	public Camera cam;
+	PhotonView view;
 
 	private void Start() {
 		characterController = GetComponent<CharacterController>();
-		Debug.Log(Camera.main);
+		view = GetComponent<PhotonView>();
+
+		if (!view.IsMine && GetComponent<PlayerController>() != null) {
+			Debug.Log("disabling other player controller");
+			GetComponent<PlayerController>().enabled = false;
+		}
 	}
 
 	void Update() {
+		if (!view.IsMine && PhotonNetwork.IsConnected == true) {
+			return;
+		}
+
+		if (view.IsMine) {
+			Debug.Log(view.IsMine);
+			CheckInput();
+		}
+	}
+
+	private void CheckInput() {
 		float currentMovementSpeed = MovementSpeed;
 		if (Input.GetKey(KeyCode.LeftShift)) {
 			currentMovementSpeed = MovementSpeed * 2;
