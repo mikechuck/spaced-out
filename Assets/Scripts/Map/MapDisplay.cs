@@ -17,7 +17,6 @@ public class MapDisplay : MonoBehaviour
 	public void DrawMesh(MeshData meshData) {
 		Mesh newMesh = meshData.CreateMesh();
 		meshFilter.sharedMesh = newMesh;
-		// MeshCollider meshc = gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
 		meshCollider.sharedMesh = newMesh;
 
 		meshFilter.transform.localScale = Vector3.one * FindObjectOfType<MapGenerator>().terrainData.uniformScale;
