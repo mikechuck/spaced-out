@@ -1,0 +1,32 @@
+Map:
+- grass
+  - only render a certain distance from player
+- spawn different tree types
+- fix lighting
+
+Player:
+- inventory
+  - UI
+    - hotkey boxes
+    - larger inventory display
+  - state management
+  - selectable items
+  - display selected item on screen
+  - current item is visible to other players
+  - animation for item use
+- player state
+  - HP
+  - name
+- HUD
+  - HP
+  - name
+- interact with trees + rocks with items
+
+Tree Chopping:
+- tree data
+  - type
+  - HP
+  - current HP
+    - other players need to get current HP updated for them
+  - item drop (lumber)
+    - picked up when close enough

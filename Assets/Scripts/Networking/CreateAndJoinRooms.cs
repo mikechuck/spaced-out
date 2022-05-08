@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 {
-	public InputField createInput;
-	public InputField joinInput;
+	public TMP_InputField createInput;
+	public TMP_InputField joinInput;
+	public TMP_InputField playerName;
 
 	public void CreateRoom() {
+		DataManager.playerName = playerName.text;
 		PhotonNetwork.CreateRoom(createInput.text);
 	}
 
