@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -15,27 +16,30 @@ public class PlayerController : MonoBehaviour
 	private float xRotation = 0.0f;
 	public Camera cam;
 	PhotonView view;
+	public TextMeshProUGUI playerName;
 
 	private void Awake() {
-		
+		view = GetComponent<PhotonView>();
 	}
 
 	private void Start() {
 		characterController = GetComponent<CharacterController>();
-		Debug.Log(DataManager.playerName);
 	}
 
 	void Update() {
-		view = GetComponent<PhotonView>();
-		if (!view.IsMine && GetComponent<PlayerController>() != null)
-		{
-			// Destroy other players' scripts and cameras
-			PlayerController playerController = GetComponent<PlayerController>();
-			Destroy(playerController);
-			GameObject cam = gameObject.transform.GetChild(0).gameObject;
-			Destroy(cam);
+
+		if (!view.IsMine) {
+			if (GetComponent<PlayerController>() != null) {
+				// Destroy other players' scripts
+				PlayerController playerController = GetComponent<PlayerController>();
+				Destroy(playerController);
+				// Disable other players' camera
+				GameObject cam = gameObject.transform.GetChild(0).gameObject;
+				cam.SetActive(false);
+			}
 		}
 
+		// Call Input code
 		if (view.IsMine) {
 			CheckInput();
 		}

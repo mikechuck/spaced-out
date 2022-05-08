@@ -2,6 +2,7 @@ Map:
 - grass
   - only render a certain distance from player
 - spawn different tree types
+  - disable 2 trees from spawning in same location
 - fix lighting
 
 Player:
