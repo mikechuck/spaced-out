@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 {
 	CharacterController characterController;
 	public float MovementSpeed = 1;
+	public float jumpForce = 20f;
 	public float Gravity = 9.8f;
 	private float velocity = 0;
 	public float horizontalSpeed = 1f;
@@ -30,7 +31,7 @@ public class PlayerController : MonoBehaviour
 			// Destroy other players' scripts and cameras
 			PlayerController playerController = GetComponent<PlayerController>();
 			Destroy(playerController);
-			GameObject cam = gameObject.transform.GetChild(0).GetChild(0).gameObject;
+			GameObject cam = gameObject.transform.GetChild(0).gameObject;
 			Destroy(cam);
 		}
 
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
 	}
 
 	private void CheckInput() {
+		// Movement
 		float currentMovementSpeed = MovementSpeed;
 		if (Input.GetKey(KeyCode.LeftShift)) {
 			currentMovementSpeed = MovementSpeed * 2;
@@ -51,6 +53,7 @@ public class PlayerController : MonoBehaviour
 		float vertical = Input.GetAxis("Vertical") * currentMovementSpeed;
 		characterController.Move((transform.right * horizontal + transform.forward * vertical) * Time.deltaTime);
 
+		// Gravity force
 		if (characterController.isGrounded) {
 			velocity = 0;
 		} else {
@@ -58,14 +61,18 @@ public class PlayerController : MonoBehaviour
 			characterController.Move(new Vector3(0, velocity, 0));
 		}
 
+		// Camera movement
 		float mouseX = Input.GetAxis("Mouse X") * horizontalSpeed;
 		float mouseY = Input.GetAxis("Mouse Y") * verticalSpeed;
-
-		// horizontal rotation when mouse moves
 		transform.Rotate(0, mouseX, 0);
-
 		xRotation -= mouseY;
 		xRotation = Mathf.Clamp(-mouseY, -90, 90);
 		cam.transform.Rotate(xRotation, 0.0f, 0.0f);
+
+		// Jumping
+		if (Input.GetKeyDown(KeyCode.Space)) {
+			velocity = jumpForce;
+    		characterController.Move(new Vector3(0, velocity, 0) * Time.deltaTime);
+		}
 	}
 }
