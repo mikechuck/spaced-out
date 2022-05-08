@@ -38,8 +38,8 @@ public class GameManager : MonoBehaviour
 				float finalZ = (-(randomZ - mapSize/2) * mapScale);
 				float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
 
-				PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(finalX, finalY + 2, finalZ), Quaternion.identity);
-
+				GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(finalX, finalY + 2, finalZ), Quaternion.identity, 0);
+				player.name = PhotonNetwork.LocalPlayer.NickName;
 				//Random rotation for the player
 				// float rotation = UnityEngine.Random.Range(0f, 360f);
 				// player.transform.Rotate(0.0f, rotation, 0.0f);
