@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
 	void Update() {
 		if (!view.IsMine && GetComponent<PlayerController>() != null) {
 			Debug.Log("disabling other player controller");
-			GetComponent<PlayerController>().enabled = false;
+			gameObject.GetComponent<PlayerController>().enabled = false;
 		}
 
 		if (view.IsMine) {
