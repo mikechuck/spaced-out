@@ -16,12 +16,7 @@ public class PlayerController : MonoBehaviour
 	PhotonView view;
 
 	private void Awake() {
-		view = GetComponent<PhotonView>();
-		if (!view.IsMine && GetComponent<PlayerController>() != null)
-		{
-			Debug.Log("Destroying player scripts");
-			Destroy(GetComponent<PlayerController>());
-		}
+		
 	}
 
 	private void Start() {
@@ -29,10 +24,19 @@ public class PlayerController : MonoBehaviour
 	}
 
 	void Update() {
-		if (view.IsMine == false & PhotonNetwork.IsConnected == true)
-        {
-            return;
-        }
+		view = GetComponent<PhotonView>();
+		if (!view.IsMine && GetComponent<PlayerController>() != null)
+		{
+			Debug.Log("Destroying player scripts");
+			PlayerController playerController = GetComponent<PlayerController>();
+			Debug.Log(playerController);
+			Destroy(playerController);
+
+			GameObject cam = gameObject.transform.GetChild(0).GetChild(0).gameObject;
+			Debug.Log("cam");
+			Debug.Log(cam);
+			Destroy(cam);
+		}
 
 		if (view.IsMine) {
 			CheckInput();
