@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
 			float locationHeight = heightMap[randomX, randomZ];
 
 			if (locationHeight > 0.3f && locationHeight < 0.7f) {
+				Debug.Log("creating player");
 				float finalX = ((randomX - mapSize/2) * mapScale);
 				float finalZ = (-(randomZ - mapSize/2) * mapScale);
 				float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
