@@ -19,19 +19,16 @@ public class PlayerController : MonoBehaviour
 		characterController = GetComponent<CharacterController>();
 		view = GetComponent<PhotonView>();
 
+		
+	}
+
+	void Update() {
 		if (!view.IsMine && GetComponent<PlayerController>() != null) {
 			Debug.Log("disabling other player controller");
 			GetComponent<PlayerController>().enabled = false;
 		}
-	}
-
-	void Update() {
-		if (!view.IsMine && PhotonNetwork.IsConnected == true) {
-			return;
-		}
 
 		if (view.IsMine) {
-			// Debug.Log(view.IsMine);
 			CheckInput();
 		}
 	}
