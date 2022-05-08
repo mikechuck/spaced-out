@@ -15,19 +15,20 @@ public class PlayerController : MonoBehaviour
 	public Camera cam;
 	PhotonView view;
 
+	private void Awake() {
+		view = GetComponent<PhotonView>();
+		if (!view.IsMine && GetComponent<PlayerController>() != null)
+		{
+			Debug.Log("Destroying player scripts");
+			Destroy(GetComponent<PlayerController>());
+		}
+	}
+
 	private void Start() {
 		characterController = GetComponent<CharacterController>();
-		view = GetComponent<PhotonView>();
-
-		
 	}
 
 	void Update() {
-		if (!view.IsMine && GetComponent<PlayerController>() != null) {
-			Debug.Log("disabling other player controller");
-			gameObject.GetComponent<PlayerController>().enabled = false;
-		}
-
 		if (view.IsMine) {
 			CheckInput();
 		}
