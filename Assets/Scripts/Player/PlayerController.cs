@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
 		}
 
 		if (view.IsMine) {
-			Debug.Log(view.IsMine);
+			// Debug.Log(view.IsMine);
 			CheckInput();
 		}
 	}
