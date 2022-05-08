@@ -1,19 +1,12 @@
 fileFormatVersion: 2
-guid: c581ea6a0bdc0d649820c7aef9b7d695
+guid: cbb2a0714cad88b42bcf12c64b418aa2
 ModelImporter:
   serializedVersion: 20200
-  internalIDToNameTable: []
-  externalObjects:
+  internalIDToNameTable:
   - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material
-    second: {fileID: 2100000, guid: 6056bcebe44913d4b807d1b942ae0667, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: TRUNK MATERIAL
-    second: {fileID: 2100000, guid: 0f8cf341a59b186469f5bb9423f90905, type: 2}
+      74: -623603649343465320
+    second: Scene
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
