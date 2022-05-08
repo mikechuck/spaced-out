@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
 	private void Start() {
 		characterController = GetComponent<CharacterController>();
+		Debug.Log(DataManager.playerName);
 	}
 
 	void Update() {
@@ -45,13 +46,13 @@ public class PlayerController : MonoBehaviour
 		if (characterController.isGrounded) {
 			velocity = 0;
 		} else {
-			velocity -= Gravity * Time.deltaTime;
+			if (Input.GetKeyDown(KeyCode.Space)) {
+				velocity = jumpForce;
+			}
+			velocity -= Gravity;
 			characterController.Move(new Vector3(0, velocity, 0));
 		}
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			velocity = jumpForce;
-		}
-		characterController.Move(new Vector3(0, velocity, 0) * Time.deltaTime);
+		
 
 		// Movement
 		float currentMovementSpeed = MovementSpeed;
