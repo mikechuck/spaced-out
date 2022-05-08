@@ -27,14 +27,10 @@ public class PlayerController : MonoBehaviour
 		view = GetComponent<PhotonView>();
 		if (!view.IsMine && GetComponent<PlayerController>() != null)
 		{
-			Debug.Log("Destroying player scripts");
+			// Destroy other players' scripts and cameras
 			PlayerController playerController = GetComponent<PlayerController>();
-			Debug.Log(playerController);
 			Destroy(playerController);
-
 			GameObject cam = gameObject.transform.GetChild(0).GetChild(0).gameObject;
-			Debug.Log("cam");
-			Debug.Log(cam);
 			Destroy(cam);
 		}
 
