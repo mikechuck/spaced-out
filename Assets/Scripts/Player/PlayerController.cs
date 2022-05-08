@@ -29,6 +29,11 @@ public class PlayerController : MonoBehaviour
 	}
 
 	void Update() {
+		if (view.IsMine == false & PhotonNetwork.IsConnected == true)
+        {
+            return;
+        }
+
 		if (view.IsMine) {
 			CheckInput();
 		}

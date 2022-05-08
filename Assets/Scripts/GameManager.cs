@@ -19,10 +19,6 @@ public class GameManager : MonoBehaviour
 		SpawnPlayer();
     }
 
-	void OnLevelWasLoaded() {
-         print ("Woohoo");
- 	}
-
 	void SpawnPlayer() {
 		float mapScale = terrainData.uniformScale;
 		float heightScale = terrainData.meshHeightMultiplier;
@@ -38,13 +34,12 @@ public class GameManager : MonoBehaviour
 			float locationHeight = heightMap[randomX, randomZ];
 
 			if (locationHeight > 0.3f && locationHeight < 0.7f) {
-				Debug.Log("creating player");
 				float finalX = ((randomX - mapSize/2) * mapScale);
 				float finalZ = (-(randomZ - mapSize/2) * mapScale);
 				float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
 
-				PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(finalX, finalY + 2, finalZ), Quaternion.identity, 0);
-
+				GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(finalX, finalY + 2, finalZ), Quaternion.identity, 0);
+				player.name = PhotonNetwork.LocalPlayer.NickName;
 				//Random rotation for the player
 				// float rotation = UnityEngine.Random.Range(0f, 360f);
 				// player.transform.Rotate(0.0f, rotation, 0.0f);
