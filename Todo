@@ -30,3 +30,15 @@ Tree Chopping:
     - other players need to get current HP updated for them
   - item drop (lumber)
     - picked up when close enough
+
+
+Letoff:
+- when item is picked up, save it to an "inventoryItem" array
+- add a hotkey bar in UI
+- add small image for thumbnail to each ItemData data asset
+- add inventory display items in UI boxes for hotkeys
+- save an int as "selector" wheel
+- catch scroll input andincrease/descrease selection 
+- have UI update to highlight index based item in array
+- on scroll, send name to function that will display item in game, matching hotkey selection
+- 
