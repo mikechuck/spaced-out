@@ -111,7 +111,7 @@ public class TreeSpawner: MonoBehaviour
 						GameObject tree = Instantiate(tree2, new Vector3(finalX, finalY - 3, finalZ), Quaternion.identity);
 						tree.transform.SetParent(treesParent.transform);
 						tree.tag = "Tree";
-						tree.transform.localScale = new Vector3(7, 7, 7);
+						tree.transform.localScale = new Vector3(8, 8, 8);
 						//Random rotation for each tree
 						var euler = tree.transform.eulerAngles;
 						euler.y = Random.Range(0.0f, 360.0f);

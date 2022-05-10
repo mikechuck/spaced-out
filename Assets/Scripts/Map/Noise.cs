@@ -20,8 +20,6 @@ public static class Noise
 		for (int i = 0; i < ASCIIvalues.Length; i++) {
 			finalSeed *= ASCIIvalues[i];
 		}
-		
-		Debug.Log(finalSeed);
 
 		System.Random prng = new System.Random(finalSeed);
 		Vector2[] octaveOffsets = new Vector2[octaves];
