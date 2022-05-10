@@ -10,7 +10,7 @@ public class NoiseData : UpdatableData
 	[Range(0, 1)]
 	public float persistence;
 	public float lacunarity;
-	public int seed;
+	public string seed;
 	public Vector2 offset;
 	public Noise.NormalizeMode normalizeMode;
 

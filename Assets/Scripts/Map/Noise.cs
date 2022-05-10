@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Text;
 
 public static class Noise
 {
@@ -8,10 +10,20 @@ public static class Noise
 		Local,
 		Global
 	};
-    public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistence, float lacunarity, Vector2 offset, NormalizeMode normalizeMode) {
+    public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, string seed, float scale, int octaves, float persistence, float lacunarity, Vector2 offset, NormalizeMode normalizeMode) {
 		float[,] noiseMap = new float[mapWidth, mapHeight];
 
-		System.Random prng = new System.Random(seed);
+		string str = "ABC";
+
+		int finalSeed = 0;
+		byte[] ASCIIvalues = Encoding.ASCII.GetBytes(str);
+		for (int i = 0; i < ASCIIvalues.Length; i++) {
+			finalSeed *= ASCIIvalues[i];
+		}
+		
+		Debug.Log(finalSeed);
+
+		System.Random prng = new System.Random(finalSeed);
 		Vector2[] octaveOffsets = new Vector2[octaves];
 
 		float maxPossibleHeight = 0;

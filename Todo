@@ -1,9 +1,8 @@
 Map:
+- ad Seed option in lobby
+  - if emtpy, use randomized string for seed
 - grass
   - only render a certain distance from player
-- spawn different tree types
-  - disable 2 trees from spawning in same location
-- fix lighting
 
 Player:
 - inventory

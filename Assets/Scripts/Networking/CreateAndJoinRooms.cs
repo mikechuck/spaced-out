@@ -10,9 +10,11 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 	public TMP_InputField createInput;
 	public TMP_InputField joinInput;
 	public TMP_InputField playerName;
+	public TMP_InputField seed;
 
 	public void CreateRoom() {
 		DataManager.playerName = playerName.text;
+		DataManager.levelSeed = seed.text;
 		PhotonNetwork.CreateRoom(createInput.text);
 	}
 

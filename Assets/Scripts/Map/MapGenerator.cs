@@ -26,12 +26,22 @@ public class MapGenerator : MonoBehaviour
 
 	public MapData InitiateMapGeneration() {
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+
+		// Use saved seed, else randomize it
+		if (DataManager.levelSeed.Length > 0) {
+			noiseData.seed = DataManager.levelSeed;
+		} else {
+			RandomizeSeed();
+		}
+
 		MapData mapData = GenerateMapData(Vector2.zero);
 		MapDisplay display = FindObjectOfType<MapDisplay>();
 
 		display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, terrainData.meshHeightMultiplier, terrainData.meshHeightCurve, editorPreviewLOD));
 		textureData.ApplyToMaterial(terrainMaterial);
 
+		TreeSpawner treeSpawner = FindObjectOfType<TreeSpawner>();
+		treeSpawner.SpawnTrees(mapData, terrainData, textureData);
 		return mapData;
 	}
 
@@ -56,13 +66,15 @@ public class MapGenerator : MonoBehaviour
 			display.DrawTexture(TextureGenerator.TextureFromHeightMap(FalloffGenerator.GenerateFalloffMap(mapChunkSize)));
 		}
 
+		textureData.ApplyToMaterial(terrainMaterial);
+
 		TreeSpawner treeSpawner = FindObjectOfType<TreeSpawner>();
 		treeSpawner.SpawnTrees(mapData, terrainData, textureData);
 	}
 
 	public void RandomizeSeed() {
 		int randomSeed = UnityEngine.Random.Range(0, 10000);
-		noiseData.seed = randomSeed;
+		noiseData.seed = randomSeed.ToString();
 	}
 
 	MapData GenerateMapData(Vector2 center) {
@@ -105,6 +117,7 @@ public struct MapData {
 	public readonly float[,] heightMap;
 
 	public MapData(float[,] heightMap) {
+
 		this.heightMap = heightMap;
 	}
 }
