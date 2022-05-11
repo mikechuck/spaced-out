@@ -18,46 +18,39 @@ public class InventoryManager : MonoBehaviour
 
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.tag == "Item") {
-			ItemData itemData = itemListData.GetItemData(other.gameObject.name);
+			GameObject parent = other.gameObject.transform.parent.gameObject;
+			
 			// Debug.Log(itemData.itemName);
-			PickUpItem(itemData);
+			PickUpItem(parent);
 		}
 	}
 
-	public void PickUpItem(ItemData itemData) {
-		// check for maxstacksize, if no items are found without exceeding limit, create new item
-		// if (itemData.stackable) {
-			// loop through, find same type, increase qty by 1
-			bool addedToInventory = false;
-			for (int i = 0; i < inventory.Length; i++) {
-				if (inventory[i] != null) {
-					if (itemData.itemName == inventory[i].itemData.itemName && itemData.stackable) {
-						inventory[i].updateQuantity(inventory[i].quantity + 1);
-						addedToInventory = true;
-						Debug.Log("breaking 1");
-						break;
-					}
-				} else {
-					inventory[i] = new Item(itemData, 1, 100);
-					addedToInventory = true;
-					Debug.Log("breaking 2");
+	public void PickUpItem(GameObject parent) {
+		ItemData itemData = itemListData.GetItemData(parent.name);
+		bool pickedUp = false;
+		for (int i = 0; i < inventory.Length; i++) {
+			if (inventory[i] != null) {
+				if (itemData.itemName == inventory[i].itemData.itemName && itemData.stackable) {
+					inventory[i].updateQuantity(inventory[i].quantity + 1);
+					pickedUp = true;
+					Debug.Log("breaking 1");
 					break;
 				}
-			}
-
-			if (addedToInventory) {
-				hudManager.DrawInventoryItems(inventory);
 			} else {
-				Debug.Log("inventory full!");
+				inventory[i] = new Item(itemData, 1, 100);
+				pickedUp = true;
+				Debug.Log("breaking 2");
+				break;
 			}
-		// } else {
-		// 	Item newItem = new Item(itemData, 1, 100);
-		// 	inventory.Add(newItem);
-		// }
+		}
 
-		// for ()
+		if (pickedUp) {
+			hudManager.DrawInventoryItems(inventory);
+			// Destroy(parent);
+		} else {
+			Debug.Log("inventory full!");
+		}
 
-		// hudManager.DrawInventoryItems();
 	}
 }
 

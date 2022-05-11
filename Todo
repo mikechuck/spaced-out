@@ -1,6 +1,4 @@
 Map:
-- ad Seed option in lobby
-  - if emtpy, use randomized string for seed
 - grass
   - only render a certain distance from player
 
@@ -31,14 +29,3 @@ Tree Chopping:
   - item drop (lumber)
     - picked up when close enough
 
-
-Letoff:
-- when item is picked up, save it to an "inventoryItem" array
-- add a hotkey bar in UI
-	- Screen.width, Screen.height, use these values to center hotbar
-- add inventory display items in UI boxes for hotkeys
-- save an int as "selector" wheel
-- catch scroll input andincrease/descrease selection 
-- have UI update to highlight index based item in array
-- on scroll, send name to function that will display item in game, matching hotkey selection
-- 

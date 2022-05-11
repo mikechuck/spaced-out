@@ -32,8 +32,8 @@ public class SpawnPlayer : MonoBehaviour
 				float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
 
 				GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(finalX, finalY + 2, finalZ), Quaternion.identity, 0);
-				GameObject wood = PhotonNetwork.Instantiate(genericWood.name, new Vector3(finalX+5, finalY + 2, finalZ), Quaternion.identity, 0);
-				GameObject axeObject = PhotonNetwork.Instantiate(axe.name, new Vector3(finalX+3, finalY + 2, finalZ), Quaternion.identity, 0);
+				GameObject wood = PhotonNetwork.Instantiate(genericWood.name, new Vector3(finalX+5, finalY + 10, finalZ), Quaternion.identity, 0);
+				GameObject axeObject = PhotonNetwork.Instantiate(axe.name, new Vector3(finalX + 3, finalY + 10, finalZ + 1), Quaternion.identity, 0);
 				player.name = PhotonNetwork.LocalPlayer.NickName;
 				wood.name = "Generic Wood";
 				axeObject.name = "Wood Axe";
