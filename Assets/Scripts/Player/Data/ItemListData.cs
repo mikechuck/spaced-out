@@ -15,7 +15,6 @@ public class ItemListData: ScriptableObject
 	}
     public ItemListEntry[] items;
 	Dictionary<string, ItemData> itemDict = new Dictionary<string, ItemData>();
-	public float[] baseStartHeights;
 
 	public ItemData GetItemData(string itemName) {
 		PopulateDict();

@@ -10,6 +10,7 @@ public class SpawnPlayer : MonoBehaviour
 	public MapData mapData;
 	public TextureData textureData;
 	public GameObject genericWood;
+	public GameObject axe;
 	
 	public void Spawn(MapData mapData) {
 		float mapScale = terrainData.uniformScale;
@@ -31,12 +32,11 @@ public class SpawnPlayer : MonoBehaviour
 				float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
 
 				GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(finalX, finalY + 2, finalZ), Quaternion.identity, 0);
-				GameObject wood = PhotonNetwork.Instantiate(genericWood.name, new Vector3(finalX+5, finalY + 2, finalZ+5), Quaternion.identity, 0);
+				GameObject wood = PhotonNetwork.Instantiate(genericWood.name, new Vector3(finalX+5, finalY + 2, finalZ), Quaternion.identity, 0);
+				GameObject axeObject = PhotonNetwork.Instantiate(axe.name, new Vector3(finalX+3, finalY + 2, finalZ), Quaternion.identity, 0);
 				player.name = PhotonNetwork.LocalPlayer.NickName;
 				wood.name = "Generic Wood";
-				//Random rotation for the player
-				// float rotation = UnityEngine.Random.Range(0f, 360f);
-				// player.transform.Rotate(0.0f, rotation, 0.0f);
+				axeObject.name = "Wood Axe";
 				break;
 			}
 		}
