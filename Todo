@@ -10,6 +10,7 @@ Player:
   - state management
   - selectable items
   - display selected item on screen
+	- on item select (and once on load), call player script to spawn prefab usign itemData passed in from HUD script
   - current item is visible to other players
   - animation for item use
 - player state
@@ -29,3 +30,5 @@ Tree Chopping:
   - item drop (lumber)
     - picked up when close enough
 
+leftoff:
+find out why tree prefabs don't have meshes

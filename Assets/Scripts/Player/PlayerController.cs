@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
 	public Camera cam;
 	PhotonView view;
 	public TextMeshProUGUI playerName;
+	private Ray ray;
+	private float interactionDistance = 5f;
 
 	private void Awake() {
 		view = GetComponent<PhotonView>();
@@ -27,7 +29,6 @@ public class PlayerController : MonoBehaviour
 	}
 
 	void Update() {
-
 		if (!view.IsMine) {
 			if (GetComponent<PlayerController>() != null) {
 				// Destroy other players' scripts
@@ -41,11 +42,38 @@ public class PlayerController : MonoBehaviour
 
 		// Call Input code
 		if (view.IsMine) {
-			CheckInput();
+			CheckMovementInput();
+		}
+
+		CheckItemInteraction();
+	}
+
+	private void CheckItemInteraction() {
+		if (Input.GetKey(KeyCode.Mouse0)) {
+			GameObject hitItem = CastRay();
+			if (hitItem) {
+				Debug.Log("item hit!");
+				Debug.Log(hitItem.gameObject.name);
+			}
 		}
 	}
 
-	private void CheckInput() {
+	private GameObject CastRay() {
+		Debug.Log("casting ray");
+		ray = new Ray(transform.position, transform.forward);
+		RaycastHit hitData;
+        if (Physics.Raycast(ray, out hitData)){
+			Debug.Log("hit");
+			Debug.Log(hitData.distance);
+			Debug.Log(interactionDistance);
+			if (hitData.distance <= interactionDistance) {
+				return hitData.collider.gameObject;
+			}
+        }
+		return null;
+	}
+
+	private void CheckMovementInput() {
 		// Gravity + Jump force
 		if (characterController.isGrounded) {
 			velocity = 0;
