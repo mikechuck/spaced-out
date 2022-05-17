@@ -19,6 +19,8 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 	}
 
 	public void JoinRoom() {
+		DataManager.playerName = playerName.text;
+		DataManager.levelSeed = seed.text;
 		PhotonNetwork.JoinRoom(joinInput.text);
 	}
 

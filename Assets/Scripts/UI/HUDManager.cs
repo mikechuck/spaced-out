@@ -7,6 +7,7 @@ using TMPro;
 
 public class HUDManager : MonoBehaviour
 {
+	public TextMeshProUGUI itemNameText;
 	public int inventorySize = 8;
 	public float inventoryScale = 1f;
 	private Sprite[] inventorySprites;
@@ -14,6 +15,7 @@ public class HUDManager : MonoBehaviour
 	private int selectedInventorySlot = 0;
 	private GameObject[] inventorySlots;
 
+	//sm
 	// UI Colors
 	public Color inventorySlotColor = new Color32(91, 75, 56, 225);
 	public Color inventorySlotBorderColor = new Color32(56, 42, 30, 225);
@@ -48,7 +50,6 @@ public class HUDManager : MonoBehaviour
 	}
 
 	public void DrawInventoryItems(Item[] inventory) {
-		GameObject hudGameObject = GameObject.Find("HUD");
 		inventorySlots = GameObject.FindGameObjectsWithTag("Inventory Slot");
 
 		for (int i = 0; i < inventorySlots.Length; i++) {
@@ -68,5 +69,11 @@ public class HUDManager : MonoBehaviour
 				quantityText.text = "";
 			}
 		}
+	}
+
+	public void ShowItemInfo(string itemName, bool showHp, int hp) {
+		Debug.Log("showing item:");
+		Debug.Log(itemName);
+		itemNameText.SetText(itemName);
 	}
 }

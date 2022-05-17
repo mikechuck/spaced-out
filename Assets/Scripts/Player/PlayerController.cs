@@ -7,6 +7,8 @@ using TMPro;
 public class PlayerController : MonoBehaviour
 {
 	CharacterController characterController;
+	private GameObject HUD;
+	private HUDManager hudManager;
 	public float MovementSpeed = 1;
 	public float jumpForce = 20f;
 	public float Gravity = 9.8f;
@@ -18,7 +20,7 @@ public class PlayerController : MonoBehaviour
 	PhotonView view;
 	public TextMeshProUGUI playerName;
 	private Ray ray;
-	private float interactionDistance = 5f;
+	private float interactionDistance = 10f;
 
 	private void Awake() {
 		view = GetComponent<PhotonView>();
@@ -26,8 +28,10 @@ public class PlayerController : MonoBehaviour
 
 	private void Start() {
 		characterController = GetComponent<CharacterController>();
+		HUD = GameObject.Find("HUD");
+		hudManager = HUD.GetComponent<HUDManager>();
 	}
-
+	
 	void Update() {
 		if (!view.IsMine) {
 			if (GetComponent<PlayerController>() != null) {
@@ -43,34 +47,47 @@ public class PlayerController : MonoBehaviour
 		// Call Input code
 		if (view.IsMine) {
 			CheckMovementInput();
+			CheckItemInteraction();
 		}
 
-		CheckItemInteraction();
 	}
 
 	private void CheckItemInteraction() {
-		if (Input.GetKey(KeyCode.Mouse0)) {
-			GameObject hitItem = CastRay();
-			if (hitItem) {
-				Debug.Log("item hit!");
-				Debug.Log(hitItem.gameObject.name);
-			}
+		GameObject hitObject = CastRay();
+		if (hitObject) {
+			HandleObjectHit(hitObject);
 		}
 	}
 
 	private GameObject CastRay() {
-		Debug.Log("casting ray");
 		ray = new Ray(transform.position, transform.forward);
 		RaycastHit hitData;
         if (Physics.Raycast(ray, out hitData)){
-			Debug.Log("hit");
-			Debug.Log(hitData.distance);
-			Debug.Log(interactionDistance);
 			if (hitData.distance <= interactionDistance) {
 				return hitData.collider.gameObject;
+			} else {
+				hudManager.ShowItemInfo("", false, 0);
 			}
         }
 		return null;
+	}
+
+	private void HandleObjectHit(GameObject hitObject) {
+		Transform parent = hitObject.gameObject.transform.parent;
+		TreeState treeState = parent.gameObject.GetComponent<TreeState>();
+
+		// Item name display for RaycastHit layer
+		if (parent.gameObject.layer == 6) {
+			hudManager.ShowItemInfo(parent.name, true, treeState.hp);
+		} else {
+			hudManager.ShowItemInfo("", false, 0);
+		}
+
+		if (Input.GetKeyDown(KeyCode.Mouse0)) {
+			if (parent.tag == "Tree") {
+				treeState.DecreaseHP(5);
+			}
+		}
 	}
 
 	private void CheckMovementInput() {

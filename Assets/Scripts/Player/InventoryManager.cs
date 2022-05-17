@@ -8,10 +8,11 @@ public class InventoryManager : MonoBehaviour
 	// public ListMapping[] itemList;
 	public ItemListData itemListData;
 	private int maxStackSize = 50;
-	public GameObject HUD;
+	private GameObject HUD;
 	private HUDManager hudManager;
 
 	void Start() {
+		HUD = GameObject.Find("HUD");
 		hudManager = HUD.GetComponent<HUDManager>();
 		inventory = new Item[8];
 	}
@@ -33,20 +34,18 @@ public class InventoryManager : MonoBehaviour
 				if (itemData.itemName == inventory[i].itemData.itemName && itemData.stackable) {
 					inventory[i].updateQuantity(inventory[i].quantity + 1);
 					pickedUp = true;
-					Debug.Log("breaking 1");
 					break;
 				}
 			} else {
 				inventory[i] = new Item(itemData, 1, 100);
 				pickedUp = true;
-				Debug.Log("breaking 2");
 				break;
 			}
 		}
 
 		if (pickedUp) {
 			hudManager.DrawInventoryItems(inventory);
-			// Destroy(parent);
+			Destroy(parent);
 		} else {
 			Debug.Log("inventory full!");
 		}

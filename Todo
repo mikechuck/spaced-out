@@ -1,14 +1,14 @@
 Map:
 - grass
   - only render a certain distance from player
+- make slightly smaller scale
+- add more small-wave noise
 
 Player:
 - inventory
   - UI
-    - hotkey boxes
     - larger inventory display
   - state management
-  - selectable items
   - display selected item on screen
 	- on item select (and once on load), call player script to spawn prefab usign itemData passed in from HUD script
   - current item is visible to other players
@@ -30,5 +30,17 @@ Tree Chopping:
   - item drop (lumber)
     - picked up when close enough
 
-leftoff:
-find out why tree prefabs don't have meshes
+Distance fog
+
+Custom Skybox:
+- clouds
+- stars
+- sun
+
+Water
+- low poly waves near shore
+
+
+LEFTOFF:
+- debug why item name text is not acessable in HUD manager when ShowItemInfo is called
+
