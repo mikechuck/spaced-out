@@ -73,6 +73,8 @@ public class PlayerController : MonoBehaviour
 	}
 
 	private void HandleObjectHit(GameObject hitObject) {
+		Debug.Log("name:");
+		Debug.Log(hitObject.gameObject.name);
 		Transform parent = hitObject.gameObject.transform.parent;
 		TreeState treeState = parent.gameObject.GetComponent<TreeState>();
 

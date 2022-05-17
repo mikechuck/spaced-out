@@ -89,7 +89,6 @@ public class MeshData {
 	}
 
 	public Mesh CreateMesh() {
-		Debug.Log("mesh created");
 		Mesh mesh = new Mesh();
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;

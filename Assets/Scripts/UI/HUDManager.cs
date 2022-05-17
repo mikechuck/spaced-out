@@ -72,8 +72,6 @@ public class HUDManager : MonoBehaviour
 	}
 
 	public void ShowItemInfo(string itemName, bool showHp, int hp) {
-		Debug.Log("showing item:");
-		Debug.Log(itemName);
 		itemNameText.SetText(itemName);
 	}
 }

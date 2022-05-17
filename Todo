@@ -21,14 +21,24 @@ Player:
   - name
 - interact with trees + rocks with items
 
-Tree Chopping:
-- tree data
-  - type
-  - HP
-  - current HP
-    - other players need to get current HP updated for them
-  - item drop (lumber)
-    - picked up when close enough
+Animals:
+- Chicken
+- Penguin
+
+Players:
+- Player1
+- Player2
+- Player3
+- Player4
+
+Scenery:
+- Tree1
+- Tree2
+- Tree3
+- Grass1
+- Grass2
+
+
 
 Distance fog
 
@@ -42,5 +52,4 @@ Water
 
 
 LEFTOFF:
-- debug why item name text is not acessable in HUD manager when ShowItemInfo is called
-
+- Debug NullRefernceException error with Generic Wood item

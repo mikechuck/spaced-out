@@ -17,4 +17,13 @@ MonoBehaviour:
     itemData: {fileID: 11400000, guid: 2bc7bfe4c9f9bb244861bde5f95cee31, type: 2}
   - itemName: Wood Axe
     itemData: {fileID: 11400000, guid: ff6f9f93aa90bc3469ccc6eba87cc848, type: 2}
-  baseStartHeights: []
+  - itemName: Wood Pickaxe
+    itemData: {fileID: 11400000, guid: 23feec97f633acf4abd7932d0a1d041c, type: 2}
+  - itemName: Wood Sword
+    itemData: {fileID: 11400000, guid: de00f55cc2783a34887aa46681dc2050, type: 2}
+  - itemName: Iron Sword
+    itemData: {fileID: 11400000, guid: d76cc117f38fe0d40935b0659cb7dcb0, type: 2}
+  - itemName: Buckler
+    itemData: {fileID: 11400000, guid: d9047410a73003a4b97d2321de31ba69, type: 2}
+  - itemName: Treasure Chest
+    itemData: {fileID: 11400000, guid: d4a773eb54a1fcc42a80e6be632af5b2, type: 2}
