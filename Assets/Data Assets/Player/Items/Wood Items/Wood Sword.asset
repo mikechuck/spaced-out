@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wood Sword
   m_EditorClassIdentifier: 
   itemName: Wood Sword
-  itemPrefab: {fileID: 3991853555341219022, guid: 9be725d8fdc70ec488bf9d24cd352bc2, type: 3}
+  itemPrefab: {fileID: 3206615399508725972, guid: 98418fc69439add4483fc657c97d0e90, type: 3}
   itemImage: {fileID: 21300000, guid: d08842c4d889a8745944bf6cfbf2dc10, type: 3}
   damage: 10
   canEquip: 1

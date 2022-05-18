@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 5189056486138507216}
   - component: {fileID: 2006863019201290991}
   m_Layer: 6
-  m_Name: default
-  m_TagString: Untagged
+  m_Name: tree
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3406833904121274677}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -108,10 +108,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6449605665420002134}
-  - component: {fileID: 3634636755025668396}
-  m_Layer: 6
+  - component: {fileID: 6060955009146088003}
+  m_Layer: 0
   m_Name: Tree 1
-  m_TagString: Tree
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,7 +132,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3634636755025668396
+--- !u!114 &6060955009146088003
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,4 +145,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 100
-  itemDropped: {fileID: 4862274220350674562, guid: 7a302870ece255447bdd408190d87f96, type: 3}
+  itemDropped: {fileID: 383164094270176595, guid: 1824e6eb040764f42a2682506580ec65, type: 3}

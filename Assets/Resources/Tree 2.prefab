@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 796626266595044828}
   m_Layer: 6
   m_Name: Icosphere.004
-  m_TagString: Untagged
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 150
-  itemDropped: {fileID: 4862274220350674562, guid: 7a302870ece255447bdd408190d87f96, type: 3}
+  itemDropped: {fileID: 383164094270176595, guid: 1824e6eb040764f42a2682506580ec65, type: 3}
 --- !u!1 &7244566671796100786
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 8201467875204821954}
   m_Layer: 6
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

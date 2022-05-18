@@ -31,7 +31,7 @@ public class HUDManager : MonoBehaviour
 	}
 
 	private void ScrollHandler() {
-		int scrollValue = (int)Input.mouseScrollDelta.y;
+		int scrollValue = -(int)Input.mouseScrollDelta.y;
 		int previousSelectorValue = selectedInventorySlot;
 
 		if (selectedInventorySlot == 0 && scrollValue != -1) {
@@ -71,7 +71,7 @@ public class HUDManager : MonoBehaviour
 		}
 	}
 
-	public void ShowItemInfo(string itemName, bool showHp, int hp) {
+	public void ShowItemInfo(string itemName) {
 		itemNameText.SetText(itemName);
 	}
 }

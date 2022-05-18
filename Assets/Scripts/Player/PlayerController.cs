@@ -15,7 +15,8 @@ public class PlayerController : MonoBehaviour
 	private float velocity = 0;
 	public float horizontalSpeed = 1f;
 	public float verticalSpeed = 1f;
-	private float xRotation = 0.0f;
+	private float xRotate = 0.0f;
+	private float yRotate = 0.0f;
 	public Camera cam;
 	PhotonView view;
 	public TextMeshProUGUI playerName;
@@ -56,39 +57,46 @@ public class PlayerController : MonoBehaviour
 		GameObject hitObject = CastRay();
 		if (hitObject) {
 			HandleObjectHit(hitObject);
+		} else {
+			hudManager.ShowItemInfo("");
 		}
 	}
 
 	private GameObject CastRay() {
-		ray = new Ray(transform.position, transform.forward);
+		ray = new Ray(cam.transform.position, transform.forward);
+		Debug.DrawRay(cam.transform.position, transform.forward, Color.green);
 		RaycastHit hitData;
-        if (Physics.Raycast(ray, out hitData)){
-			if (hitData.distance <= interactionDistance) {
-				return hitData.collider.gameObject;
-			} else {
-				hudManager.ShowItemInfo("", false, 0);
+        if (Physics.Raycast(ray, out hitData)) {
+			// Only register raycast layer hits
+			if (hitData.collider.gameObject.layer == 6) {
+				if (hitData.distance <= interactionDistance) {
+					return hitData.collider.gameObject;
+				}
 			}
         }
 		return null;
 	}
 
 	private void HandleObjectHit(GameObject hitObject) {
-		Debug.Log("name:");
-		Debug.Log(hitObject.gameObject.name);
 		Transform parent = hitObject.gameObject.transform.parent;
-		TreeState treeState = parent.gameObject.GetComponent<TreeState>();
+		Debug.Log("parent.name:");
+		Debug.Log(parent.name);
+		hudManager.ShowItemInfo(parent.name);
 
-		// Item name display for RaycastHit layer
-		if (parent.gameObject.layer == 6) {
-			hudManager.ShowItemInfo(parent.name, true, treeState.hp);
-		} else {
-			hudManager.ShowItemInfo("", false, 0);
-		}
+		switch(hitObject.gameObject.tag) {
+			case "Tree":
+				TreeState treeState = parent.gameObject.GetComponent<TreeState>();
 
-		if (Input.GetKeyDown(KeyCode.Mouse0)) {
-			if (parent.tag == "Tree") {
-				treeState.DecreaseHP(5);
-			}
+				if (Input.GetKeyDown(KeyCode.Mouse0)) {
+					treeState.DecreaseHP(5);
+				}
+				break;
+			case "Item":
+				hudManager.ShowItemInfo(parent.name);
+				break;
+			default:
+				break;
+
 		}
 	}
 
@@ -118,11 +126,10 @@ public class PlayerController : MonoBehaviour
 		characterController.Move((transform.right * horizontal + transform.forward * vertical) * Time.deltaTime);
 
 		// Camera movement
-		float mouseX = Input.GetAxis("Mouse X") * horizontalSpeed;
-		float mouseY = Input.GetAxis("Mouse Y") * verticalSpeed;
-		transform.Rotate(0, mouseX, 0);
-		xRotation -= mouseY;
-		xRotation = Mathf.Clamp(-mouseY, -90, 90);
-		cam.transform.Rotate(xRotation, 0.0f, 0.0f);
+		xRotate += Input.GetAxis("Mouse X") * horizontalSpeed;
+		yRotate -= Input.GetAxis("Mouse Y") * verticalSpeed;
+		transform.eulerAngles = new Vector3 (0.0f, xRotate, 0.0f);
+		yRotate = Mathf.Clamp (yRotate, -90, 90);
+		cam.transform.eulerAngles = new Vector3 (yRotate, xRotate, 0.0f);
 	}
 }

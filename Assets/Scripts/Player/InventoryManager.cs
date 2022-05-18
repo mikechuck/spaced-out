@@ -18,6 +18,7 @@ public class InventoryManager : MonoBehaviour
 	}
 
 	void OnTriggerEnter(Collider other) {
+		Debug.Log("collided");
 		if (other.gameObject.tag == "Item") {
 			GameObject parent = other.gameObject.transform.parent.gameObject;
 			

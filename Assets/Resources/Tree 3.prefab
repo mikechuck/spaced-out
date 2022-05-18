@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4386142351955870408}
   m_Layer: 6
   m_Name: Cylinder.001
-  m_TagString: Untagged
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 2875094776519204506}
   m_Layer: 6
   m_Name: Tree 3
-  m_TagString: Tree
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 200
-  itemDropped: {fileID: 4862274220350674562, guid: 7a302870ece255447bdd408190d87f96, type: 3}
+  itemDropped: {fileID: 383164094270176595, guid: 1824e6eb040764f42a2682506580ec65, type: 3}
 --- !u!1 &7168836643302472259
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 636239943049638694}
   m_Layer: 6
   m_Name: Cylinder
-  m_TagString: Untagged
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

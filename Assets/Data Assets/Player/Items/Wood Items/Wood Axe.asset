@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wood Axe
   m_EditorClassIdentifier: 
   itemName: Axe
-  itemPrefab: {fileID: 1403495303246060620, guid: 01aaf3fb339a0f54591ae5b02ab54212, type: 3}
+  itemPrefab: {fileID: 3592194204895600855, guid: 2ab27c3eb32a9384ea7b6d3252717c0c, type: 3}
   itemImage: {fileID: 21300000, guid: 8980243cf3cd5014caa64d6a46b27d45, type: 3}
   damage: 5
   canEquip: 1

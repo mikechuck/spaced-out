@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Iron Sword
   m_EditorClassIdentifier: 
   itemName: Iron Sword
-  itemPrefab: {fileID: 1903591457688822842, guid: 7cc4e215b866efb45be420071ec23916, type: 3}
+  itemPrefab: {fileID: 2425584259472419221, guid: 7dcf6049046190e4c82a5156f7e74597, type: 3}
   itemImage: {fileID: 21300000, guid: 231d59bae443f5b4dbc9b97d5fce264d, type: 3}
   damage: 50
   canEquip: 1
