@@ -67,7 +67,6 @@ public class PlayerController : MonoBehaviour
 		Debug.DrawRay(cam.transform.position, transform.forward, Color.green);
 		RaycastHit hitData;
         if (Physics.Raycast(ray, out hitData)) {
-			// Only register raycast layer hits
 			if (hitData.collider.gameObject.layer == 6) {
 				if (hitData.distance <= interactionDistance) {
 					return hitData.collider.gameObject;
@@ -79,8 +78,6 @@ public class PlayerController : MonoBehaviour
 
 	private void HandleObjectHit(GameObject hitObject) {
 		Transform parent = hitObject.gameObject.transform.parent;
-		Debug.Log("parent.name:");
-		Debug.Log(parent.name);
 		hudManager.ShowItemInfo(parent.name);
 
 		switch(hitObject.gameObject.tag) {

@@ -14,8 +14,10 @@ public class PlayerNameTag : MonoBehaviourPun
 			return;
 		}
 
-		SetName();
+		SetName(DataManager.playerName);
 	}
 
-	private void SetName() => nameText.text = "test";
+	private void SetName(string name) {
+		nameText.text = name;
+	}
 }

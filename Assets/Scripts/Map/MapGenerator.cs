@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Threading;
+using Photon.Pun;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -33,6 +33,7 @@ public class MapGenerator : MonoBehaviour
 		} else {
 			RandomizeSeed();
 		}
+	
 
 		MapData mapData = GenerateMapData(Vector2.zero);
 		MapDisplay display = FindObjectOfType<MapDisplay>();

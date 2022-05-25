@@ -12,4 +12,14 @@ public class DataManager : MonoBehaviour
 		Instance = this;
 		DontDestroyOnLoad(gameObject);
 	}
+
+	public static void SetPlayerName(string name) {
+		Debug.Log("setting player name");
+		playerName = name;
+	}
+
+	public static void SetLevelSeed(string seed) {
+		Debug.Log("setting level seed");
+		levelSeed = seed;
+	}
 }

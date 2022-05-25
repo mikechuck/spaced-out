@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using Photon.Pun;
 
 public class GameManager : MonoBehaviour
@@ -12,9 +13,14 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		spawnPlayer = GetComponent<SpawnPlayer>();
+		try {
+			spawnPlayer = GetComponent<SpawnPlayer>();
 
-        mapData = mapGenerator.InitiateMapGeneration();
-		spawnPlayer.Spawn(mapData);
+			mapData = mapGenerator.InitiateMapGeneration();
+			spawnPlayer.Spawn(mapData);
+		} catch (Exception e) {
+			Debug.LogError(e);
+			PhotonNetwork.LoadLevel("Loading");
+		}
     }
 }

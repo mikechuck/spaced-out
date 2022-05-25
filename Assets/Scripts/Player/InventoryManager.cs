@@ -11,14 +11,13 @@ public class InventoryManager : MonoBehaviour
 	private GameObject HUD;
 	private HUDManager hudManager;
 
-	void Start() {
+	void Awake() {
 		HUD = GameObject.Find("HUD");
 		hudManager = HUD.GetComponent<HUDManager>();
 		inventory = new Item[8];
 	}
 
 	void OnTriggerEnter(Collider other) {
-		Debug.Log("collided");
 		if (other.gameObject.tag == "Item") {
 			GameObject parent = other.gameObject.transform.parent.gameObject;
 			
@@ -29,6 +28,14 @@ public class InventoryManager : MonoBehaviour
 
 	public void PickUpItem(GameObject parent) {
 		ItemData itemData = itemListData.GetItemData(parent.name);
+
+		Debug.Log("----------");
+		Debug.Log("picked up item:");
+		Debug.Log(itemData.itemName);
+		Debug.Log("by player");
+		Debug.Log(DataManager.playerName);
+		Debug.Log("----------");
+
 		bool pickedUp = false;
 		for (int i = 0; i < inventory.Length; i++) {
 			if (inventory[i] != null) {
@@ -47,8 +54,6 @@ public class InventoryManager : MonoBehaviour
 		if (pickedUp) {
 			hudManager.DrawInventoryItems(inventory);
 			Destroy(parent);
-		} else {
-			Debug.Log("inventory full!");
 		}
 
 	}

@@ -13,18 +13,16 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 	public TMP_InputField seed;
 
 	public void CreateRoom() {
-		DataManager.playerName = playerName.text;
-		DataManager.levelSeed = seed.text;
 		PhotonNetwork.CreateRoom(createInput.text);
 	}
 
 	public void JoinRoom() {
-		DataManager.playerName = playerName.text;
-		DataManager.levelSeed = seed.text;
 		PhotonNetwork.JoinRoom(joinInput.text);
 	}
 
 	public override void OnJoinedRoom() {
+		DataManager.SetLevelSeed(seed.text);
+		DataManager.SetPlayerName(playerName.text);
 		PhotonNetwork.LoadLevel("MainScene");
 	}
 }
