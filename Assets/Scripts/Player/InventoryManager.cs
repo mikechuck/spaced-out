@@ -10,11 +10,13 @@ public class InventoryManager : MonoBehaviour
 	private int maxStackSize = 50;
 	private GameObject HUD;
 	private HUDManager hudManager;
+	private GameManager gameManager;
 
 	void Awake() {
 		HUD = GameObject.Find("HUD");
 		hudManager = HUD.GetComponent<HUDManager>();
 		inventory = new Item[8];
+		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 	}
 
 	void OnTriggerEnter(Collider other) {
@@ -33,7 +35,7 @@ public class InventoryManager : MonoBehaviour
 		Debug.Log("picked up item:");
 		Debug.Log(itemData.itemName);
 		Debug.Log("by player");
-		Debug.Log(DataManager.playerName);
+		Debug.Log(gameManager.playerName);
 		Debug.Log("----------");
 
 		bool pickedUp = false;
@@ -57,7 +59,11 @@ public class InventoryManager : MonoBehaviour
 		}
 
 	}
+	public void DisplaySelectedItem(ItemData selectedItem) {
+		Debug.Log("selecting");
+	}
 }
+
 
 public class Item {
 	public ItemData itemData;

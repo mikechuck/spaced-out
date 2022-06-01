@@ -276,7 +276,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4986081215177776553}
   m_LocalRotation: {x: 0.0761569, y: -0, z: -0, w: 0.9970959}
-  m_LocalPosition: {x: 0, y: 0.91, z: 0.122}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -366,7 +366,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4986081216091629975}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 758, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -408,10 +408,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MovementSpeed: 60
   jumpForce: 1
-  Gravity: 3
   horizontalSpeed: 3
   verticalSpeed: 3
   cam: {fileID: 4986081215177776556}
+  HeadAnimationTarget: {fileID: 0}
   playerName: {fileID: 250130824939835093}
 --- !u!114 &4425375857675687212
 MonoBehaviour:

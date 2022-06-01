@@ -9,22 +9,28 @@ public class PlayerController : MonoBehaviour
 	CharacterController characterController;
 	private GameObject HUD;
 	private HUDManager hudManager;
-	public float MovementSpeed = 1;
-	public float jumpForce = 20f;
-	public float Gravity = 9.8f;
-	private float velocity = 0;
-	public float horizontalSpeed = 1f;
-	public float verticalSpeed = 1f;
-	private float xRotate = 0.0f;
-	private float yRotate = 0.0f;
+	private GameManager gameManager;
 	public Camera cam;
+	public GameObject HeadAnimationTarget;
 	PhotonView view;
 	public TextMeshProUGUI playerName;
+
+	public float MovementSpeed = 1;
+	public float horizontalSpeed = 1f;
+	public float verticalSpeed = 1f;
+	private float Gravity = -50f;
+	private float jumpForce = 30f;
+	private float groundHeight = 4f;
+	private float velocity = 0;
+	private Vector3 playerVelocity;
+	private float xRotate = 0.0f;
+	private float yRotate = 0.0f;
 	private Ray ray;
 	private float interactionDistance = 10f;
 
 	private void Awake() {
 		view = GetComponent<PhotonView>();
+		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 	}
 
 	private void Start() {
@@ -99,15 +105,20 @@ public class PlayerController : MonoBehaviour
 
 	private void CheckMovementInput() {
 		// Gravity + Jump force
-		if (characterController.isGrounded) {
-			velocity = 0;
-		} else {
-			if (Input.GetKeyDown(KeyCode.Space)) {
-				velocity = jumpForce;
+		RaycastHit hitData;
+		bool isGrounded = Physics.Raycast(transform.position, -transform.up, out hitData, groundHeight);
+
+		if (isGrounded) {
+			if (playerVelocity.y < 0) {
+				playerVelocity.y = 0f;
 			}
-			velocity -= Gravity;
-			characterController.Move(new Vector3(0, velocity, 0));
+
+			if (Input.GetKeyDown(KeyCode.Space)) {
+				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
+			}
 		}
+        playerVelocity.y += Gravity * Time.deltaTime;
+        characterController.Move(playerVelocity * Time.deltaTime);
 		
 
 		// Movement
@@ -128,5 +139,8 @@ public class PlayerController : MonoBehaviour
 		transform.eulerAngles = new Vector3 (0.0f, xRotate, 0.0f);
 		yRotate = Mathf.Clamp (yRotate, -90, 90);
 		cam.transform.eulerAngles = new Vector3 (yRotate, xRotate, 0.0f);
+
+		// Move head aim target as well (vertical)
+		HeadAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 5) );
 	}
 }

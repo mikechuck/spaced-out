@@ -18,6 +18,7 @@ public class MapGenerator : MonoBehaviour
 	public bool autoUpdate;
 	float[,] falloffMap;
 	public Material terrainMaterial;
+	private GameManager gameManager;
 
 	// Data objects
 	public TerrainData terrainData;
@@ -26,10 +27,11 @@ public class MapGenerator : MonoBehaviour
 
 	public MapData InitiateMapGeneration() {
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
 		// Use saved seed, else randomize it
-		if (DataManager.levelSeed.Length > 0) {
-			noiseData.seed = DataManager.levelSeed;
+		if (gameManager.levelSeed.Length > 0) {
+			noiseData.seed = gameManager.levelSeed;
 		} else {
 			RandomizeSeed();
 		}

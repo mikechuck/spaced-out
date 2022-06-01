@@ -43,6 +43,8 @@ public class HUDManager : MonoBehaviour
 		}
 		inventorySlots[previousSelectorValue].transform.GetChild(0).GetComponent<Image>().color = inventorySlotBorderColor;
 		inventorySlots[selectedInventorySlot].transform.GetChild(0).GetComponent<Image>().color = selectedInventorySlotBorderColor;
+
+		
 	}
 
 	private void ScaleInventory() {

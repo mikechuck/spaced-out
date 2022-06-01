@@ -9,8 +9,14 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 {
 	public TMP_InputField createInput;
 	public TMP_InputField joinInput;
-	public TMP_InputField playerName;
-	public TMP_InputField seed;
+	public TMP_InputField playerNameInput;
+	public TMP_InputField seedInput;
+	private GameObject gameManagerObject;
+	private GameManager gameManager;
+
+	private void Awake() {
+		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+	}
 
 	public void CreateRoom() {
 		PhotonNetwork.CreateRoom(createInput.text);
@@ -21,8 +27,8 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 	}
 
 	public override void OnJoinedRoom() {
-		DataManager.SetLevelSeed(seed.text);
-		DataManager.SetPlayerName(playerName.text);
+		gameManager.levelSeed = seedInput.text;
+		gameManager.playerName = playerNameInput.text;
 		PhotonNetwork.LoadLevel("MainScene");
 	}
 }

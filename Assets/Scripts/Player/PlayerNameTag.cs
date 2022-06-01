@@ -8,13 +8,18 @@ public class PlayerNameTag : MonoBehaviourPun
 {
     [SerializeField]
 	private TextMeshProUGUI nameText;
+	private GameManager gameManager;
+
+	private void Awake() {
+		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+	}
 
 	private void Start() {
 		if (photonView.IsMine) {
 			return;
 		}
 
-		SetName(DataManager.playerName);
+		SetName(gameManager.playerName);
 	}
 
 	private void SetName(string name) {

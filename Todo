@@ -3,6 +3,7 @@ Map:
   - only render a certain distance from player
 - make slightly smaller scale
 - add more small-wave noise
+- vary tree height + tilt slightly
 
 Player:
 - inventory
@@ -38,7 +39,8 @@ Scenery:
 - Grass1
 - Grass2
 
-
+Design:
+- play with coloring (scenery, items, text, etc)
 
 Distance fog
 
