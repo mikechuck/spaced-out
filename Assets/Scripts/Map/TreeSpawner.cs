@@ -11,17 +11,27 @@ public class TreeSpawner: MonoBehaviour
 	public GameObject tree2;
 	public GameObject tree3;
 	private bool[,] usedTreePositions;
+	private int mapSize;
+	private float[,] heightMap;
+	AnimationCurve heightCurve;
+	float heightScale;
+	float mapScale;
+	GameObject treesParent;
+
+	public float noiseScale = 50f;
+	public float lacunarity = 5f;
+	public int octaves = 5;
+	public float persistence = 0.5f;
 
 	public void SpawnTrees(MapData mapData, TerrainData terrainData, TextureData textureData) {
 
-		float mapScale = terrainData.uniformScale;
-		float heightScale = terrainData.meshHeightMultiplier;
-		AnimationCurve heightCurve = new AnimationCurve(terrainData.meshHeightCurve.keys);
-		float[,] heightMap = mapData.heightMap;
-		int mapSize = heightMap.GetLength(0);
+		mapScale = terrainData.uniformScale;
+		heightScale = terrainData.meshHeightMultiplier;
+		heightCurve = new AnimationCurve(terrainData.meshHeightCurve.keys);
+		heightMap = mapData.heightMap;
+		mapSize = heightMap.GetLength(0);
 		usedTreePositions = new bool[mapSize, mapSize];
-		
-		GameObject treesParent = GameObject.Find("Trees");
+		treesParent = GameObject.Find("Trees");
 
 		//Destroy trees first
 		GameObject[] trees = GameObject.FindGameObjectsWithTag("Tree");
@@ -33,10 +43,13 @@ public class TreeSpawner: MonoBehaviour
 		int randomSeed1 = UnityEngine.Random.Range(0, 10000);
 		int randomSeed2 = UnityEngine.Random.Range(0, 10000);
 		int randomSeed3 = UnityEngine.Random.Range(0, 10000);
-		float noiseScale = 50f;
-		float lacunarity = 5f;
-		int octaves = 5;
-		float persistence = 0.5f;
+		randomSeed1 = 100;
+		randomSeed2 = 200;
+		randomSeed3 = 300;
+		noiseScale = 50f;
+		lacunarity = 5f;
+		octaves = 5;
+		persistence = 0.5f;
 		Vector2 offset = new Vector2(0, 0);
 		Noise.NormalizeMode normalizeMode = Noise.NormalizeMode.Local;
 
@@ -45,28 +58,36 @@ public class TreeSpawner: MonoBehaviour
 		float[,] noiseMap3 = Noise.GenerateNoiseMap(mapSize, mapSize, randomSeed3.ToString(), noiseScale, octaves, persistence, lacunarity, offset, normalizeMode);
 
 		//Set treee spawn bounds
-		float lowerBound1 = 0.3f;
-		float upperBound1 = 0.5f;
+		float lowerBound1 = 0.25f;
+		float upperBound1 = 0.51f;
 
-		float lowerBound2 = 0.5f;
-		float upperBound2 = 0.7f;
+		float lowerBound2 = 0.49f;
+		float upperBound2 = 0.65f;
 
-		float lowerBound3 = 0.7f;
+		float lowerBound3 = 0.61f;
 		float upperBound3 = 0.9f;
 
+		SpawnTreeType(numberOfTrees1, tree1, lowerBound1, upperBound1, noiseMap1);
+		SpawnTreeType(numberOfTrees2, tree2, lowerBound2, upperBound2, noiseMap2);
+		SpawnTreeType(numberOfTrees3, tree3, lowerBound3, upperBound3, noiseMap3);
+			
+	}
+
+	private void SpawnTreeType(int numberOfTrees, GameObject treeObject, float lowerBound, float upperBound, float[,] noiseMap){
 		// Spawn tree 1
 		int x = 0;
-		while(x < numberOfTrees1) {
+		while(x < numberOfTrees) {
 			int randomX = UnityEngine.Random.Range(0, mapSize);
 			int randomZ = UnityEngine.Random.Range(0, mapSize);
+			float randomScale = UnityEngine.Random.Range(90f, 110f) / 100f;
 
 			float randomOffset = UnityEngine.Random.Range(0, 10);
-			float noiseValue = noiseMap1[randomX, randomZ];
+			float noiseValue = noiseMap[randomX, randomZ];
 
-			if (noiseValue > 0.6f) {
+			if (noiseValue > 0.45f) {
 				float locationHeight = heightMap[randomX, randomZ];
 
-				if (locationHeight > lowerBound1 && locationHeight < upperBound1) {
+				if (locationHeight > lowerBound && locationHeight < upperBound) {
 					// Only spawn tree is position is free to be used
 					if (!usedTreePositions[randomX, randomZ]) {
 						usedTreePositions[randomX, randomZ] = true;
@@ -74,81 +95,12 @@ public class TreeSpawner: MonoBehaviour
 						float finalZ = (-(randomZ - mapSize/2) * mapScale) + randomOffset;
 						float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
 
-						GameObject tree = Instantiate(tree1, new Vector3(finalX, finalY - 3, finalZ), Quaternion.identity);
+						GameObject tree = Instantiate(treeObject, new Vector3(finalX, finalY - 3, finalZ), Quaternion.identity);
 						tree.transform.SetParent(treesParent.transform);
 						tree.tag = "Tree";
-						tree.name = tree1.name;
-						//Random rotation for each tree
-						var euler = tree.transform.eulerAngles;
-						euler.y = Random.Range(0.0f, 360.0f);
-						tree.transform.eulerAngles = euler;
-					}
-				}
-				x++;
-			}
-		}
-
-		// Spawn tree 2
-		x = 0;
-		while(x < numberOfTrees2) {
-			int randomX = UnityEngine.Random.Range(0, mapSize);
-			int randomZ = UnityEngine.Random.Range(0, mapSize);
-
-			float randomOffset = UnityEngine.Random.Range(0, 10);
-			float noiseValue = noiseMap2[randomX, randomZ];
-
-			if (noiseValue > 0.6f) {
-				float locationHeight = heightMap[randomX, randomZ];
-
-				if (locationHeight > lowerBound2 && locationHeight < upperBound2) {
-
-					// Only spawn tree is position is free to be used
-					if (!usedTreePositions[randomX, randomZ]) {
-						usedTreePositions[randomX, randomZ] = true;
-						float finalX = ((randomX - mapSize/2) * mapScale) + randomOffset;
-						float finalZ = (-(randomZ - mapSize/2) * mapScale) + randomOffset;
-						float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
-
-						GameObject tree = Instantiate(tree2, new Vector3(finalX, finalY - 3, finalZ), Quaternion.identity);
-						tree.transform.SetParent(treesParent.transform);
-						tree.tag = "Tree";
-						tree.name = tree2.name;
-						tree.transform.localScale = new Vector3(8, 8, 8);
-						//Random rotation for each tree
-						var euler = tree.transform.eulerAngles;
-						euler.y = Random.Range(0.0f, 360.0f);
-						tree.transform.eulerAngles = euler;
-					}
-				}
-				x++;
-			}
-		}
-
-		// Spawn tree 3
-		x = 0;
-		while(x < numberOfTrees3) {
-			int randomX = UnityEngine.Random.Range(0, mapSize);
-			int randomZ = UnityEngine.Random.Range(0, mapSize);
-
-			float randomOffset = UnityEngine.Random.Range(0, 10);
-			float noiseValue = noiseMap3[randomX, randomZ];
-
-			if (noiseValue > 0.6f) {
-				float locationHeight = heightMap[randomX, randomZ];
-
-				if (locationHeight > lowerBound3 && locationHeight < upperBound3) {
-					// Only spawn tree is position is free to be used
-					if (!usedTreePositions[randomX, randomZ]) {
-						usedTreePositions[randomX, randomZ] = true;
-						float finalX = ((randomX - mapSize/2) * mapScale) + randomOffset;
-						float finalZ = (-(randomZ - mapSize/2) * mapScale) + randomOffset;
-						float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
-
-						GameObject tree = Instantiate(tree3, new Vector3(finalX, finalY - 3, finalZ), Quaternion.identity);
-						tree.transform.SetParent(treesParent.transform);
-						tree.tag = "Tree";
-						tree.name = tree3.name;
-						tree.transform.localScale = new Vector3(8, 8, 8);
+						tree.name = treeObject.name;
+						tree.transform.localScale = tree.transform.localScale * randomScale * 1.7f;
+						// tree.transform.localScale = transform.localScale * 2;
 						//Random rotation for each tree
 						var euler = tree.transform.eulerAngles;
 						euler.y = Random.Range(0.0f, 360.0f);

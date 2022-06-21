@@ -76,7 +76,7 @@ public class MapGenerator : MonoBehaviour
 	}
 
 	public void RandomizeSeed() {
-		int randomSeed = UnityEngine.Random.Range(0, 10000);
+		int randomSeed = UnityEngine.Random.Range(0, 100000);
 		noiseData.seed = randomSeed.ToString();
 	}
 

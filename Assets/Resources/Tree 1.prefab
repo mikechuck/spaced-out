@@ -145,4 +145,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 100
-  itemDropped: {fileID: 383164094270176595, guid: 1824e6eb040764f42a2682506580ec65, type: 3}
+  itemDropped: {fileID: 4256242510610817788, guid: 4afdc825f73e6064aa8eab03cc22084b, type: 3}

@@ -124,7 +124,7 @@ Transform:
   m_GameObject: {fileID: 7189105499819037063}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 8, y: 8, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6700972938029961304}
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 150
-  itemDropped: {fileID: 383164094270176595, guid: 1824e6eb040764f42a2682506580ec65, type: 3}
+  itemDropped: {fileID: 4256242510610817788, guid: 4afdc825f73e6064aa8eab03cc22084b, type: 3}
 --- !u!1 &7244566671796100786
 GameObject:
   m_ObjectHideFlags: 0

@@ -23,20 +23,12 @@ public class InventoryManager : MonoBehaviour
 		if (other.gameObject.tag == "Item") {
 			GameObject parent = other.gameObject.transform.parent.gameObject;
 			
-			// Debug.Log(itemData.itemName);
 			PickUpItem(parent);
 		}
 	}
 
 	public void PickUpItem(GameObject parent) {
 		ItemData itemData = itemListData.GetItemData(parent.name);
-
-		Debug.Log("----------");
-		Debug.Log("picked up item:");
-		Debug.Log(itemData.itemName);
-		Debug.Log("by player");
-		Debug.Log(gameManager.playerName);
-		Debug.Log("----------");
 
 		bool pickedUp = false;
 		for (int i = 0; i < inventory.Length; i++) {

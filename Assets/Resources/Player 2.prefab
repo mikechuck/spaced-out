@@ -524,13 +524,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34eed9a38e8fbae44be41a9a178d72ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementSpeed: 60
-  jumpForce: 1
-  horizontalSpeed: 3
-  verticalSpeed: 3
   cam: {fileID: 4986081215177776556}
   HeadAnimationTarget: {fileID: 2818335589595875550}
   playerName: {fileID: 250130824939835093}
+  MovementSpeed: 60
+  horizontalSpeed: 3
+  verticalSpeed: 3
 --- !u!114 &4425375857675687212
 MonoBehaviour:
   m_ObjectHideFlags: 0

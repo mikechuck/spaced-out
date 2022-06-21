@@ -7,7 +7,7 @@ public class TreeState : MonoBehaviour
 {
     public int hp = 100;
 	public GameObject itemDropped;
-
+	
 	public void DecreaseHP(int damage) {
 		hp -= damage;
 

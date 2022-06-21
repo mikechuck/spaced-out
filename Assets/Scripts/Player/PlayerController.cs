@@ -14,13 +14,14 @@ public class PlayerController : MonoBehaviour
 	public GameObject HeadAnimationTarget;
 	PhotonView view;
 	public TextMeshProUGUI playerName;
+	Animator _animator;
 
-	public float MovementSpeed = 1;
+	public float movementSpeed;
 	public float horizontalSpeed = 1f;
 	public float verticalSpeed = 1f;
 	private float Gravity = -50f;
 	private float jumpForce = 30f;
-	private float groundHeight = 4f;
+	private float groundHeight = 3.3f;
 	private float velocity = 0;
 	private Vector3 playerVelocity;
 	private float xRotate = 0.0f;
@@ -28,8 +29,13 @@ public class PlayerController : MonoBehaviour
 	private Ray ray;
 	private float interactionDistance = 10f;
 
+	// values for character rotation smoothing
+	private float interp = 0;
+	private float rotationSpeed = 0.5f;
+
 	private void Awake() {
 		view = GetComponent<PhotonView>();
+		_animator = gameObject.transform.GetChild(1).GetComponent<Animator>();
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 	}
 
@@ -106,32 +112,28 @@ public class PlayerController : MonoBehaviour
 	private void CheckMovementInput() {
 		// Gravity + Jump force
 		RaycastHit hitData;
-		bool isGrounded = Physics.Raycast(transform.position, -transform.up, out hitData, groundHeight);
-
-		if (isGrounded) {
-			if (playerVelocity.y < 0) {
-				playerVelocity.y = 0f;
-			}
-
+		// Separate checks: one for velocity floor, one for letting rapid jumps
+		bool isGrounded1 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.5f);
+		bool isGrounded2 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.3f);
+		if (isGrounded1) {
 			if (Input.GetKeyDown(KeyCode.Space)) {
 				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
 			}
 		}
+		if (isGrounded2) {
+			if (playerVelocity.y < 0) {
+				playerVelocity.y = 0f;
+			}
+		}
+		
         playerVelocity.y += Gravity * Time.deltaTime;
         characterController.Move(playerVelocity * Time.deltaTime);
-		
-
-		// Movement
-		float currentMovementSpeed = MovementSpeed;
+		float horizontal = Input.GetAxis("Horizontal");
+		float vertical = Input.GetAxis("Vertical");
 		if (Input.GetKey(KeyCode.LeftShift)) {
-			currentMovementSpeed = MovementSpeed * 2;
-		} else {
-			currentMovementSpeed = MovementSpeed;
+			vertical *= 2;
 		}
-
-		float horizontal = Input.GetAxis("Horizontal") * currentMovementSpeed;
-		float vertical = Input.GetAxis("Vertical") * currentMovementSpeed;
-		characterController.Move((transform.right * horizontal + transform.forward * vertical) * Time.deltaTime);
+		characterController.Move((transform.right * horizontal * movementSpeed + transform.forward * vertical * movementSpeed) * Time.deltaTime);
 
 		// Camera movement
 		xRotate += Input.GetAxis("Mouse X") * horizontalSpeed;
@@ -141,6 +143,15 @@ public class PlayerController : MonoBehaviour
 		cam.transform.eulerAngles = new Vector3 (yRotate, xRotate, 0.0f);
 
 		// Move head aim target as well (vertical)
-		HeadAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 5) );
+		HeadAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 50) );
+	
+		// Animating
+		_animator.SetFloat("VelocityForward", vertical, 0.1f, Time.deltaTime);
+		if (_animator.GetFloat("VelocityForward") > 0.1f) {
+			Debug.Log("greater than 0.1");
+		}
+		if (_animator.GetFloat("VelocityForward") < 0.1f) {
+			Debug.Log("less that 0.1");
+		}
 	}
 }

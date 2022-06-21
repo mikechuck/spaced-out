@@ -20,6 +20,7 @@ Player:
 - HUD
   - HP
   - name
+  - fix dynamic location of hud items for different screen sizes
 - interact with trees + rocks with items
 
 Animals:
@@ -51,3 +52,16 @@ Custom Skybox:
 
 Water
 - low poly waves near shore
+
+
+LEFTOFF:
+- consolidate animations into one model (import the already exported model with previous animation)
+- add animations:
+  - run
+  - jump
+  - side step
+  - backstep
+
+- add hand constraint to player rig for when holding item (set as bool trigger)
+- spawn item in hand when scrolling to it in inventory
+- figure out how to have separate animations for usign different items

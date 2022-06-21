@@ -19,6 +19,7 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 	}
 
 	public void CreateRoom() {
+		gameManager.levelSeed = seedInput.text;
 		PhotonNetwork.CreateRoom(createInput.text);
 	}
 
@@ -27,7 +28,6 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
 	}
 
 	public override void OnJoinedRoom() {
-		gameManager.levelSeed = seedInput.text;
 		gameManager.playerName = playerNameInput.text;
 		PhotonNetwork.LoadLevel("MainScene");
 	}

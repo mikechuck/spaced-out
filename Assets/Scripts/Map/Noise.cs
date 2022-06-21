@@ -13,10 +13,8 @@ public static class Noise
     public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, string seed, float scale, int octaves, float persistence, float lacunarity, Vector2 offset, NormalizeMode normalizeMode) {
 		float[,] noiseMap = new float[mapWidth, mapHeight];
 
-		string str = "ABC";
-
-		int finalSeed = 0;
-		byte[] ASCIIvalues = Encoding.ASCII.GetBytes(str);
+		int finalSeed = 1;
+		byte[] ASCIIvalues = Encoding.ASCII.GetBytes(seed);
 		for (int i = 0; i < ASCIIvalues.Length; i++) {
 			finalSeed *= ASCIIvalues[i];
 		}

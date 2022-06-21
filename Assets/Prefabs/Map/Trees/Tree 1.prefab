@@ -145,4 +145,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 100
-  itemDropped: {fileID: 383164094270176595, guid: 1824e6eb040764f42a2682506580ec65, type: 3}
+  itemDropped: {fileID: 4256242510610817788, guid: 2f6004585b01af14597f8dc59f424518, type: 3}
+  lowerBound: 0.25
+  upperBound: 0.51
