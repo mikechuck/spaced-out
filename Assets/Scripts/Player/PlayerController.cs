@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
 	public float horizontalSpeed = 1f;
 	public float verticalSpeed = 1f;
 	private float Gravity = -50f;
-	private float jumpForce = 30f;
+	private float jumpForce = 20f;
 	private float groundHeight = 3.3f;
 	private float velocity = 0;
 	private Vector3 playerVelocity;
@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
 	private float yRotate = 0.0f;
 	private Ray ray;
 	private float interactionDistance = 10f;
+	private float airMovementSpeed = 0f;
 
 	// values for character rotation smoothing
 	private float interp = 0;
@@ -117,7 +118,11 @@ public class PlayerController : MonoBehaviour
 		bool isGrounded2 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.3f);
 		if (isGrounded1) {
 			if (Input.GetKeyDown(KeyCode.Space)) {
-				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
+				// playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
+				// characterController.Move(playerVelocity * Time.deltaTime);
+				// _animator.SetTrigger("Jumping");
+				StartCoroutine(playerJump(1f));
+				// Invoke("changeCanJump", 
 			}
 		}
 		if (isGrounded2) {
@@ -130,12 +135,19 @@ public class PlayerController : MonoBehaviour
         characterController.Move(playerVelocity * Time.deltaTime);
 		float horizontal = Input.GetAxis("Horizontal");
 		float vertical = Input.GetAxis("Vertical");
-		if (Input.GetKey(KeyCode.LeftShift)) {
-			vertical *= 2;
+
+		// Sprinting
+		if (Input.GetKey(KeyCode.LeftShift) && vertical > 0) {
+			vertical *= 2f;
+			horizontal = 0f;
+		}
+		// Walking backwards
+		if (vertical < 0) {
+			vertical /= 1.5f;
 		}
 		characterController.Move((transform.right * horizontal * movementSpeed + transform.forward * vertical * movementSpeed) * Time.deltaTime);
 
-		// Camera movement
+		// Camera movementgit pu
 		xRotate += Input.GetAxis("Mouse X") * horizontalSpeed;
 		yRotate -= Input.GetAxis("Mouse Y") * verticalSpeed;
 		transform.eulerAngles = new Vector3 (0.0f, xRotate, 0.0f);
@@ -146,12 +158,30 @@ public class PlayerController : MonoBehaviour
 		HeadAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 50) );
 	
 		// Animating
-		_animator.SetFloat("VelocityForward", vertical, 0.1f, Time.deltaTime);
-		if (_animator.GetFloat("VelocityForward") > 0.1f) {
-			Debug.Log("greater than 0.1");
+		Debug.Log(vertical);
+		if (isGrounded1) {
+			_animator.SetFloat("VelocityForward", vertical, 0.1f, Time.deltaTime);
+			_animator.SetFloat("VelocitySide", horizontal, 0.1f, Time.deltaTime);
 		}
-		if (_animator.GetFloat("VelocityForward") < 0.1f) {
-			Debug.Log("less that 0.1");
+
+		transform.Rotate(0, 180, 0, Space.Self);
+	}
+
+	IEnumerator playerJump(float seconds) {
+		float velocitySide = _animator.GetFloat("VelocitySide");
+		float velocityForward = _animator.GetFloat("VelocityForward");
+		bool isIdle = velocityForward < 0.5f && velocitySide < 0.5f && velocitySide > -0.5f;
+		bool allowJump = velocityForward > 0.5f;
+		if (allowJump) {
+			_animator.SetTrigger("Jumping");
+			if (isIdle) {
+				yield return new WaitForSeconds(seconds);
+				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
+				characterController.Move(playerVelocity * Time.deltaTime);
+			} else {
+				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
+				characterController.Move(playerVelocity * Time.deltaTime);
+			}
 		}
 	}
 }

@@ -524,13 +524,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34eed9a38e8fbae44be41a9a178d72ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementSpeed: 60
-  jumpForce: 1
-  horizontalSpeed: 3
-  verticalSpeed: 3
   cam: {fileID: 4986081215177776556}
   HeadAnimationTarget: {fileID: 2818335589595875550}
   playerName: {fileID: 250130824939835093}
+  movementSpeed: 10
+  horizontalSpeed: 3
+  verticalSpeed: 3
 --- !u!114 &4425375857675687212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -785,8 +784,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410262575712722077}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: c346a9e2503cda64ba4698db6aa5e707, type: 3}
+  m_Controller: {fileID: 9100000, guid: 94d325ecaf5d8fb44949ab698aa6085a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

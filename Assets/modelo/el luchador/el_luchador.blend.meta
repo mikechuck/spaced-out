@@ -1,29 +1,11 @@
 fileFormatVersion: 2
-guid: ad842fb6be489074ca03d84e9c604250
+guid: 6f3d5da5caf83684784d64dca69f308d
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
   - first:
-      74: 6144204302869600065
-    second: run.001
-  - first:
-      74: 6082973293160568753
-    second: Armature.001|0Tpose
-  - first:
-      74: -2913575079318313896
-    second: Armature.001|good walk
-  - first:
-      74: 9163257287205964719
-    second: Armature.001|idle
-  - first:
-      74: -5931150356716588552
-    second: Armature.001|jump
-  - first:
-      74: 821543624513260220
-    second: Armature.001|run.001
-  - first:
-      74: -203655887218126122
-    second: mixamo.com
+      74: -623603649343465320
+    second: Scene
   externalObjects: {}
   materials:
     materialImportMode: 2

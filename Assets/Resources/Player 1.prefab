@@ -581,7 +581,7 @@ MonoBehaviour:
   cam: {fileID: 4986081215177776556}
   HeadAnimationTarget: {fileID: 4041560229652814275}
   playerName: {fileID: 250130824939835093}
-  movementSpeed: 20
+  movementSpeed: 10
   horizontalSpeed: 3
   verticalSpeed: 3
 --- !u!114 &4425375857675687212
@@ -873,14 +873,21 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3633199821282166165}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: b4c8e39d1ca826d4b94f6ec27544382f, type: 3}
   m_Controller: {fileID: 9100000, guid: 94d325ecaf5d8fb44949ab698aa6085a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_WarningMessage: 
+  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
+    are already bound by a Humanoid avatar. These transforms can only be changed
+    by Humanoid clips.\n\tTransform 'Armature.001'\n\tTransform 'UPPERARM.L'\n\tTransform
+    'UPPERARM.R'\n\tTransform 'UPPERLEG.R'\n\tTransform 'SHOULDER.L'\n\tTransform
+    'HEAD'\n\tTransform 'HAND.L'\n\tTransform 'SPINE2'\n\tTransform 'Armature.001'\n\tTransform
+    'HAND.R'\n\tand more ...\n\tFrom animation clip 'Running'\n\tFrom animation clip
+    'Left Srafe'\n\tFrom animation clip 'Bakward Walk'\n\tFrom animation clip 'Right
+    Strafe'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0

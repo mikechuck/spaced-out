@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b4c8e39d1ca826d4b94f6ec27544382f
+guid: 8a5ea9eb61eb61248881984230c969b6
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
@@ -23,7 +23,7 @@ ModelImporter:
     second: Armature.001|run.001
   - first:
       74: -203655887218126122
-    second: Walking
+    second: Bakward Walk
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -54,11 +54,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Walking
+      name: Bakward Walk
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 31
+      lastFrame: 28
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

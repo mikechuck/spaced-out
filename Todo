@@ -55,13 +55,7 @@ Water
 
 
 LEFTOFF:
-- consolidate animations into one model (import the already exported model with previous animation)
-- add animations:
-  - run
-  - jump
-  - side step
-  - backstep
-
-- add hand constraint to player rig for when holding item (set as bool trigger)
+- finish jumping animations (add right jump, left jump, and disable backward jump)
 - spawn item in hand when scrolling to it in inventory
+- add hand constraint to player rig for when holding item (set as bool trigger)
 - figure out how to have separate animations for usign different items
