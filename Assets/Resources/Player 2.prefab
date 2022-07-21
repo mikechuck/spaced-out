@@ -527,7 +527,7 @@ MonoBehaviour:
   cam: {fileID: 4986081215177776556}
   HeadAnimationTarget: {fileID: 2818335589595875550}
   playerName: {fileID: 250130824939835093}
-  MovementSpeed: 60
+  movementSpeed: 0
   horizontalSpeed: 3
   verticalSpeed: 3
 --- !u!114 &4425375857675687212
@@ -763,6 +763,10 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: a8e78fac496c97b43ac1a7e857dbbb74, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8468213021429486830, guid: a8e78fac496c97b43ac1a7e857dbbb74, type: 3}
+      propertyPath: m_TagString
+      value: PlayerHead
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a8e78fac496c97b43ac1a7e857dbbb74, type: 3}
       propertyPath: m_Name

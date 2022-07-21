@@ -1,22 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class InventoryManager : MonoBehaviour
 {
 	public Item[] inventory;
 	// public ListMapping[] itemList;
 	public ItemListData itemListData;
+	public GameObject playerRightHand;
 	private int maxStackSize = 50;
 	private GameObject HUD;
 	private HUDManager hudManager;
 	private GameManager gameManager;
+	private GameObject player;
 
 	void Awake() {
 		HUD = GameObject.Find("HUD");
 		hudManager = HUD.GetComponent<HUDManager>();
 		inventory = new Item[8];
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+		// player = GameObject.Find("Player 1");
 	}
 
 	void OnTriggerEnter(Collider other) {
@@ -47,12 +51,17 @@ public class InventoryManager : MonoBehaviour
 
 		if (pickedUp) {
 			hudManager.DrawInventoryItems(inventory);
+			// DisplaySelectedItem(itemData);
 			Destroy(parent);
 		}
 
 	}
-	public void DisplaySelectedItem(ItemData selectedItem) {
-		Debug.Log("selecting");
+	public void DisplaySelectedItem(ItemData itemData) {
+		GameObject item = PhotonNetwork.Instantiate(itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
+		item.GetComponent<Rigidbody>().detectCollisions = false;
+		item.GetComponent<Rigidbody>().useGravity = false;
+		item.name = itemData.itemName;
+		item.transform.SetParent(playerRightHand.transform);
 	}
 }
 

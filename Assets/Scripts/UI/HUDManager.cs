@@ -14,6 +14,7 @@ public class HUDManager : MonoBehaviour
 	// public List<GameObject> inventorySlots = new List<GameObject>();
 	private int selectedInventorySlot = 0;
 	private GameObject[] inventorySlots;
+	InventoryManager inventoryManager;
 
 	//sm
 	// UI Colors

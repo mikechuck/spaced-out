@@ -29,6 +29,12 @@ public class PlayerController : MonoBehaviour
 	private Ray ray;
 	private float interactionDistance = 10f;
 	private float airMovementSpeed = 0f;
+	private bool canMovePlayer = true;
+
+	// Global movement directions
+	private float horizontal;
+	private float vertical;
+	private bool isJumping;
 
 	// values for character rotation smoothing
 	private float interp = 0;
@@ -63,7 +69,6 @@ public class PlayerController : MonoBehaviour
 			CheckMovementInput();
 			CheckItemInteraction();
 		}
-
 	}
 
 	private void CheckItemInteraction() {
@@ -117,71 +122,59 @@ public class PlayerController : MonoBehaviour
 		bool isGrounded1 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.5f);
 		bool isGrounded2 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.3f);
 		if (isGrounded1) {
-			if (Input.GetKeyDown(KeyCode.Space)) {
-				// playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
-				// characterController.Move(playerVelocity * Time.deltaTime);
-				// _animator.SetTrigger("Jumping");
-				StartCoroutine(playerJump(1f));
-				// Invoke("changeCanJump", 
+			float velocityForward = _animator.GetFloat("VelocityForward");
+			bool allowJump = velocityForward >= 0f;
+			if (Input.GetKeyDown(KeyCode.Space) && allowJump) {
+				_animator.SetTrigger("Jumping");
+				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
+				characterController.Move(playerVelocity * Time.deltaTime);
 			}
 		}
 		if (isGrounded2) {
 			if (playerVelocity.y < 0) {
 				playerVelocity.y = 0f;
 			}
+			canMovePlayer = true;
+		} else {
+			canMovePlayer = false;
 		}
 		
         playerVelocity.y += Gravity * Time.deltaTime;
         characterController.Move(playerVelocity * Time.deltaTime);
-		float horizontal = Input.GetAxis("Horizontal");
-		float vertical = Input.GetAxis("Vertical");
 
-		// Sprinting
-		if (Input.GetKey(KeyCode.LeftShift) && vertical > 0) {
-			vertical *= 2f;
-			horizontal = 0f;
-		}
-		// Walking backwards
-		if (vertical < 0) {
-			vertical /= 1.5f;
+		if (canMovePlayer) {
+			horizontal = Input.GetAxis("Horizontal");
+			vertical = Input.GetAxis("Vertical");
+
+			// Sprinting
+			if (Input.GetKey(KeyCode.LeftShift) && vertical > 0) {
+				vertical *= 2f;
+				horizontal = 0f;
+			}
+			// Walking backwards
+			if (vertical < 0) {
+				vertical /= 1.5f;
+			}
 		}
 		characterController.Move((transform.right * horizontal * movementSpeed + transform.forward * vertical * movementSpeed) * Time.deltaTime);
 
-		// Camera movementgit pu
+
+		// Camera movement
 		xRotate += Input.GetAxis("Mouse X") * horizontalSpeed;
 		yRotate -= Input.GetAxis("Mouse Y") * verticalSpeed;
 		transform.eulerAngles = new Vector3 (0.0f, xRotate, 0.0f);
-		yRotate = Mathf.Clamp (yRotate, -90, 90);
+		yRotate = Mathf.Clamp (yRotate, -80, 60);
 		cam.transform.eulerAngles = new Vector3 (yRotate, xRotate, 0.0f);
 
 		// Move head aim target as well (vertical)
 		HeadAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 50) );
 	
 		// Animating
-		Debug.Log(vertical);
 		if (isGrounded1) {
 			_animator.SetFloat("VelocityForward", vertical, 0.1f, Time.deltaTime);
 			_animator.SetFloat("VelocitySide", horizontal, 0.1f, Time.deltaTime);
 		}
 
 		transform.Rotate(0, 180, 0, Space.Self);
-	}
-
-	IEnumerator playerJump(float seconds) {
-		float velocitySide = _animator.GetFloat("VelocitySide");
-		float velocityForward = _animator.GetFloat("VelocityForward");
-		bool isIdle = velocityForward < 0.5f && velocitySide < 0.5f && velocitySide > -0.5f;
-		bool allowJump = velocityForward > 0.5f;
-		if (allowJump) {
-			_animator.SetTrigger("Jumping");
-			if (isIdle) {
-				yield return new WaitForSeconds(seconds);
-				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
-				characterController.Move(playerVelocity * Time.deltaTime);
-			} else {
-				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
-				characterController.Move(playerVelocity * Time.deltaTime);
-			}
-		}
 	}
 }
