@@ -35,17 +35,18 @@ public class HUDManager : MonoBehaviour
 		int scrollValue = -(int)Input.mouseScrollDelta.y;
 		int previousSelectorValue = selectedInventorySlot;
 
-		if (selectedInventorySlot == 0 && scrollValue != -1) {
-			selectedInventorySlot += (int)scrollValue;
-		} else if (selectedInventorySlot == inventorySize - 1 && scrollValue != 1) {
-			selectedInventorySlot += (int)scrollValue;
-		} else if (selectedInventorySlot > 0 && selectedInventorySlot < inventorySize - 1){
-			selectedInventorySlot += (int)scrollValue;
+		if (scrollValue != 0) {
+			if (selectedInventorySlot == 0 && scrollValue != -1) {
+				selectedInventorySlot += (int)scrollValue;
+			} else if (selectedInventorySlot == inventorySize - 1 && scrollValue != 1) {
+				selectedInventorySlot += (int)scrollValue;
+			} else if (selectedInventorySlot > 0 && selectedInventorySlot < inventorySize - 1){
+				selectedInventorySlot += (int)scrollValue;
+			}
+			inventorySlots[previousSelectorValue].transform.GetChild(0).GetComponent<Image>().color = inventorySlotBorderColor;
+			inventorySlots[selectedInventorySlot].transform.GetChild(0).GetComponent<Image>().color = selectedInventorySlotBorderColor;
+			EventManager.TriggerEvent("ScrollItem");
 		}
-		inventorySlots[previousSelectorValue].transform.GetChild(0).GetComponent<Image>().color = inventorySlotBorderColor;
-		inventorySlots[selectedInventorySlot].transform.GetChild(0).GetComponent<Image>().color = selectedInventorySlotBorderColor;
-
-		
 	}
 
 	private void ScaleInventory() {

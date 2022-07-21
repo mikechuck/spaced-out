@@ -54,7 +54,15 @@ Water
 - low poly waves near shore
 
 
+Worflow:
+- add AssetBundle workflow to dynamically create resources folder from refabs (for Photon use)
+- implement event systems for all cross-script resource sharing
+
+Animations:
+- add new layer for item animations (will move arms, custom animation)
+	- each item should have its own animation state in blend tree
+	- will need to have hand contraint to player rig, similar to moving head
+
 LEFTOFF:
-- spawn item in hand when scrolling to it in inventory
-- add hand constraint to player rig for when holding item (set as bool trigger)
-- figure out how to have separate animations for usign different items
+- implement event system (currently doing inventory/hud connections)
+	- figuring out how to pass parameters between events

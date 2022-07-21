@@ -20,7 +20,8 @@ public class InventoryManager : MonoBehaviour
 		hudManager = HUD.GetComponent<HUDManager>();
 		inventory = new Item[8];
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-		// player = GameObject.Find("Player 1");
+		EventManager.AddListener("PickupItem", _OnTest);
+		EventManager.AddListener("ScrollItem", _DisplayItem);
 	}
 
 	void OnTriggerEnter(Collider other) {
@@ -52,6 +53,7 @@ public class InventoryManager : MonoBehaviour
 		if (pickedUp) {
 			hudManager.DrawInventoryItems(inventory);
 			// DisplaySelectedItem(itemData);
+			EventManager.TriggerEvent("PickupItem");
 			Destroy(parent);
 		}
 
@@ -62,6 +64,14 @@ public class InventoryManager : MonoBehaviour
 		item.GetComponent<Rigidbody>().useGravity = false;
 		item.name = itemData.itemName;
 		item.transform.SetParent(playerRightHand.transform);
+	}
+
+	private void _OnTest() {
+		Debug.Log("recieved test event! (picked up item)");
+	}
+
+	private void _DisplayItem() {
+		Debug.Log("displayign item on scroll");
 	}
 }
 
