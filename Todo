@@ -65,4 +65,4 @@ Animations:
 
 LEFTOFF:
 - implement event system (currently doing inventory/hud connections)
-	- figuring out how to pass parameters between events
+	- tutorial has object, but we need to use array... or make the type dynamic in the class declaration

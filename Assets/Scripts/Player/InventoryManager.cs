@@ -12,16 +12,22 @@ public class InventoryManager : MonoBehaviour
 	private int maxStackSize = 50;
 	private GameObject HUD;
 	private HUDManager hudManager;
-	private GameManager gameManager;
 	private GameObject player;
 
 	void Awake() {
 		HUD = GameObject.Find("HUD");
 		hudManager = HUD.GetComponent<HUDManager>();
 		inventory = new Item[8];
-		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-		EventManager.AddListener("PickupItem", _OnTest);
-		EventManager.AddListener("ScrollItem", _DisplayItem);
+	}
+
+	void OnEnable() {
+		EventManager.StartListening("PickupItem", _OnTest);
+		EventManager.StartListening("ScrollItem", _DisplayItem);
+	}
+
+	void OnDisable() {
+		EventManager.StopListening("PickupItem");
+		EventManager.StopListening("ScrollItem");
 	}
 
 	void OnTriggerEnter(Collider other) {
@@ -51,8 +57,9 @@ public class InventoryManager : MonoBehaviour
 		}
 
 		if (pickedUp) {
-			hudManager.DrawInventoryItems(inventory);
+			// hudManager.DrawInventoryItems(inventory);
 			// DisplaySelectedItem(itemData);
+			EventManager.TriggerEvent("DrawInventoryHud", inventory)
 			EventManager.TriggerEvent("PickupItem");
 			Destroy(parent);
 		}

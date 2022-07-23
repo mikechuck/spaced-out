@@ -22,6 +22,18 @@ public class HUDManager : MonoBehaviour
 	public Color inventorySlotBorderColor = new Color32(56, 42, 30, 225);
 	public Color selectedInventorySlotBorderColor = new Color32(255, 255, 255, 225);
 
+	void Awake() {
+	}
+
+	void OnEnable() {
+		EventManager.StartListening("DrawInventoryHud", _DrawInventoryItems);
+	}
+
+	void OnDisable() {
+		EventManager.StopListening("DrawInventoryHud");
+
+	}
+
 	void Start() {
 		inventorySprites = new Sprite[inventorySize];
 		inventorySlots = GameObject.FindGameObjectsWithTag("Inventory Slot");
@@ -53,7 +65,7 @@ public class HUDManager : MonoBehaviour
 
 	}
 
-	public void DrawInventoryItems(Item[] inventory) {
+	public void _DrawInventoryItems(Item[] inventory) {
 		inventorySlots = GameObject.FindGameObjectsWithTag("Inventory Slot");
 
 		for (int i = 0; i < inventorySlots.Length; i++) {
