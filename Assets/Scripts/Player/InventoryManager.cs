@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.Events;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -10,24 +11,22 @@ public class InventoryManager : MonoBehaviour
 	public ItemListData itemListData;
 	public GameObject playerRightHand;
 	private int maxStackSize = 50;
-	private GameObject HUD;
-	private HUDManager hudManager;
 	private GameObject player;
+	private GameObject spawnedItem;
+	private UnityAction<Item> spawnSelectedItemAction;
+
 
 	void Awake() {
-		HUD = GameObject.Find("HUD");
-		hudManager = HUD.GetComponent<HUDManager>();
 		inventory = new Item[8];
+		spawnSelectedItemAction = new UnityAction<Item>(SpawnSelectedItem);
 	}
 
 	void OnEnable() {
-		EventManager.StartListening("PickupItem", _OnTest);
-		EventManager.StartListening("ScrollItem", _DisplayItem);
+		EventManager.StartListening("SpawnSelectedItem", spawnSelectedItemAction);
 	}
 
 	void OnDisable() {
-		EventManager.StopListening("PickupItem");
-		EventManager.StopListening("ScrollItem");
+		EventManager.StopListening("SpawnSelectedItem", spawnSelectedItemAction);
 	}
 
 	void OnTriggerEnter(Collider other) {
@@ -57,20 +56,21 @@ public class InventoryManager : MonoBehaviour
 		}
 
 		if (pickedUp) {
-			// hudManager.DrawInventoryItems(inventory);
-			// DisplaySelectedItem(itemData);
-			EventManager.TriggerEvent("DrawInventoryHud", inventory)
-			EventManager.TriggerEvent("PickupItem");
+			EventManager.TriggerEvent("DrawInventoryHud", inventory);
 			Destroy(parent);
 		}
 
 	}
-	public void DisplaySelectedItem(ItemData itemData) {
-		GameObject item = PhotonNetwork.Instantiate(itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
+	public void SpawnSelectedItem(Item selectedItem) {
+		if (spawnedItem != null) {
+			PhotonNetwork.Destroy(spawnedItem);
+		}
+		GameObject item = PhotonNetwork.Instantiate(selectedItem.itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
 		item.GetComponent<Rigidbody>().detectCollisions = false;
 		item.GetComponent<Rigidbody>().useGravity = false;
-		item.name = itemData.itemName;
+		item.name = selectedItem.itemData.itemName;
 		item.transform.SetParent(playerRightHand.transform);
+		spawnedItem = item;
 	}
 
 	private void _OnTest() {

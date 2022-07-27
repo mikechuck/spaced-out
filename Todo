@@ -64,5 +64,6 @@ Animations:
 	- will need to have hand contraint to player rig, similar to moving head
 
 LEFTOFF:
-- implement event system (currently doing inventory/hud connections)
-	- tutorial has object, but we need to use array... or make the type dynamic in the class declaration
+- make eventmanager more local to player, rename it
+- attach selectedITem to hand when spawning
+- add new rig that will hold item in one place (new animation layer)
