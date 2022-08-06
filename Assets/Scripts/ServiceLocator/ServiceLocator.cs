@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace ServiceLocatorSample.ServiceLocator
 {
 	/// <summary>
@@ -44,7 +47,7 @@ namespace ServiceLocatorSample.ServiceLocator
 		/// <typeparam name="T">Service type.</typeparam>
 		/// <param name="service">Service instance.</param>
 		public void Register<T>(T service) where T: IGameService {
-			string key typeof(T).Name;
+			string key = typeof(T).Name;
 			if (services.ContainsKey(key)) {
 				Debug.LogError($"Attempted to register service of type {key} which is already registered with the {GetType().Name}.");
 				return;

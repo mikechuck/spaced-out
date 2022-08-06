@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
+using ServiceLocatorSample.ServiceLocator;
 
 public class PlayerController : MonoBehaviour
 {
@@ -50,6 +51,8 @@ public class PlayerController : MonoBehaviour
 		characterController = GetComponent<CharacterController>();
 		HUD = GameObject.Find("HUD");
 		hudManager = HUD.GetComponent<HUDManager>();
+		IInventoryManager inventoryManager = ServiceLocator.Current.Get<IInventoryManager>();
+		Debug.Log(inventoryManager);
 	}
 	
 	void Update() {

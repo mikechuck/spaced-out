@@ -3,8 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Events;
+using ServiceLocatorSample.ServiceLocator;
 
-public class InventoryManager : MonoBehaviour
+namespace ServiceLocatorSample.ServiceLocator
+{
+	public interface IInventoryManager: IGameService
+	{
+		void OnTriggerEnter(Collider other);
+		void PickUpItem(GameObject parent);
+		void SpawnSelectedItem(Item selectedItem);
+		void testMethod();
+	}
+}
+
+public class InventoryManager : MonoBehaviour, IInventoryManager
 {
 	public Item[] inventory;
 	// public ListMapping[] itemList;
@@ -29,7 +41,7 @@ public class InventoryManager : MonoBehaviour
 		EventManager.StopListening("SpawnSelectedItem", spawnSelectedItemAction);
 	}
 
-	void OnTriggerEnter(Collider other) {
+	public void OnTriggerEnter(Collider other) {
 		if (other.gameObject.tag == "Item") {
 			GameObject parent = other.gameObject.transform.parent.gameObject;
 			
@@ -73,12 +85,8 @@ public class InventoryManager : MonoBehaviour
 		spawnedItem = item;
 	}
 
-	private void _OnTest() {
-		Debug.Log("recieved test event! (picked up item)");
-	}
-
-	private void _DisplayItem() {
-		Debug.Log("displayign item on scroll");
+	public void testMethod() {
+		Debug.Log("found service");
 	}
 }
 
