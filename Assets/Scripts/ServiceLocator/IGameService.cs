@@ -1,4 +1,4 @@
-namespace ServiceLocatorSample.ServiceLocator
+namespace ServiceLocatorNamespace
 {
 	public interface IGameService {}
 }

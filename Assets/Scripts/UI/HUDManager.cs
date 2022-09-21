@@ -5,8 +5,18 @@ using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
+using ServiceLocatorNamespace;
 
-public class HUDManager : MonoBehaviour
+namespace ServiceLocatorNamespace
+{
+	public interface IHudManager: IGameService
+	{
+		void DrawInventoryHud(Item[] inventory);
+		void ShowItemInfo(string itemName);
+	}
+}
+
+public class HUDManager : MonoBehaviour, IHudManager
 {
 	public TextMeshProUGUI itemNameText;
 	public int inventorySize = 8;
@@ -15,34 +25,31 @@ public class HUDManager : MonoBehaviour
 	private int selectedInventorySlot = 0;
 	private GameObject[] inventorySlots;
 	private Item[] playerInventory;
-	InventoryManager inventoryManager;
-
-	// Event Actions
-	private UnityAction<Item[]> drawInventoryHudAction;
+	IInventoryManager inventoryManager;
 
 	// UI Colors
 	public Color inventorySlotColor = new Color32(91, 75, 56, 225);
 	public Color inventorySlotBorderColor = new Color32(56, 42, 30, 225);
 	public Color selectedInventorySlotBorderColor = new Color32(255, 255, 255, 225);
 
-	void Awake() {
-		drawInventoryHudAction = new UnityAction<Item[]>(OnDrawInventoryHud);
-	}
-
 	void OnEnable() {
-		EventManager.StartListening("DrawInventoryHud", drawInventoryHudAction);
+		ServiceLocator.Current.Register<IHudManager>(this);
 	}
-
+	
 	void OnDisable() {
-		EventManager.StopListening("DrawInventoryHud", drawInventoryHudAction);
+		ServiceLocator.Current.Unregister<IHudManager>();
 	}
 
 	void Start() {
+		inventoryManager = ServiceLocator.Current.Get<IInventoryManager>();
 		inventorySprites = new Sprite[inventorySize];
 		inventorySlots = GameObject.FindGameObjectsWithTag("Inventory Slot");
 	}
 
 	void Update() {
+		if (inventoryManager == null) {
+			inventoryManager = ServiceLocator.Current.Get<IInventoryManager>();
+		}
 		ScrollHandler();
 	}
 
@@ -63,7 +70,7 @@ public class HUDManager : MonoBehaviour
 
 			Item selectedItem = playerInventory[selectedInventorySlot];
 			if (selectedItem != null) {
-				EventManager.TriggerEvent("SpawnSelectedItem", selectedItem);
+				inventoryManager.SpawnSelectedItem(selectedItem);
 			}
 		}
 	}
@@ -72,7 +79,7 @@ public class HUDManager : MonoBehaviour
 
 	}
 
-	public void OnDrawInventoryHud(Item[] inventory) {
+	public void DrawInventoryHud(Item[] inventory) {
 		playerInventory = inventory;
 		inventorySlots = GameObject.FindGameObjectsWithTag("Inventory Slot");
 

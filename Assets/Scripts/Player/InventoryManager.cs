@@ -3,42 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Events;
-using ServiceLocatorSample.ServiceLocator;
+using ServiceLocatorNamespace;
 
-namespace ServiceLocatorSample.ServiceLocator
+namespace ServiceLocatorNamespace
 {
 	public interface IInventoryManager: IGameService
 	{
 		void OnTriggerEnter(Collider other);
 		void PickUpItem(GameObject parent);
 		void SpawnSelectedItem(Item selectedItem);
-		void testMethod();
 	}
 }
 
+
 public class InventoryManager : MonoBehaviour, IInventoryManager
 {
-	public Item[] inventory;
-	// public ListMapping[] itemList;
+	public Item[] inventory = new Item[8];
 	public ItemListData itemListData;
 	public GameObject playerRightHand;
 	private int maxStackSize = 50;
 	private GameObject player;
 	private GameObject spawnedItem;
 	private UnityAction<Item> spawnSelectedItemAction;
-
-
-	void Awake() {
-		inventory = new Item[8];
-		spawnSelectedItemAction = new UnityAction<Item>(SpawnSelectedItem);
-	}
+	private IHudManager hudManager;
 
 	void OnEnable() {
-		EventManager.StartListening("SpawnSelectedItem", spawnSelectedItemAction);
+		ServiceLocator.Current.Register<IInventoryManager>(this);
 	}
 
 	void OnDisable() {
-		EventManager.StopListening("SpawnSelectedItem", spawnSelectedItemAction);
+		ServiceLocator.Current.Register<IInventoryManager>(this);
+	}
+
+	void Start() {
+		hudManager = ServiceLocator.Current.Get<IHudManager>();
 	}
 
 	public void OnTriggerEnter(Collider other) {
@@ -68,7 +66,7 @@ public class InventoryManager : MonoBehaviour, IInventoryManager
 		}
 
 		if (pickedUp) {
-			EventManager.TriggerEvent("DrawInventoryHud", inventory);
+			hudManager.DrawInventoryHud(inventory);
 			Destroy(parent);
 		}
 
@@ -77,16 +75,16 @@ public class InventoryManager : MonoBehaviour, IInventoryManager
 		if (spawnedItem != null) {
 			PhotonNetwork.Destroy(spawnedItem);
 		}
+		
 		GameObject item = PhotonNetwork.Instantiate(selectedItem.itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
 		item.GetComponent<Rigidbody>().detectCollisions = false;
 		item.GetComponent<Rigidbody>().useGravity = false;
 		item.name = selectedItem.itemData.itemName;
+		item.transform.position = playerRightHand.transform.position;
+		item.transform.rotation = playerRightHand.transform.rotation;
+		item.transform.rotation = playerRightHand.transform.rotation * Quaternion.Euler(selectedItem.itemData.pickupRotation);
 		item.transform.SetParent(playerRightHand.transform);
 		spawnedItem = item;
-	}
-
-	public void testMethod() {
-		Debug.Log("found service");
 	}
 }
 
