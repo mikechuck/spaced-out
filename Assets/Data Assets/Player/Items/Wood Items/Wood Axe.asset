@@ -21,5 +21,5 @@ MonoBehaviour:
   canEat: 0
   canUse: 0
   canSwing: 1
-  pickupRotation: {x: 260, y: -60, z: 220}
+  pickupRotation: {x: 280.09723, y: 127.15713, z: 16.53571}
   groundRotation: {x: 0, y: 0, z: 0}

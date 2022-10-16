@@ -56,6 +56,7 @@ public class SpawnPlayer : MonoBehaviour
 				
 				GameObject player = PhotonNetwork.Instantiate(playerPrefabName, new Vector3(finalX, finalY + 2, finalZ), Quaternion.identity, 0);
 				player.name = gameManager.playerName;
+				PhotonNetwork.LocalPlayer.NickName = player.name;
 
 				// Temp spawns for objects
 				GameObject wood = PhotonNetwork.Instantiate("Generic Wood", new Vector3(finalX + 10, finalY + 30, finalZ), Quaternion.identity, 0);

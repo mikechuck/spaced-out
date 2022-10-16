@@ -209,7 +209,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 038d6291ea265ec4488c9e2bf2258dab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCameraTransform: {fileID: 4986081215177776554}
 --- !u!1 &1666008356752607458
 GameObject:
   m_ObjectHideFlags: 0
@@ -1165,7 +1164,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 119
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1240,6 +1239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34eed9a38e8fbae44be41a9a178d72ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HudPrefab: {fileID: 6586837262861362328, guid: 6b58831236c342a46867007746c00e7c, type: 3}
   cam: {fileID: 4986081215177776556}
   HeadAnimationTarget: {fileID: 4041560229652814275}
   playerName: {fileID: 250130824939835093}

@@ -5,51 +5,31 @@ using Photon.Pun;
 using UnityEngine.Events;
 using ServiceLocatorNamespace;
 
-namespace ServiceLocatorNamespace
-{
-	public interface IInventoryManager: IGameService
-	{
-		void OnTriggerEnter(Collider other);
-		void PickUpItem(GameObject parent);
-		void SpawnSelectedItem(Item selectedItem);
-	}
-}
-
-
-public class InventoryManager : MonoBehaviour, IInventoryManager
+public class InventoryManager : MonoBehaviour
 {
 	public Item[] inventory = new Item[8];
 	public ItemListData itemListData;
 	public GameObject playerRightHand;
-	private int maxStackSize = 50;
-	private GameObject player;
+	private HUDManager hudManager;
 	private GameObject spawnedItem;
-	private UnityAction<Item> spawnSelectedItemAction;
-	private IHudManager hudManager;
+	private GameObject player;
+	private int maxStackSize = 50;
 
-	void OnEnable() {
-		ServiceLocator.Current.Register<IInventoryManager>(this);
-	}
-
-	void OnDisable() {
-		ServiceLocator.Current.Register<IInventoryManager>(this);
-	}
-
-	void Start() {
-		hudManager = ServiceLocator.Current.Get<IHudManager>();
+	public void SetHudManager(HUDManager _hudManager) {
+		hudManager = _hudManager;
 	}
 
 	public void OnTriggerEnter(Collider other) {
 		if (other.gameObject.tag == "Item") {
 			GameObject parent = other.gameObject.transform.parent.gameObject;
+			ItemData itemData = itemListData.GetItemData(parent.name);
 			
-			PickUpItem(parent);
+			PickUpItem(itemData);
+			PhotonNetwork.Destroy(parent);
 		}
 	}
 
-	public void PickUpItem(GameObject parent) {
-		ItemData itemData = itemListData.GetItemData(parent.name);
-
+	private void PickUpItem(ItemData itemData) {
 		bool pickedUp = false;
 		for (int i = 0; i < inventory.Length; i++) {
 			if (inventory[i] != null) {
@@ -67,15 +47,14 @@ public class InventoryManager : MonoBehaviour, IInventoryManager
 
 		if (pickedUp) {
 			hudManager.DrawInventoryHud(inventory);
-			Destroy(parent);
 		}
-
 	}
+
 	public void SpawnSelectedItem(Item selectedItem) {
 		if (spawnedItem != null) {
+			Debug.Log("destroying spawned item");
 			PhotonNetwork.Destroy(spawnedItem);
 		}
-		
 		GameObject item = PhotonNetwork.Instantiate(selectedItem.itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
 		item.GetComponent<Rigidbody>().detectCollisions = false;
 		item.GetComponent<Rigidbody>().useGravity = false;
@@ -87,7 +66,6 @@ public class InventoryManager : MonoBehaviour, IInventoryManager
 		spawnedItem = item;
 	}
 }
-
 
 public class Item {
 	public ItemData itemData;

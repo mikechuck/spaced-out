@@ -6,51 +6,65 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
 using ServiceLocatorNamespace;
+using UnityEngine.SceneManagement;
 
-namespace ServiceLocatorNamespace
-{
-	public interface IHudManager: IGameService
-	{
-		void DrawInventoryHud(Item[] inventory);
-		void ShowItemInfo(string itemName);
-	}
-}
-
-public class HUDManager : MonoBehaviour, IHudManager
+public class HUDManager : MonoBehaviour
 {
 	public TextMeshProUGUI itemNameText;
+	public TextMeshProUGUI playerNameText;
+	public TextMeshProUGUI playerCoordXText;
+	public TextMeshProUGUI playerCoordYText;
+	public GameObject minimapContent;
+	//leftoff: add logic for minimap pings and info
 	public int inventorySize = 8;
 	public float inventoryScale = 1f;
 	private Sprite[] inventorySprites;
 	private int selectedInventorySlot = 0;
 	private GameObject[] inventorySlots;
 	private Item[] playerInventory;
-	IInventoryManager inventoryManager;
+	private InventoryManager inventoryManager;
+	private PlayerController playerController;
 
 	// UI Colors
 	public Color inventorySlotColor = new Color32(91, 75, 56, 225);
 	public Color inventorySlotBorderColor = new Color32(56, 42, 30, 225);
 	public Color selectedInventorySlotBorderColor = new Color32(255, 255, 255, 225);
 
-	void OnEnable() {
-		ServiceLocator.Current.Register<IHudManager>(this);
-	}
-	
-	void OnDisable() {
-		ServiceLocator.Current.Unregister<IHudManager>();
-	}
-
-	void Start() {
-		inventoryManager = ServiceLocator.Current.Get<IInventoryManager>();
-		inventorySprites = new Sprite[inventorySize];
-		inventorySlots = GameObject.FindGameObjectsWithTag("Inventory Slot");
+	private void Awake() {
+		this.transform.SetParent(GameObject.Find("Canvas").GetComponent<Transform>(), false);
 	}
 
 	void Update() {
-		if (inventoryManager == null) {
-			inventoryManager = ServiceLocator.Current.Get<IInventoryManager>();
-		}
 		ScrollHandler();
+		DrawPlayerIcons();
+		if (playerController == null) {
+			Destroy(this.gameObject);
+			return;
+		}
+	}
+
+	public void SetPlayerCoordinates(float coordX, float coordY) {
+		playerCoordXText.SetText(((int)coordX).ToString());
+		playerCoordYText.SetText(((int)coordY).ToString());
+	}
+
+	public void DrawPlayerIcons() {
+		foreach (var player in PhotonNetwork.PlayerList) {
+			Debug.Log(player.NickName);
+		}
+		// get list of players from PUN
+		// get coord data from list
+	}
+
+	public void SetPlayerController(PlayerController _playerController) {
+		playerController = _playerController;
+		if (playerNameText != null) {
+			playerNameText.text = playerController.photonView.Owner.NickName;
+		}
+	}
+
+	public void SetInventoryManager(InventoryManager _inventoryManager) {
+		inventoryManager = _inventoryManager;
 	}
 
 	private void ScrollHandler() {
@@ -73,10 +87,6 @@ public class HUDManager : MonoBehaviour, IHudManager
 				inventoryManager.SpawnSelectedItem(selectedItem);
 			}
 		}
-	}
-
-	private void ScaleInventory() {
-
 	}
 
 	public void DrawInventoryHud(Item[] inventory) {
