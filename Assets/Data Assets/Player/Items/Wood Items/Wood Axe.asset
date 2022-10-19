@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ce208bc6148bd54484ffd8e046502f0, type: 3}
   m_Name: Wood Axe
   m_EditorClassIdentifier: 
-  itemName: Axe
+  itemName: Wood Axe
   itemPrefab: {fileID: 3592194204895600855, guid: 2ab27c3eb32a9384ea7b6d3252717c0c, type: 3}
   itemImage: {fileID: 21300000, guid: 8980243cf3cd5014caa64d6a46b27d45, type: 3}
   damage: 5
@@ -21,3 +21,5 @@ MonoBehaviour:
   canEat: 0
   canUse: 0
   canSwing: 1
+  pickupRotation: {x: 280.09723, y: 127.15713, z: 16.53571}
+  groundRotation: {x: 0, y: 0, z: 0}

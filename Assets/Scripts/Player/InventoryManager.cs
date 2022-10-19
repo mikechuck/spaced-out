@@ -1,35 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using UnityEngine.Events;
+using ServiceLocatorNamespace;
 
 public class InventoryManager : MonoBehaviour
 {
-	public Item[] inventory;
-	// public ListMapping[] itemList;
+	public Item[] inventory = new Item[8];
 	public ItemListData itemListData;
-	private int maxStackSize = 50;
-	private GameObject HUD;
+	public GameObject playerRightHand;
 	private HUDManager hudManager;
-	private GameManager gameManager;
+	private GameObject spawnedItem;
+	private GameObject player;
+	private int maxStackSize = 50;
 
-	void Awake() {
-		HUD = GameObject.Find("HUD");
-		hudManager = HUD.GetComponent<HUDManager>();
-		inventory = new Item[8];
-		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+	public void SetHudManager(HUDManager _hudManager) {
+		hudManager = _hudManager;
 	}
 
-	void OnTriggerEnter(Collider other) {
+	public void OnTriggerEnter(Collider other) {
 		if (other.gameObject.tag == "Item") {
 			GameObject parent = other.gameObject.transform.parent.gameObject;
+			ItemData itemData = itemListData.GetItemData(parent.name);
 			
-			PickUpItem(parent);
+			PickUpItem(itemData);
+			PhotonNetwork.Destroy(parent);
 		}
 	}
 
-	public void PickUpItem(GameObject parent) {
-		ItemData itemData = itemListData.GetItemData(parent.name);
-
+	private void PickUpItem(ItemData itemData) {
 		bool pickedUp = false;
 		for (int i = 0; i < inventory.Length; i++) {
 			if (inventory[i] != null) {
@@ -46,16 +46,26 @@ public class InventoryManager : MonoBehaviour
 		}
 
 		if (pickedUp) {
-			hudManager.DrawInventoryItems(inventory);
-			Destroy(parent);
+			hudManager.DrawInventoryHud(inventory);
 		}
-
 	}
-	public void DisplaySelectedItem(ItemData selectedItem) {
-		Debug.Log("selecting");
+
+	public void SpawnSelectedItem(Item selectedItem) {
+		if (spawnedItem != null) {
+			Debug.Log("destroying spawned item");
+			PhotonNetwork.Destroy(spawnedItem);
+		}
+		GameObject item = PhotonNetwork.Instantiate(selectedItem.itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
+		item.GetComponent<Rigidbody>().detectCollisions = false;
+		item.GetComponent<Rigidbody>().useGravity = false;
+		item.name = selectedItem.itemData.itemName;
+		item.transform.position = playerRightHand.transform.position;
+		item.transform.rotation = playerRightHand.transform.rotation;
+		item.transform.rotation = playerRightHand.transform.rotation * Quaternion.Euler(selectedItem.itemData.pickupRotation);
+		item.transform.SetParent(playerRightHand.transform);
+		spawnedItem = item;
 	}
 }
-
 
 public class Item {
 	public ItemData itemData;

@@ -8,6 +8,8 @@ TagManager:
   - Tag
   - Item
   - Inventory Slot
+  - PlayerHead
+  - PlayerHand
   layers:
   - Default
   - TransparentFX
@@ -16,7 +18,7 @@ TagManager:
   - Water
   - UI
   - RaycastHit
-  - 
+  - Minimap
   - 
   - 
   - 

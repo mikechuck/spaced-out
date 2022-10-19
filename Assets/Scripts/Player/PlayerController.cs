@@ -3,46 +3,50 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
+using ServiceLocatorNamespace;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPunCallbacks
 {
-	CharacterController characterController;
-	private GameObject HUD;
-	private HUDManager hudManager;
-	private GameManager gameManager;
+	public GameObject HudPrefab;
 	public Camera cam;
 	public GameObject HeadAnimationTarget;
-	PhotonView view;
 	public TextMeshProUGUI playerName;
-	Animator _animator;
-
 	public float movementSpeed;
 	public float horizontalSpeed = 1f;
 	public float verticalSpeed = 1f;
+	private CharacterController characterController;
+	private InventoryManager inventoryManager;
+	private GameObject HUD;
+	private HUDManager hudManager;
+	private GameManager gameManager;
+	private Animator _animator;
+	private PhotonView view;
+	private Ray ray;
 	private float Gravity = -50f;
-	private float jumpForce = 30f;
-	private float groundHeight = 3.3f;
+	private float jumpForce = 20f;
 	private float velocity = 0;
 	private Vector3 playerVelocity;
 	private float xRotate = 0.0f;
 	private float yRotate = 0.0f;
-	private Ray ray;
 	private float interactionDistance = 10f;
-
-	// values for character rotation smoothing
-	private float interp = 0;
-	private float rotationSpeed = 0.5f;
+	private bool canMovePlayer = true;
+	private float horizontalInput;
+	private float verticalInput;
 
 	private void Awake() {
 		view = GetComponent<PhotonView>();
 		_animator = gameObject.transform.GetChild(1).GetComponent<Animator>();
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+		inventoryManager = gameObject.GetComponent<InventoryManager>();
 	}
 
 	private void Start() {
 		characterController = GetComponent<CharacterController>();
-		HUD = GameObject.Find("HUD");
-		hudManager = HUD.GetComponent<HUDManager>();
+		if (HudPrefab != null) {
+			SetHudManager();
+		} else {
+			Debug.LogWarning("HudPrefab missing from PlayerController");
+		}
 	}
 	
 	void Update() {
@@ -56,13 +60,31 @@ public class PlayerController : MonoBehaviour
 				cam.SetActive(false);
 			}
 		}
-
 		// Call Input code
 		if (view.IsMine) {
 			CheckMovementInput();
 			CheckItemInteraction();
 		}
+	}
 
+	void CalledOnLevelWasLoaded() {
+		SetHudManager();
+	}
+
+	private void SetPlayerCoords() {
+		Hashtable coordsHash = new Hashtable();
+		coordsHash.Add("coordX", transform.position.x);
+		coordsHash.Add("coordY", transform.position.z);
+		// need to convert to different hashtable type...
+		// PhotonNetwork.LocalPlayer.SetCustomProperties(coordsHash);
+	}
+
+	private void SetHudManager() {
+		HUD = Instantiate(this.HudPrefab);
+		hudManager = HUD.GetComponent<HUDManager>();
+		hudManager.SetPlayerController(this);
+		hudManager.SetInventoryManager(inventoryManager);
+		inventoryManager.SetHudManager(hudManager);
 	}
 
 	private void CheckItemInteraction() {
@@ -70,7 +92,7 @@ public class PlayerController : MonoBehaviour
 		if (hitObject) {
 			HandleObjectHit(hitObject);
 		} else {
-			hudManager.ShowItemInfo("");
+			// hudManager.ShowItemInfo("");
 		}
 	}
 
@@ -90,7 +112,7 @@ public class PlayerController : MonoBehaviour
 
 	private void HandleObjectHit(GameObject hitObject) {
 		Transform parent = hitObject.gameObject.transform.parent;
-		hudManager.ShowItemInfo(parent.name);
+		// hudManager.ShowItemInfo(parent.name);
 
 		switch(hitObject.gameObject.tag) {
 			case "Tree":
@@ -101,11 +123,10 @@ public class PlayerController : MonoBehaviour
 				}
 				break;
 			case "Item":
-				hudManager.ShowItemInfo(parent.name);
+				// hudManager.ShowItemInfo(parent.name);
 				break;
 			default:
 				break;
-
 		}
 	}
 
@@ -116,42 +137,59 @@ public class PlayerController : MonoBehaviour
 		bool isGrounded1 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.5f);
 		bool isGrounded2 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.3f);
 		if (isGrounded1) {
-			if (Input.GetKeyDown(KeyCode.Space)) {
+			float velocityForward = _animator.GetFloat("VelocityForward");
+			bool allowJump = velocityForward >= 0f;
+			if (Input.GetKeyDown(KeyCode.Space) && allowJump) {
+				_animator.SetTrigger("Jumping");
 				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
+				characterController.Move(playerVelocity * Time.deltaTime);
 			}
 		}
 		if (isGrounded2) {
 			if (playerVelocity.y < 0) {
 				playerVelocity.y = 0f;
 			}
+			canMovePlayer = true;
+		} else {
+			canMovePlayer = false;
 		}
 		
         playerVelocity.y += Gravity * Time.deltaTime;
         characterController.Move(playerVelocity * Time.deltaTime);
-		float horizontal = Input.GetAxis("Horizontal");
-		float vertical = Input.GetAxis("Vertical");
-		if (Input.GetKey(KeyCode.LeftShift)) {
-			vertical *= 2;
+
+		if (canMovePlayer) {
+			horizontalInput = Input.GetAxis("Horizontal");
+			verticalInput = Input.GetAxis("Vertical");
+
+			// Sprinting
+			if (Input.GetKey(KeyCode.LeftShift) && verticalInput > 0) {
+				verticalInput *= 2f;
+				horizontalInput = 0f;
+			}
+			// Walking backwards
+			if (verticalInput < 0) {
+				verticalInput /= 1.5f;
+			}
 		}
-		characterController.Move((transform.right * horizontal * movementSpeed + transform.forward * vertical * movementSpeed) * Time.deltaTime);
+		characterController.Move((transform.right * horizontalInput * movementSpeed + transform.forward * verticalInput * movementSpeed) * Time.deltaTime);
+
 
 		// Camera movement
 		xRotate += Input.GetAxis("Mouse X") * horizontalSpeed;
 		yRotate -= Input.GetAxis("Mouse Y") * verticalSpeed;
 		transform.eulerAngles = new Vector3 (0.0f, xRotate, 0.0f);
-		yRotate = Mathf.Clamp (yRotate, -90, 90);
+		yRotate = Mathf.Clamp (yRotate, -80, 60);
 		cam.transform.eulerAngles = new Vector3 (yRotate, xRotate, 0.0f);
 
 		// Move head aim target as well (vertical)
 		HeadAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 50) );
 	
 		// Animating
-		_animator.SetFloat("VelocityForward", vertical, 0.1f, Time.deltaTime);
-		if (_animator.GetFloat("VelocityForward") > 0.1f) {
-			Debug.Log("greater than 0.1");
+		if (isGrounded1) {
+			_animator.SetFloat("VelocityForward", verticalInput, 0.1f, Time.deltaTime);
+			_animator.SetFloat("VelocitySide", horizontalInput, 0.1f, Time.deltaTime);
 		}
-		if (_animator.GetFloat("VelocityForward") < 0.1f) {
-			Debug.Log("less that 0.1");
-		}
+
+		transform.Rotate(0, 180, 0, Space.Self);
 	}
 }

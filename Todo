@@ -54,14 +54,33 @@ Water
 - low poly waves near shore
 
 
-LEFTOFF:
-- consolidate animations into one model (import the already exported model with previous animation)
-- add animations:
-  - run
-  - jump
-  - side step
-  - backstep
+Worflow:
+- add AssetBundle workflow to dynamically create resources folder from refabs (for Photon use)
+- implement event systems for all cross-script resource sharing
 
-- add hand constraint to player rig for when holding item (set as bool trigger)
-- spawn item in hand when scrolling to it in inventory
-- figure out how to have separate animations for usign different items
+Animations:
+- add new layer for item animations (will move arms, custom animation)
+	- each item should have its own animation state in blend tree
+	- will need to have hand contraint to player rig, similar to moving head
+
+LEFTOFF:
+- add icons to minimap
+- coordinates
+- add new rig that will hold item in one place (new animation layer)
+
+
+new network framework
+- networkmanager object, lists all objects being spawned (no need for Resources!)
+- objects need networkobject component
+- set up networkcommandline component so you can cmd spawn server, client, and host
+	"Hello World.exe" -logfile log-server.txt -mlapi server (...client, host, etc)
+
+
+Space upgrade:
+- new player models
+- create flat launch pad in middle of map, have player spawn there every time
+- add rocketry:
+	- spawn rocket on launchpad
+	- create control panel with launch button
+	- add physics, particle effects, and sound
+	- reset rocket after certain amount of time (blow it up maybe?)
