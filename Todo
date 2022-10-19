@@ -79,6 +79,7 @@ new network framework
 Space upgrade:
 - new player models
 - create flat launch pad in middle of map, have player spawn there every time
+	- stop trees from spawning in circle
 - add rocketry:
 	- spawn rocket on launchpad
 	- create control panel with launch button

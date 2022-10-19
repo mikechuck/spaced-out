@@ -25,12 +25,13 @@ public class SpawnPlayer : MonoBehaviour
 		while(true) {
 			int randomX = UnityEngine.Random.Range(0, mapSize);
 			int randomZ = UnityEngine.Random.Range(0, mapSize);
+			int middle = mapSize / 2;
 
-			float locationHeight = heightMap[randomX, randomZ];
+			float locationHeight = heightMap[middle, middle];
 
 			if (locationHeight > 0.3f && locationHeight < 0.7f) {
-				float finalX = ((randomX - mapSize/2) * mapScale);
-				float finalZ = (-(randomZ - mapSize/2) * mapScale);
+				float finalX = ((middle - mapSize/2) * mapScale);
+				float finalZ = (-(middle - mapSize/2) * mapScale) - 150;
 				float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
 
 				int players = PhotonNetwork.CurrentRoom.PlayerCount;
@@ -54,7 +55,7 @@ public class SpawnPlayer : MonoBehaviour
 						break;
 				}
 				
-				GameObject player = PhotonNetwork.Instantiate(playerPrefabName, new Vector3(finalX, finalY + 2, finalZ), Quaternion.identity, 0);
+				GameObject player = PhotonNetwork.Instantiate(playerPrefabName, new Vector3(finalX, finalY + 3, finalZ), Quaternion.identity);
 				player.name = gameManager.playerName;
 				PhotonNetwork.LocalPlayer.NickName = player.name;
 

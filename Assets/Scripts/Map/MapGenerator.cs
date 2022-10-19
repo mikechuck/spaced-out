@@ -19,6 +19,13 @@ public class MapGenerator : MonoBehaviour
 	float[,] falloffMap;
 	public Material terrainMaterial;
 	private GameManager gameManager;
+	private float heightCenterOfMap;
+	private MapData mapData;
+	// Map objects
+	public GameObject objectsParent;
+	public GameObject launchpad;
+	// public GameObject rocket;
+	public GameObject launchControls;
 
 	// Data objects
 	public TerrainData terrainData;
@@ -35,16 +42,14 @@ public class MapGenerator : MonoBehaviour
 		} else {
 			RandomizeSeed();
 		}
-	
 
-		MapData mapData = GenerateMapData(Vector2.zero);
+		mapData = GenerateMapData(Vector2.zero);
 		MapDisplay display = FindObjectOfType<MapDisplay>();
 
 		display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, terrainData.meshHeightMultiplier, terrainData.meshHeightCurve, editorPreviewLOD));
 		textureData.ApplyToMaterial(terrainMaterial);
 
-		TreeSpawner treeSpawner = FindObjectOfType<TreeSpawner>();
-		treeSpawner.SpawnTrees(mapData, terrainData, textureData);
+		SpawnMapScenery();
 		return mapData;
 	}
 
@@ -59,7 +64,7 @@ public class MapGenerator : MonoBehaviour
 	}
 
 	public void DrawMapInEditor() {
-		MapData mapData = GenerateMapData(Vector2.zero);
+		mapData = GenerateMapData(Vector2.zero);
 		MapDisplay display = FindObjectOfType<MapDisplay>();
 		if (drawMode == DrawMode.NoiseMode) {
 			display.DrawTexture(TextureGenerator.TextureFromHeightMap(mapData.heightMap));
@@ -69,10 +74,9 @@ public class MapGenerator : MonoBehaviour
 			display.DrawTexture(TextureGenerator.TextureFromHeightMap(FalloffGenerator.GenerateFalloffMap(mapChunkSize)));
 		}
 
-		textureData.ApplyToMaterial(terrainMaterial);
-
 		TreeSpawner treeSpawner = FindObjectOfType<TreeSpawner>();
-		treeSpawner.SpawnTrees(mapData, terrainData, textureData);
+		treeSpawner.SpawnTrees(mapData, terrainData, textureData, heightCenterOfMap, mapChunkSize);
+		textureData.ApplyToMaterial(terrainMaterial);
 	}
 
 	public void RandomizeSeed() {
@@ -84,10 +88,24 @@ public class MapGenerator : MonoBehaviour
 		float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, noiseData.seed, noiseData.noiseScale, noiseData.octaves, noiseData.persistence, noiseData.lacunarity, center + noiseData.offset, noiseData.normalizeMode);
 
 		Color[] colorMap = new Color[mapChunkSize * mapChunkSize];
+		int halfMapChunkSize = mapChunkSize / 2;
+		int centerCirleSize = 5;
+
+		heightCenterOfMap = Mathf.Clamp01(noiseMap[halfMapChunkSize, halfMapChunkSize] - falloffMap[halfMapChunkSize, halfMapChunkSize]);
 		for (int y = 0; y< mapChunkSize; y++) {
 			for (int x = 0; x < mapChunkSize; x++) {
 				if (terrainData.useFalloff) {
-					noiseMap[x,y] = Mathf.Clamp01(noiseMap[x,y] - falloffMap[x,y]);
+					float heightValue = Mathf.Clamp01(noiseMap[x,y] - falloffMap[x,y]);
+					bool yIsInRange = y >= halfMapChunkSize - centerCirleSize && y <= halfMapChunkSize + centerCirleSize;
+					bool xIsInRange = x >= halfMapChunkSize - centerCirleSize && x <= halfMapChunkSize + centerCirleSize;
+					int xMiddle = halfMapChunkSize - x;
+					int yMiddle = halfMapChunkSize - y;
+					bool isInRange = Math.Sqrt(Math.Pow(xMiddle, 2) + Math.Pow(yMiddle, 2)) <= 5;
+					if (isInRange) {
+						Debug.Log(heightCenterOfMap);
+						heightValue = heightCenterOfMap;
+					}
+					noiseMap[x,y] = heightValue;
 				}
 			}
 		}
@@ -112,6 +130,23 @@ public class MapGenerator : MonoBehaviour
 			textureData.OnValuesUpdated += OnTextureValuesUpdated;
 		}
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+	}
+
+	private void SpawnMapScenery() {
+		float scaledHeight = terrainData.meshHeightCurve.Evaluate(heightCenterOfMap) * terrainData.meshHeightMultiplier * terrainData.uniformScale;
+
+		// Trees
+		TreeSpawner treeSpawner = FindObjectOfType<TreeSpawner>();
+		treeSpawner.SpawnTrees(mapData, terrainData, textureData, heightCenterOfMap, mapChunkSize);
+		// Launchpad
+		GameObject launchpadInstance = Instantiate(launchpad, new Vector3(0, scaledHeight, 0), Quaternion.identity);
+		launchpadInstance.transform.SetParent(objectsParent.transform);
+		// Rocket
+		// GameObject rocketInstance = Instantiate(rocket, new Vector3(0, scaledHeight + 2, 0), Quaternion.identity);
+		// rocketInstance.transform.SetParent(objectsParent.transform);
+		// Launch Controls
+		GameObject launchControlsInstance = Instantiate(launchControls, new Vector3(0f, scaledHeight + 2.5f, -147f), Quaternion.identity);
+		launchControlsInstance.transform.SetParent(objectsParent.transform);
 	}
 }
 

@@ -50,7 +50,7 @@ public class HUDManager : MonoBehaviour
 
 	public void DrawPlayerIcons() {
 		foreach (var player in PhotonNetwork.PlayerList) {
-			Debug.Log(player.NickName);
+			// Debug.Log(player.NickName);
 		}
 		// get list of players from PUN
 		// get coord data from list

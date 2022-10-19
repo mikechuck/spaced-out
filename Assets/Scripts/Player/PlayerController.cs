@@ -189,7 +189,5 @@ public class PlayerController : MonoBehaviourPunCallbacks
 			_animator.SetFloat("VelocityForward", verticalInput, 0.1f, Time.deltaTime);
 			_animator.SetFloat("VelocitySide", horizontalInput, 0.1f, Time.deltaTime);
 		}
-
-		transform.Rotate(0, 180, 0, Space.Self);
 	}
 }
