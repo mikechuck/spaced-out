@@ -50,14 +50,10 @@ public class EventManager : MonoBehaviour
 		}
 	}
 	public static void TriggerEvent(string eventName) {
-		Debug.Log("triggering");
-		Debug.Log(eventName);
 		foreach(KeyValuePair<string, UnityEvent> item in instance.eventDictionary) {
-			Debug.Log(item.Key);
 		}
 		UnityEvent thisEvent = null;
 		if (instance.eventDictionary.TryGetValue(eventName, out thisEvent)) {
-			Debug.Log("found match");
 			thisEvent.Invoke();
 		}
 	}

@@ -85,3 +85,15 @@ Space upgrade:
 	- create control panel with launch button
 	- add physics, particle effects, and sound
 	- reset rocket after certain amount of time (blow it up maybe?)
+
+
+Prototype:
+- prodedural planets with noise, nothing else
+- each level has different skybox, randomly selected
+- add new MP framework before continuing
+- spawn enemies randomly
+- spawn chests randomly
+- create both team's spawn location
+	- includes launchpad
+- continue with chest/enemy interaction
+- economy, player stats, hud, etc...

@@ -102,7 +102,6 @@ public class MapGenerator : MonoBehaviour
 					int yMiddle = halfMapChunkSize - y;
 					bool isInRange = Math.Sqrt(Math.Pow(xMiddle, 2) + Math.Pow(yMiddle, 2)) <= 5;
 					if (isInRange) {
-						Debug.Log(heightCenterOfMap);
 						heightValue = heightCenterOfMap;
 					}
 					noiseMap[x,y] = heightValue;

@@ -19,7 +19,6 @@ namespace ServiceLocatorNamespace
 public class HudManagerService : IHudManagerService
 {
 	public void DrawInventoryHud(Item[] inventory) {
-		Debug.Log("drawinventoryhud in service");
 		EventManager.TriggerEvent("HudManagerDrawInventoryHud");
 	}
 
