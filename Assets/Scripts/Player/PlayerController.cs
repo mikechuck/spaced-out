@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
-using ServiceLocatorNamespace;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -116,11 +115,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
 		switch(hitObject.gameObject.tag) {
 			case "Tree":
-				TreeState treeState = parent.gameObject.GetComponent<TreeState>();
-
-				if (Input.GetKeyDown(KeyCode.Mouse0)) {
-					treeState.DecreaseHP(5);
-				}
+				Debug.Log("hit tree");
 				break;
 			case "Item":
 				// hudManager.ShowItemInfo(parent.name);

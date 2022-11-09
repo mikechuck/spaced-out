@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.Events;
-using ServiceLocatorNamespace;
 
 public class InventoryManager : MonoBehaviour
 {

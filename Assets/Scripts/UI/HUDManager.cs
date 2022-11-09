@@ -5,7 +5,6 @@ using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
-using ServiceLocatorNamespace;
 using UnityEngine.SceneManagement;
 
 public class HUDManager : MonoBehaviour
