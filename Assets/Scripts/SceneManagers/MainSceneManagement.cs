@@ -6,20 +6,30 @@ using System;
 
 public class MainSceneManagement : MonoBehaviour
 {
-	private SpawnPlayer spawnPlayer;
+	public List<Material> skyboxOptions;
+	public PlanetManager planetManager;
 	
-    // Start is called before the first frame update
-    void Start() {
+    void Start()
+	{
+		SetSkybox();
 		StartSceneCreation();
     }
 
-	private void StartSceneCreation() {
-		Debug.Log("Creating planet");
+	private void StartSceneCreation()
+	{
 		// call function to create planet
+		planetManager.GeneratePlanet();
 		// spawn launchpad
 		// spawn players
 		// spawn chests
 		// spawn enemies
+	}
+
+	private void SetSkybox()
+	{
+		System.Random r = new System.Random();
+		int randomInt = r.Next(skyboxOptions.Count - 1);
+		RenderSettings.skybox = skyboxOptions[randomInt];
 	}
 }
 
