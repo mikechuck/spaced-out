@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class ShapeGenerator
 {
-	private float _planetRadius = 1;
+	private float _planetRadius;
 	private int _numNoiseLayers;
 	private NoiseFilter[] _noiseFilters;
 
 	public ShapeGenerator()
 	{
-		// todo1: change to random num of noise layers
-		_numNoiseLayers = 4;
+		_planetRadius = Random.Range(10f, 50f);
+		_numNoiseLayers = Random.Range(3, 5);
 		CreateNoiseFilters();
 	}
 

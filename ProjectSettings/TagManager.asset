@@ -10,6 +10,7 @@ TagManager:
   - Inventory Slot
   - PlayerHead
   - PlayerHand
+  - PlanetMesh
   layers:
   - Default
   - TransparentFX

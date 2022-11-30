@@ -16,14 +16,17 @@ public class NoiseFilter
 
 	public NoiseFilter()
 	{
-		// todo1: change these to have random values within a range
-		this._strength = 1;
-		this._numLayers = 1;
-		this._baseRoughness = 1f;
-		this._roughness = 2f;
-		this._persistence = 0.5f;
-		this._center = new Vector3(0, 1, 2);
-		this._minValue = 0.05;
+		this._strength = Random.Range(0.05f, 0.15f);
+		this._numLayers = Random.Range(4, 8);
+		this._baseRoughness = Random.Range(1f, 1.08f);
+		this._roughness = Random.Range(2f, 2.4f);
+		this._persistence = Random.Range(0.4f, 0.7f);
+		this._center = new Vector3(
+			Random.Range(0, 10),
+			Random.Range(0, 10),
+			Random.Range(0, 10)
+		);
+		this._minValue = Random.Range(0.5f, 1.25f);
 	}
 
 	public float Evaluate(Vector3 point)

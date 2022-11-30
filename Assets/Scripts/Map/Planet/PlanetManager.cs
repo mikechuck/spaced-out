@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class PlanetManager : MonoBehaviour
 {
-	private int _resolution = 100;
-	private ColorSettings _colorSettings;
+	private int _resolution = 10;
+	private Color _planetColor;
 	private ShapeGenerator _shapeGenerator;
 
 	[SerializeField, HideInInspector]
@@ -37,12 +37,14 @@ public class PlanetManager : MonoBehaviour
 		GenerateColors();
 	}
 
-	void Initialize()
+	private void Initialize()
 	{
 		_shapeGenerator = new ShapeGenerator();
-		meshFilters = new MeshFilter[6];
 		terrainFaces = new TerrainFace[6];
-
+		if (meshFilters.Length == 0) {
+			meshFilters = new MeshFilter[6];
+		}
+		
 		// save all 6 base directions of the cube to an array
 		Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
 
@@ -54,6 +56,7 @@ public class PlanetManager : MonoBehaviour
 				// add a new mesh filter component to the new gameobject
 				// save to array at this index
 				GameObject meshObj = new GameObject("mesh");
+				meshObj.tag = "PlanetMesh";
 				meshObj.transform.parent = transform;
 				meshObj.AddComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
 				meshFilters[i] = meshObj.AddComponent<MeshFilter>();
@@ -64,7 +67,7 @@ public class PlanetManager : MonoBehaviour
 		}
 	}
 
-	void GenerateMesh()
+	private void GenerateMesh()
 	{
 		foreach(TerrainFace face in terrainFaces)
 		{
@@ -72,11 +75,16 @@ public class PlanetManager : MonoBehaviour
 		}
 	}
 
-	void GenerateColors()
+	private void GenerateColors()
 	{
+		float randR = Random.Range(0f, 1f);
+		float randG = Random.Range(0f, 1f);
+		float randB = Random.Range(0f, 1f);
 		foreach (MeshFilter mesh in meshFilters)
 		{
-			mesh.GetComponent<MeshRenderer>().sharedMaterial.color = colorSettings.planetColor;
+			_planetColor = new Color(randR, randG, randB);
+
+			mesh.GetComponent<MeshRenderer>().sharedMaterial.color = _planetColor;
 		}
 	}
 }
