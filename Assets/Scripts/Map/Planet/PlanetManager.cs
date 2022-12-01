@@ -5,18 +5,13 @@ using UnityEngine;
 
 public class PlanetManager : MonoBehaviour
 {
-	private int _resolution = 10;
+	public int _resolution = 10;
 	private Color _planetColor;
 	private ShapeGenerator _shapeGenerator;
 
 	[SerializeField, HideInInspector]
 	MeshFilter[] meshFilters;
 	TerrainFace[] terrainFaces;
-
-	private void OnValidate()
-	{
-		GeneratePlanet();
-	}
 
 	public void OnShapeSettingsUpdated()
 	{
@@ -62,7 +57,7 @@ public class PlanetManager : MonoBehaviour
 				meshFilters[i] = meshObj.AddComponent<MeshFilter>();
 				meshFilters[i].sharedMesh = new Mesh();
 			}
-
+			Debug.Log(string.Format("Setting new terrainface with resolution: {0}", _resolution));
 			terrainFaces[i] = new TerrainFace(_shapeGenerator, meshFilters[i].sharedMesh, _resolution, directions[i]);
 		}
 	}
@@ -83,7 +78,6 @@ public class PlanetManager : MonoBehaviour
 		foreach (MeshFilter mesh in meshFilters)
 		{
 			_planetColor = new Color(randR, randG, randB);
-
 			mesh.GetComponent<MeshRenderer>().sharedMaterial.color = _planetColor;
 		}
 	}

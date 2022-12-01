@@ -25,6 +25,8 @@ public class TerrainFace
 
 	public void ConstructMesh()
 	{
+		Debug.Log("Constructing mesh");
+		Debug.Log(resolution);
 		Vector3[] vertices = new Vector3[resolution * resolution];
 		int squaresPerSide = resolution - 1;
 		int squaresPerMesh = squaresPerSide * squaresPerSide;

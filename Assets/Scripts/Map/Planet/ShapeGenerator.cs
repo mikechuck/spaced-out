@@ -11,7 +11,7 @@ public class ShapeGenerator
 
 	public ShapeGenerator()
 	{
-		_planetRadius = Random.Range(10f, 50f);
+		_planetRadius = Random.Range(550f, 850f);
 		_numNoiseLayers = Random.Range(3, 5);
 		CreateNoiseFilters();
 	}
