@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlanetManager : MonoBehaviour
 {
-	public int _resolution = 10;
+	public int _resolution = 100;
 	private Color _planetColor;
 	private ShapeGenerator _shapeGenerator;
 
@@ -57,7 +57,6 @@ public class PlanetManager : MonoBehaviour
 				meshFilters[i] = meshObj.AddComponent<MeshFilter>();
 				meshFilters[i].sharedMesh = new Mesh();
 			}
-			Debug.Log(string.Format("Setting new terrainface with resolution: {0}", _resolution));
 			terrainFaces[i] = new TerrainFace(_shapeGenerator, meshFilters[i].sharedMesh, _resolution, directions[i]);
 		}
 	}

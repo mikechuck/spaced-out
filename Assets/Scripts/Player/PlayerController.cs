@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 using TMPro;
+using Unity.Netcode;
 
-public class PlayerController : MonoBehaviourPunCallbacks
+public class PlayerController : PhysicsObject
 {
 	public GameObject HudPrefab;
 	public Camera cam;
@@ -19,12 +19,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 	private HUDManager hudManager;
 	private GameManager gameManager;
 	private Animator _animator;
-	private PhotonView view;
+	// private PhotonView view;
 	private Ray ray;
-	private float Gravity = -50f;
+	// private float Gravity = -50f;
 	private float jumpForce = 20f;
 	private float velocity = 0;
-	private Vector3 playerVelocity;
 	private float xRotate = 0.0f;
 	private float yRotate = 0.0f;
 	private float interactionDistance = 10f;
@@ -33,13 +32,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
 	private float verticalInput;
 
 	private void Awake() {
-		view = GetComponent<PhotonView>();
 		_animator = gameObject.transform.GetChild(1).GetComponent<Animator>();
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 		inventoryManager = gameObject.GetComponent<InventoryManager>();
 	}
 
 	private void Start() {
+		_gameObject = gameObject;
 		characterController = GetComponent<CharacterController>();
 		if (HudPrefab != null) {
 			SetHudManager();
@@ -49,7 +48,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 	}
 	
 	void Update() {
-		if (!view.IsMine) {
+		if (!IsOwner) {
 			if (GetComponent<PlayerController>() != null) {
 				// Destroy other players' scripts
 				PlayerController playerController = GetComponent<PlayerController>();
@@ -60,9 +59,10 @@ public class PlayerController : MonoBehaviourPunCallbacks
 			}
 		}
 		// Call Input code
-		if (view.IsMine) {
+		if (IsOwner) {
 			CheckMovementInput();
 			CheckItemInteraction();
+			ApplyGravity();
 		}
 	}
 
@@ -115,7 +115,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
 		switch(hitObject.gameObject.tag) {
 			case "Tree":
-				Debug.Log("hit tree");
+				// tree hit
 				break;
 			case "Item":
 				// hudManager.ShowItemInfo(parent.name);
@@ -136,21 +136,20 @@ public class PlayerController : MonoBehaviourPunCallbacks
 			bool allowJump = velocityForward >= 0f;
 			if (Input.GetKeyDown(KeyCode.Space) && allowJump) {
 				_animator.SetTrigger("Jumping");
-				playerVelocity.y += Mathf.Sqrt(jumpForce * -Gravity);
-				characterController.Move(playerVelocity * Time.deltaTime);
+				_velocity.y += Mathf.Sqrt(jumpForce * -50f);
+				// characterController.Move(_velocity * Time.deltaTime);
 			}
 		}
 		if (isGrounded2) {
-			if (playerVelocity.y < 0) {
-				playerVelocity.y = 0f;
+			if (_velocity.y < 0) {
+				_velocity.y = 0f;
 			}
 			canMovePlayer = true;
 		} else {
 			canMovePlayer = false;
 		}
-		
-        playerVelocity.y += Gravity * Time.deltaTime;
-        characterController.Move(playerVelocity * Time.deltaTime);
+
+        // characterController.Move(_velocity * Time.deltaTime);
 
 		if (canMovePlayer) {
 			horizontalInput = Input.GetAxis("Horizontal");
@@ -166,7 +165,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 				verticalInput /= 1.5f;
 			}
 		}
-		characterController.Move((transform.right * horizontalInput * movementSpeed + transform.forward * verticalInput * movementSpeed) * Time.deltaTime);
+		// characterController.Move((transform.right * horizontalInput * movementSpeed + transform.forward * verticalInput * movementSpeed) * Time.deltaTime);
 
 
 		// Camera movement
@@ -177,7 +176,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 		cam.transform.eulerAngles = new Vector3 (yRotate, xRotate, 0.0f);
 
 		// Move head aim target as well (vertical)
-		HeadAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 50) );
+		// HeadAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 50) );
 	
 		// Animating
 		if (isGrounded1) {

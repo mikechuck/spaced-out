@@ -51,17 +51,16 @@ public class InventoryManager : MonoBehaviour
 
 	public void SpawnSelectedItem(Item selectedItem) {
 		if (spawnedItem != null) {
-			Debug.Log("destroying spawned item");
 			PhotonNetwork.Destroy(spawnedItem);
 		}
 		GameObject item = PhotonNetwork.Instantiate(selectedItem.itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
 		item.GetComponent<Rigidbody>().detectCollisions = false;
 		item.GetComponent<Rigidbody>().useGravity = false;
 		item.name = selectedItem.itemData.itemName;
-		item.transform.position = playerRightHand.transform.position;
-		item.transform.rotation = playerRightHand.transform.rotation;
-		item.transform.rotation = playerRightHand.transform.rotation * Quaternion.Euler(selectedItem.itemData.pickupRotation);
-		item.transform.SetParent(playerRightHand.transform);
+		// item.transform.position = playerRightHand.transform.position;
+		// item.transform.rotation = playerRightHand.transform.rotation;
+		// item.transform.rotation = playerRightHand.transform.rotation * Quaternion.Euler(selectedItem.itemData.pickupRotation);
+		// item.transform.SetParent(playerRightHand.transform);
 		spawnedItem = item;
 	}
 }

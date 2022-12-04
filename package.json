@@ -1,0 +1,20 @@
+{
+  "name": "spaced-out",
+  "version": "1.0.0",
+  "description": "Space themed rouged-like Unity game",
+  "main": "index.js",
+  "scripts": {
+    "start-server": "cd Builds/Windows && \"Spaced Out.exe\" -logfile log-server.txt -mode server",
+	"start-client": "cd Builds/Windows && \"Spaced Out.exe\" -logfile log-client.txt -mode client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/mikechuck/spaced-out.git"
+  },
+  "author": "Michael Joy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mikechuck/spaced-out/issues"
+  },
+  "homepage": "https://github.com/mikechuck/spaced-out#readme"
+}
