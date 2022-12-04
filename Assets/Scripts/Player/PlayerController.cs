@@ -62,7 +62,7 @@ public class PlayerController : PhysicsObject
 		if (IsOwner) {
 			CheckMovementInput();
 			CheckItemInteraction();
-			ApplyGravity();
+			ApplyPhysics();
 		}
 	}
 

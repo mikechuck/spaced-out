@@ -12,14 +12,23 @@ public class PhysicsObject : NetworkBehaviour
 	protected Vector3 _gravity;
 	protected GameObject _gameObject;
 
-	public void ApplyGravity()
+	public void ApplyPhysics()
 	{
-		// get vector between current position and origin
-		// find the normalized vector, multiply by gravityMagnitude
-		Vector3 gravityVector = -_gameObject.transform.position.normalized * _gravityMagnitude;
-		Debug.Log(gravityVector);
+		_down = -_gameObject.transform.position.normalized;
+		RotateObject();
+		ApplyGravity();
+	}
 
-		if (_gameObject.transform.position)
+	private void RotateObject()
+	{
+		Debug.Log(_down);
+		_gameObject.transform.rotation = Quaternion.Euler(_down.x, _down.y, _down.z);;
+	}
+
+	private void ApplyGravity()
+	{
+		Vector3 currentPosition = _gameObject.transform.position;
+		Vector3 gravityVector = _down * _gravityMagnitude;
 		_gameObject.transform.position = _gameObject.transform.position + new Vector3(gravityVector.x * Time.deltaTime, gravityVector.y * Time.deltaTime, gravityVector.z * Time.deltaTime);
 	}
 }
@@ -27,3 +36,5 @@ public class PhysicsObject : NetworkBehaviour
 // rotate player depending on position direction vector
 // first just keep going in this direction...
 // explore rigidbody instead ofcharacter controller (see if playercontroller can be used without character controller as well)
+
+// leftoff: rotation is applying correctly, but model is not rotating...
