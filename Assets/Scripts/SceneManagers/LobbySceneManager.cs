@@ -15,27 +15,7 @@ public class LobbySceneManager : MonoBehaviour
 
     private void Awake()
 	{
-		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-
 		// Will handle room codes and seeds later, for now just load main scene
-		if (NetworkManager.Singleton.IsServer)
-		{
-			SceneManager.LoadScene("MainScene");
-		}
-	}
-	public void OnStartGameButton()
-	{
 		SceneManager.LoadScene("MainScene");
 	}
-
-	// public void OnJoinRoomButton()
-	// {
-	// 	StartNewClient(joinInput.text);
-	// }
-
-	// private void StartNewClient(string id)
-	// {
-	// 	NetworkManager.Singleton.StartClient();
-	// 	SceneManager.LoadScene("MainScene")
-	// }
 }

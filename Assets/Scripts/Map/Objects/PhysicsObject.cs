@@ -6,35 +6,38 @@ using Unity.Netcode;
 public class PhysicsObject : NetworkBehaviour
 {
 	private float _gravityMagnitude = 5f;
-    private Vector3 _position;
-	private Vector3 _down;
-	protected Vector3 _velocity;
-	protected Vector3 _gravity;
-	protected GameObject _gameObject;
+	private Vector3 _worldUp;
+	public NetworkVariable<Vector3> Position = new NetworkVariable<Vector3>();
+	public NetworkVariable<Quaternion> Rotation = new NetworkVariable<Quaternion>();
 
-	public void ApplyPhysics()
+	void Update()
 	{
-		_down = -_gameObject.transform.position.normalized;
-		RotateObject();
-		ApplyGravity();
+		ApplyPhysics();
 	}
 
-	private void RotateObject()
+	protected void ApplyPhysics()
 	{
-		Debug.Log(_down);
-		_gameObject.transform.rotation = Quaternion.Euler(_down.x, _down.y, _down.z);;
+		_worldUp = transform.position.normalized;
+		if (IsOwner)
+		{
+			ApplyGravityServerRpc();
+			ApplyRotationServerRpc();
+		}
+		transform.position = Position.Value;
+		transform.rotation = Rotation.Value;
 	}
 
-	private void ApplyGravity()
+	[ServerRpc]
+	private void ApplyGravityServerRpc(ServerRpcParams rpcParams = default)
 	{
-		Vector3 currentPosition = _gameObject.transform.position;
-		Vector3 gravityVector = _down * _gravityMagnitude;
-		_gameObject.transform.position = _gameObject.transform.position + new Vector3(gravityVector.x * Time.deltaTime, gravityVector.y * Time.deltaTime, gravityVector.z * Time.deltaTime);
+		Debug.Log("gravity");
+		Position.Value += -_worldUp * _gravityMagnitude * Time.deltaTime;
+	}
+
+	[ServerRpc]
+	private void ApplyRotationServerRpc(ServerRpcParams rpcParams = default)
+	{
+		Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, _worldUp);
+		Rotation.Value = newRotation;
 	}
 }
-
-// rotate player depending on position direction vector
-// first just keep going in this direction...
-// explore rigidbody instead ofcharacter controller (see if playercontroller can be used without character controller as well)
-
-// leftoff: rotation is applying correctly, but model is not rotating...

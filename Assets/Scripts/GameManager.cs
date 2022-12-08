@@ -13,8 +13,8 @@ public class GameManager : MonoBehaviour
     }
 
 	void Start() {
-		if (SceneManager.GetActiveScene().name != "Loading") {
-			SceneManager.LoadScene("Loading");
-		}
+		// if (SceneManager.GetActiveScene().name != "Loading") {
+		// 	SceneManager.LoadScene("Loading");
+		// }
 	}
 }

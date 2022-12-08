@@ -5,18 +5,41 @@ using Unity.Netcode;
 
 public class MainSceneManager : MonoBehaviour
 {
-	[SerializeField]
-	private List<Material> skyboxOptions;
-	[SerializeField]
-	private PlanetManager planetManager;
+	
+	[SerializeField] private List<Material> skyboxOptions;
+	[SerializeField] private PlanetManager planetManager;
 	private SpawnPlayer spawnPlayer;
+
+	#region UI
+	void OnGUI()
+	{
+		GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+		StatusLabels();
+		GUILayout.EndArea();
+	}
+
+	static void StatusLabels()
+	{
+		var mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
+		GUILayout.Label("Transport: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
+		GUILayout.Label("Mode: " + mode);
+	}
+	#endregion
 	
     void Start()
-	{
+	{	
+		CreateClientConnection();
 		EnableServerDebugging();
-		spawnPlayer = gameObject.GetComponent<SpawnPlayer>();
 		StartSceneCreation();
     }
+
+	private void CreateClientConnection()
+	{
+		if (!NetworkManager.Singleton.IsServer)
+		{
+			NetworkManager.Singleton.StartClient();
+		}
+	}
 
 	private void EnableServerDebugging()
 	{
@@ -36,8 +59,6 @@ public class MainSceneManager : MonoBehaviour
 			// spawn chests
 			// spawn enemies
 		}
-		spawnPlayer.Spawn();
-		
 	}
 
 	private void SetSkybox()

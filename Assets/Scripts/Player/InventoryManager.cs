@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 using UnityEngine.Events;
 
 public class InventoryManager : MonoBehaviour
@@ -20,11 +19,11 @@ public class InventoryManager : MonoBehaviour
 
 	public void OnTriggerEnter(Collider other) {
 		if (other.gameObject.tag == "Item") {
-			GameObject parent = other.gameObject.transform.parent.gameObject;
-			ItemData itemData = itemListData.GetItemData(parent.name);
+			// GameObject parent = other.gameObject.transform.parent.gameObject;
+			// ItemData itemData = itemListData.GetItemData(parent.name);
 			
-			PickUpItem(itemData);
-			PhotonNetwork.Destroy(parent);
+			// PickUpItem(itemData);
+			// PhotonNetwork.Destroy(parent);
 		}
 	}
 
@@ -50,18 +49,18 @@ public class InventoryManager : MonoBehaviour
 	}
 
 	public void SpawnSelectedItem(Item selectedItem) {
-		if (spawnedItem != null) {
-			PhotonNetwork.Destroy(spawnedItem);
-		}
-		GameObject item = PhotonNetwork.Instantiate(selectedItem.itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
-		item.GetComponent<Rigidbody>().detectCollisions = false;
-		item.GetComponent<Rigidbody>().useGravity = false;
-		item.name = selectedItem.itemData.itemName;
-		// item.transform.position = playerRightHand.transform.position;
-		// item.transform.rotation = playerRightHand.transform.rotation;
-		// item.transform.rotation = playerRightHand.transform.rotation * Quaternion.Euler(selectedItem.itemData.pickupRotation);
-		// item.transform.SetParent(playerRightHand.transform);
-		spawnedItem = item;
+		// if (spawnedItem != null) {
+		// 	PhotonNetwork.Destroy(spawnedItem);
+		// }
+		// GameObject item = PhotonNetwork.Instantiate(selectedItem.itemData.itemName, gameObject.transform.position, Quaternion.identity, 0);
+		// item.GetComponent<Rigidbody>().detectCollisions = false;
+		// item.GetComponent<Rigidbody>().useGravity = false;
+		// item.name = selectedItem.itemData.itemName;
+		// // item.transform.position = playerRightHand.transform.position;
+		// // item.transform.rotation = playerRightHand.transform.rotation;
+		// // item.transform.rotation = playerRightHand.transform.rotation * Quaternion.Euler(selectedItem.itemData.pickupRotation);
+		// // item.transform.SetParent(playerRightHand.transform);
+		// spawnedItem = item;
 	}
 }
 

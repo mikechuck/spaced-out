@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class DebugStuff : MonoBehaviour
 {
-	static string myLog = "";
-	private string output;
-	private string stack;
+	static string myLog;
+	private string _output;
+	private string _stack;
+	private bool _showLogsGUI = true;
 
 	void Update() {
-		if (Input.GetKey(KeyCode.Tilde)) {
-			// myLog.SetActive(false);
+		if (Input.GetKey(KeyCode.Tilde))
+		{
+			_showLogsGUI = !_showLogsGUI;
 		}
 	}
 
@@ -26,9 +28,9 @@ public class DebugStuff : MonoBehaviour
 
 	public void Log(string logString, string stackTrace, LogType type)
 	{
-		output = logString;
-		stack = stackTrace;
-		myLog = output + "\n" + myLog;
+		_output = logString;
+		_stack = stackTrace;
+		myLog = _output + "\n" + myLog;
 		if (myLog.Length > 5000)
 		{
 			myLog = myLog.Substring(0, 4000);
@@ -37,6 +39,9 @@ public class DebugStuff : MonoBehaviour
 
 	void OnGUI()
 	{
-		myLog = GUI.TextArea(new Rect(10, 10, Screen.width - 10, Screen.height - 10), myLog);
+		if (_showLogsGUI)
+		{
+			myLog = GUI.TextArea(new Rect(10, 10, Screen.width - 10, Screen.height - 10), myLog);
+		}
 	}
 }

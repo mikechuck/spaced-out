@@ -8,37 +8,13 @@ public class NetworkCommandLine : MonoBehaviour
 {
 	private NetworkManager netManager;
 
-	void Awake() {
-		DontDestroyOnLoad(gameObject);
-	}
-
 	void Start()
 	{
-		netManager = GetComponent<NetworkManager>();
+		netManager = GetComponentInParent<NetworkManager>();
 
 		if (Application.isEditor) return;
 
 		var args = GetCommandlineArgs();
-
-		// if (args.ContainsKey("-build"))
-		// {
-		// 	List<string> activeScenes = new List<string>();
-		// 	foreach(EditorBuildSettingsScene scene in EditorBuildSettings.scenes)
-		// 	{
-		// 		if (scene.enabled)
-		// 		{
-		// 			activeScenes.Add(scene.path);
-		// 		}
-		// 	}
-		// 	var options = new BuildPlayerOptions
-        //     {
-        //         scenes = activeScenes.ToArray(), 
-        //         target = BuildTarget.StandaloneWindows, 
-        //         locationPathName = "Builds/Windows",
-        //     };
-
-        //     BuildPipeline.BuildPlayer(options);
-		// }
 
 		if (args.TryGetValue("-mode", out string mlapiValue))
 		{
