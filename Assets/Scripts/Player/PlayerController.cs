@@ -23,11 +23,6 @@ public class PlayerController: PhysicsObject
 	private float _yRotate = 0.0f;
 	private float _itemInteractionDistance = 10f;
 	private bool _canMovePlayer = true;
-	
-	private void Awake()
-	{
-		SetInitialPosition();
-	}
 
 	private void Start() {
 		_characterController = GetComponent<CharacterController>();
@@ -37,24 +32,24 @@ public class PlayerController: PhysicsObject
 		SetHudManager();
 	}
 
+	public override void OnNetworkSpawn()
+	{
+		SetInitialPosition();
+	}
+
 	public void SetInitialPosition()
 	{
 		if (IsOwner)
 		{
-			// Set initial position
-			Debug.Log("setting initial position");
 			SetInitialPositionServerRpc();
-			Debug.Log(Position.Value);
-			transform.position = Position.Value;
 		}
+		transform.position = Position.Value;
 	}
 
 	[ServerRpc]
-	private void SetInitialPositionServerRpc()
+	private void SetInitialPositionServerRpc(ServerRpcParams rpcParams = default)
 	{
-		Debug.Log("requesting new position");
 		Position.Value = new Vector3(100f, 100f, 100f);
-		Debug.Log(Position.Value);
 	}
 
 	private void SetHudManager() {
@@ -72,10 +67,11 @@ public class PlayerController: PhysicsObject
 	void Update()
 	{
 		// DisablePlayerCams();
-		if (IsOwner) {
-			CheckMovementInput();
-			CheckItemInteraction();
-		}
+		// SetInitialPosition();
+		// if (IsOwner) {
+		// 	CheckMovementInput();
+		// 	CheckItemInteraction();
+		// }
 	}
 
 	private void  DisablePlayerCams()
@@ -191,3 +187,7 @@ public class PlayerController: PhysicsObject
 		}
 	}
 }
+
+// leftoff: need to finish implementing initial position (to start planet spawning)
+// try Start again, onnetworkspawn didn't work... look for other lifecycle methods?
+// after that, fix movement inputs

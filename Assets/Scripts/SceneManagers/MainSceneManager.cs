@@ -66,6 +66,8 @@ public class MainSceneManager : MonoBehaviour
 		System.Random r = new System.Random();
 		int randomInt = r.Next(skyboxOptions.Count - 1);
 		RenderSettings.skybox = skyboxOptions[randomInt];
+		// todo: skyboxes are not matching up between client and server,
+		// need to set network variable with skybox index and use it on client side
 	}
 }
 

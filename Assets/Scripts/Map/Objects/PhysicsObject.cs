@@ -20,7 +20,7 @@ public class PhysicsObject : NetworkBehaviour
 		_worldUp = transform.position.normalized;
 		if (IsOwner)
 		{
-			ApplyGravityServerRpc();
+			// ApplyGravityServerRpc();
 			ApplyRotationServerRpc();
 		}
 		transform.position = Position.Value;
@@ -30,7 +30,6 @@ public class PhysicsObject : NetworkBehaviour
 	[ServerRpc]
 	private void ApplyGravityServerRpc(ServerRpcParams rpcParams = default)
 	{
-		Debug.Log("gravity");
 		Position.Value += -_worldUp * _gravityMagnitude * Time.deltaTime;
 	}
 
