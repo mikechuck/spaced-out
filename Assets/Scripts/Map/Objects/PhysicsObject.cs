@@ -20,8 +20,8 @@ public class PhysicsObject : NetworkBehaviour
 		_worldUp = transform.position.normalized;
 		if (IsOwner)
 		{
-			// ApplyGravityServerRpc();
-			ApplyRotationServerRpc();
+			ApplyGravityServerRpc();
+			// ApplyRotationServerRpc();
 		}
 		transform.position = Position.Value;
 		transform.rotation = Rotation.Value;
@@ -36,7 +36,7 @@ public class PhysicsObject : NetworkBehaviour
 	[ServerRpc]
 	private void ApplyRotationServerRpc(ServerRpcParams rpcParams = default)
 	{
-		Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, _worldUp);
-		Rotation.Value = newRotation;
+		// Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, _worldUp);
+		// Rotation.Value = newRotation;
 	}
 }

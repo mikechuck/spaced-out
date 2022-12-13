@@ -25,6 +25,7 @@ public class PlayerController: PhysicsObject
 	private bool _canMovePlayer = true;
 
 	private void Start() {
+		// if (!IsOwner) return;
 		_characterController = GetComponent<CharacterController>();
 		_animator = gameObject.transform.GetChild(1).GetComponent<Animator>();
 		_gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -34,23 +35,34 @@ public class PlayerController: PhysicsObject
 
 	public override void OnNetworkSpawn()
 	{
-		SetInitialPosition();
-	}
-
-	public void SetInitialPosition()
-	{
-		if (IsOwner)
+		if (IsClient)
 		{
-			SetInitialPositionServerRpc();
+			Rotation.OnValueChanged += UpdatePlayerRotation;
 		}
-		transform.position = Position.Value;
 	}
 
-	[ServerRpc]
-	private void SetInitialPositionServerRpc(ServerRpcParams rpcParams = default)
+	private void Update()
 	{
-		Position.Value = new Vector3(100f, 100f, 100f);
+		// if (!IsOwner) return;
+		// DisablePlayerCams();
+		// SetInitialPosition();
+		CheckMovementInput();
+		// CheckItemInteraction();
 	}
+
+	// public override void OnNetworkSpawn()
+	// {
+	// 	SetInitialPosition();
+	// }
+
+	// public void SetInitialPosition()
+	// {
+	// 	if (IsOwner)
+	// 	{
+	// 		SetInitialPositionServerRpc();
+	// 	}
+	// 	transform.position = Position.Value;
+	// }
 
 	private void SetHudManager() {
 		if (_hudPrefab != null) {
@@ -64,17 +76,7 @@ public class PlayerController: PhysicsObject
 		}	
 	}
 
-	void Update()
-	{
-		// DisablePlayerCams();
-		// SetInitialPosition();
-		// if (IsOwner) {
-		// 	CheckMovementInput();
-		// 	CheckItemInteraction();
-		// }
-	}
-
-	private void  DisablePlayerCams()
+	private void DisablePlayerCams()
 	{
 		if (!IsOwner) {
 			if (GetComponent<PlayerController>() != null) {
@@ -134,10 +136,9 @@ public class PlayerController: PhysicsObject
 		// Camera movement
 		_xRotate += Input.GetAxis("Mouse X") * _horizontalSpeed;
 		_yRotate -= Input.GetAxis("Mouse Y") * _verticalSpeed;
-		transform.eulerAngles = new Vector3 (0.0f, _xRotate, 0.0f);
-		_yRotate = Mathf.Clamp (_yRotate, -80, 60);
-		_cam.transform.eulerAngles = new Vector3 (_yRotate, _xRotate, 0.0f);
-
+		
+		RotatePlayer();
+		RotateCamera();
 		// Move head aim target as well (vertical)
 		// _headAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 50) );
 	
@@ -146,6 +147,25 @@ public class PlayerController: PhysicsObject
 			_animator.SetFloat("VelocityForward", _verticalInput, 0.1f, Time.deltaTime);
 			_animator.SetFloat("VelocitySide", _horizontalInput, 0.1f, Time.deltaTime);
 		}
+	}
+
+	private void RotatePlayer()
+	{
+		if (IsOwner) {
+			Debug.Log("sending update message: " + _xRotate);
+			RotatePlayerServerRpc(_xRotate);
+		}
+	}
+
+	private void UpdatePlayerRotation(Quaternion previous, Quaternion current)
+	{
+		transform.rotation = Quaternion.Slerp(previous, current, Time.time * 0.01f);;
+	}
+
+	private void RotateCamera()
+	{
+		_yRotate = Mathf.Clamp (_yRotate, -80, 60);
+		_cam.transform.eulerAngles = new Vector3 (_yRotate, _xRotate, 0.0f);
 	}
 
 	private void CheckItemInteraction() {
@@ -186,8 +206,29 @@ public class PlayerController: PhysicsObject
 				break;
 		}
 	}
+
+	#region RPC connections
+	[ServerRpc]
+	private void SetInitialPositionServerRpc()
+	{
+		Position.Value = new Vector3(100f, 100f, 100f);
+	}
+
+	[ServerRpc]
+	private void RotatePlayerServerRpc(float xRotate)
+	{
+		// Debug.Log("xRotate:" + xRotate);
+		// Rotation.Value = new Vector3 (0.0f, _xRotate, 0.0f);
+		Rotation.Value = Quaternion.Euler(0f, xRotate, 0f);
+		Debug.Log("changing rotation:");
+		Debug.Log(Rotation.Value);
+		// Debug.Log(Rotation.Value);
+	}
+	#endregion
 }
 
 // leftoff: need to finish implementing initial position (to start planet spawning)
 // try Start again, onnetworkspawn didn't work... look for other lifecycle methods?
 // after that, fix movement inputs
+
+// leftoff: lag is coming from second rotation from camera, need to fix this or combine into one single update. then continue organizing player script
