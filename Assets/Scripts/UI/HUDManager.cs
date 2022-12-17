@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
+// using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
-using ServiceLocatorNamespace;
 using UnityEngine.SceneManagement;
 
 public class HUDManager : MonoBehaviour
@@ -49,9 +48,9 @@ public class HUDManager : MonoBehaviour
 	}
 
 	public void DrawPlayerIcons() {
-		foreach (var player in PhotonNetwork.PlayerList) {
-			// Debug.Log(player.NickName);
-		}
+		// foreach (var player in PhotonNetwork.PlayerList) {
+		// 	// Debug.Log(player.NickName);
+		// }
 		// get list of players from PUN
 		// get coord data from list
 	}
@@ -59,7 +58,8 @@ public class HUDManager : MonoBehaviour
 	public void SetPlayerController(PlayerController _playerController) {
 		playerController = _playerController;
 		if (playerNameText != null) {
-			playerNameText.text = playerController.photonView.Owner.NickName;
+			// playerNameText.text = playerController.photonView.Owner.NickName;
+			playerNameText.text = "playernametext";
 		}
 	}
 

@@ -97,3 +97,4 @@ Prototype:
 	- includes launchpad
 - continue with chest/enemy interaction
 - economy, player stats, hud, etc...
+- add sun with directional light (can be the same for all maps)

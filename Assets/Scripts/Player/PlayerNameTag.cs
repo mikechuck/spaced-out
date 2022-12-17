@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
+using Unity.Netcode;
 using TMPro;
 
-public class PlayerNameTag : MonoBehaviourPun
+public class PlayerNameTag : NetworkBehaviour
 {
     [SerializeField]
 	private TextMeshProUGUI nameText;
@@ -15,7 +15,7 @@ public class PlayerNameTag : MonoBehaviourPun
 	}
 
 	private void Start() {
-		if (photonView.IsMine) {
+		if (IsOwner) {
 			return;
 		}
 

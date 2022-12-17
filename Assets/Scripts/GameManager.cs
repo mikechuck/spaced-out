@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,4 +11,10 @@ public class GameManager : MonoBehaviour
     void Awake() {
 		DontDestroyOnLoad(gameObject);
     }
+
+	void Start() {
+		// if (SceneManager.GetActiveScene().name != "Loading") {
+		// 	SceneManager.LoadScene("Loading");
+		// }
+	}
 }

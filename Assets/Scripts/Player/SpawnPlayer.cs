@@ -1,81 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
 public class SpawnPlayer : MonoBehaviour
 {
-	public TerrainData terrainData;
-	public MapData mapData;
-	public TextureData textureData;
-	private GameManager gameManager;
+	// [SerializeField] private NetworkObject playerPrefab;
 
-	void Awake() {
-		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+	public void Spawn() {
+		// if (!IsOwner) { return; }
+
+		// ray cast from origin in random 360 direction (all directions)
+		// find coord where it hits, get the normal of the vector and use as spawn rotation in instantiate
+
+		// SpawnPlayerInstanceServerRpc();
 	}
 
-	public void Spawn(MapData mapData) {
-		float mapScale = terrainData.uniformScale;
-		float heightScale = terrainData.meshHeightMultiplier;
-		AnimationCurve heightCurve = new AnimationCurve(terrainData.meshHeightCurve.keys);
-		float[,] heightMap = mapData.heightMap;
-		int mapSize = heightMap.GetLength(0);
-
-		//Spawn at random location
-		while(true) {
-			int randomX = UnityEngine.Random.Range(0, mapSize);
-			int randomZ = UnityEngine.Random.Range(0, mapSize);
-			int middle = mapSize / 2;
-
-			float locationHeight = heightMap[middle, middle];
-
-			if (locationHeight > 0.3f && locationHeight < 0.7f) {
-				float finalX = ((middle - mapSize/2) * mapScale);
-				float finalZ = (-(middle - mapSize/2) * mapScale) - 150;
-				float finalY = heightCurve.Evaluate(locationHeight) * heightScale * mapScale;
-
-				int players = PhotonNetwork.CurrentRoom.PlayerCount;
-
-				string playerPrefabName = "";
-				switch (players) {
-					case 1:
-						playerPrefabName = "Player 1";
-						break;
-					case 2:
-						playerPrefabName = "Player 2";
-						break;
-					case 3:
-						playerPrefabName = "Player 3";
-						break;
-					case 4:
-						playerPrefabName = "Player 4";
-						break;
-					default:
-						playerPrefabName = "Player 1";
-						break;
-				}
-				
-				GameObject player = PhotonNetwork.Instantiate(playerPrefabName, new Vector3(finalX, finalY + 3, finalZ), Quaternion.identity);
-				player.name = gameManager.playerName;
-				PhotonNetwork.LocalPlayer.NickName = player.name;
-
-				// Temp spawns for objects
-				GameObject wood = PhotonNetwork.Instantiate("Generic Wood", new Vector3(finalX + 10, finalY + 30, finalZ), Quaternion.identity, 0);
-				GameObject axeObject = PhotonNetwork.Instantiate("Wood Axe", new Vector3(finalX + 13, finalY + 10, finalZ + 1), Quaternion.identity, 0);
-				GameObject bucklerObject = PhotonNetwork.Instantiate("Buckler", new Vector3(finalX + 12, finalY + 10, finalZ + 2), Quaternion.identity, 0);
-				GameObject ironSwordObject = PhotonNetwork.Instantiate("Iron Sword", new Vector3(finalX + -12, finalY + 10, finalZ + 2), Quaternion.identity, 0);
-				GameObject treasureChestObject = PhotonNetwork.Instantiate("Treasure Chest", new Vector3(finalX + -13, finalY + 10, finalZ + 2), Quaternion.identity, 0);
-				GameObject woodPickaxeObject = PhotonNetwork.Instantiate("Wood Pickaxe", new Vector3(finalX + -11, finalY + 10, finalZ + -4), Quaternion.identity, 0);
-				GameObject woodSwordObject = PhotonNetwork.Instantiate("Wood Sword", new Vector3(finalX + -12, finalY + 10, finalZ + -2), Quaternion.identity, 0);
-				wood.name = "Generic Wood";
-				axeObject.name = "Wood Axe";
-				bucklerObject.name = "Buckler";
-				ironSwordObject.name = "Iron Sword";
-				treasureChestObject.name = "Treasure Chest";
-				woodPickaxeObject.name = "Wood Pickaxe";
-				woodSwordObject.name = "Wood Sword";
-				break;
-			}
-		}
-	}
+	// [ServerRpc]
+	// void SpawnPlayerInstanceServerRpc(ServerRpcParams rpcParams = default)
+	// {
+	// 	Debug.Log("spawning...");
+	// 	Debug.Log(OwnerClientId);
+	// 	// GetComponent<NetworkObject>().SpawnAsPlayerObject(OwnerClientId);
+	// 	// SpawnPlayerInstance();
+	// 	// NetworkObject playerInstance = Instantiate(playerPrefab);
+	// 	// playerInstance.SpawnWithOwnership(OwnerClientId);
+	// }
 }
