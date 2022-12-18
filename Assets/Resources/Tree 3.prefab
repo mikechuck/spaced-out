@@ -107,7 +107,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6219260073192887208}
-  - component: {fileID: 2875094776519204506}
   m_Layer: 6
   m_Name: Tree 3
   m_TagString: Untagged
@@ -132,20 +131,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2875094776519204506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6702641271806019858}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c3c9c6453e89d24f937fdb3f3e4fd82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp: 200
-  itemDropped: {fileID: 4256242510610817788, guid: 4afdc825f73e6064aa8eab03cc22084b, type: 3}
 --- !u!1 &7168836643302472259
 GameObject:
   m_ObjectHideFlags: 0

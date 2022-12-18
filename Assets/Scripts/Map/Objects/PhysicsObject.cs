@@ -5,38 +5,50 @@ using Unity.Netcode;
 
 public class PhysicsObject : NetworkBehaviour
 {
-	private float _gravityMagnitude = 5f;
+	private float _gravityMagnitude = 500f;
 	private Vector3 _worldUp;
 	public NetworkVariable<Vector3> Position = new NetworkVariable<Vector3>();
 	public NetworkVariable<Quaternion> Rotation = new NetworkVariable<Quaternion>();
 
-	void Update()
+	public override void OnNetworkSpawn()
+	{
+		SetInitialPositionServerRpc();
+	}
+
+	protected virtual void Update()
 	{
 		ApplyPhysics();
 	}
 
-	protected void ApplyPhysics()
+	private void ApplyPhysics()
 	{
 		_worldUp = transform.position.normalized;
 		if (IsOwner)
 		{
 			ApplyGravityServerRpc();
-			// ApplyRotationServerRpc();
+			ApplyRotationServerRpc();
 		}
 		transform.position = Position.Value;
 		transform.rotation = Rotation.Value;
 	}
 
 	[ServerRpc]
+	private void SetInitialPositionServerRpc()
+	{
+		Position.Value = new Vector3(1000f, 1000f, 1000f);
+	}
+
+	[ServerRpc]
 	private void ApplyGravityServerRpc(ServerRpcParams rpcParams = default)
 	{
-		Position.Value += -_worldUp * _gravityMagnitude * Time.deltaTime;
+		Vector3 newPosition = -_worldUp * _gravityMagnitude * Time.deltaTime;
+		Position.Value += newPosition;
 	}
 
 	[ServerRpc]
 	private void ApplyRotationServerRpc(ServerRpcParams rpcParams = default)
 	{
-		// Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, _worldUp);
-		// Rotation.Value = newRotation;
+		Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, _worldUp);
+		Rotation.Value = newRotation;
 	}
 }

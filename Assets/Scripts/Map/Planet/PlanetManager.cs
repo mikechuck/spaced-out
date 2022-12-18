@@ -54,6 +54,8 @@ public class PlanetManager : MonoBehaviour
 				meshObj.tag = "PlanetMesh";
 				meshObj.transform.parent = transform;
 				meshObj.AddComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
+				MeshCollider meshCollider = meshObj.AddComponent<MeshCollider>();
+				meshCollider.convex = true;
 				meshFilters[i] = meshObj.AddComponent<MeshFilter>();
 				meshFilters[i].sharedMesh = new Mesh();
 			}
