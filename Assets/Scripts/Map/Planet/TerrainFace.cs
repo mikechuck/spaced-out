@@ -63,8 +63,7 @@ public class TerrainFace
 				}
 			}
 		}
-		// when going from higher resolution (larger array) to lower,
-		// need to clear first to avoid errors
+		
 		mesh.Clear();
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;

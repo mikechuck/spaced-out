@@ -16,7 +16,7 @@ public class NoiseFilter
 
 	public NoiseFilter()
 	{
-		this._strength = Random.Range(0.1f, 0.3f);
+		this._strength = Random.Range(0.1f, 0.1f);
 		this._numLayers = Random.Range(5, 6);
 		this._baseRoughness = Random.Range(1f, 1.25f);
 		this._roughness = Random.Range(2f, 2.4f);

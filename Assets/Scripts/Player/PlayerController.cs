@@ -59,6 +59,11 @@ public class PlayerController: PhysicsObject
 		// DisablePlayerCams();
 	}
 
+	public void OnCollisionEnter(Collision collision)
+	{
+		Debug.Log("collision");
+	}
+
 	#endregion
 
 	#region Methods
@@ -244,3 +249,5 @@ public class PlayerController: PhysicsObject
 // leftoff: need to finish implementing initial position (to start planet spawning)
 // try Start again, onnetworkspawn didn't work... look for other lifecycle methods?
 // after that, fix movement inputs
+
+// leftoff: get collision and planet/player colliders to work...
