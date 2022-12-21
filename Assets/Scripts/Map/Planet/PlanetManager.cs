@@ -1,29 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
+
+/*
+add mesh as prefab
+add mesh to network list
+spawn mesh instead of creating mesh
+*/
 
 
 public class PlanetManager : MonoBehaviour
 {
 	public int _resolution = 100;
-	private Color _planetColor;
 	private ShapeGenerator _shapeGenerator;
+	[SerializeField] GameObject meshPrefab;
 
 	[SerializeField, HideInInspector]
 	MeshFilter[] meshFilters;
 	TerrainFace[] terrainFaces;
 
-	public void OnShapeSettingsUpdated()
-	{
-		Initialize();
-		GenerateMesh();
-	}
+	public NetworkVariable<Color> PlanetColor = new NetworkVariable<Color>();
 
-	public void OnColorSettingsUpdated()
-	{
-		Initialize();
-		GenerateColors();
-	}
 
 	public void GeneratePlanet()
 	{
@@ -46,18 +44,15 @@ public class PlanetManager : MonoBehaviour
 		for (int i = 0; i < 6; i++)
 		{
 			if (meshFilters[i] == null) {
-				// create a new gameobject to hold meshfilter
-				// add a shared material to new gameobject
-				// add a new mesh filter component to the new gameobject
-				// save to array at this index
-				GameObject meshObj = new GameObject("mesh");
+				GameObject meshObj = Instantiate(meshPrefab);
+				Mesh meshToCollide = new Mesh();
 				meshObj.tag = "PlanetMesh";
 				meshObj.transform.parent = transform;
-				meshObj.AddComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
-				MeshCollider meshCollider = meshObj.AddComponent<MeshCollider>();
-				meshCollider.convex = true;
-				meshFilters[i] = meshObj.AddComponent<MeshFilter>();
-				meshFilters[i].sharedMesh = new Mesh();
+				meshObj.GetComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
+				MeshCollider meshCollider = meshObj.GetComponent<MeshCollider>();
+				meshCollider.sharedMesh = meshToCollide;
+				meshFilters[i] = meshObj.GetComponent<MeshFilter>();
+				meshFilters[i].sharedMesh = meshToCollide;
 			}
 			terrainFaces[i] = new TerrainFace(_shapeGenerator, meshFilters[i].sharedMesh, _resolution, directions[i]);
 		}
@@ -73,13 +68,17 @@ public class PlanetManager : MonoBehaviour
 
 	private void GenerateColors()
 	{
-		float randR = Random.Range(0f, 1f);
-		float randG = Random.Range(0f, 1f);
-		float randB = Random.Range(0f, 1f);
+		if (NetworkManager.Singleton.IsServer)
+		{
+			float randR = Random.Range(0f, 1f);
+			float randG = Random.Range(0f, 1f);
+			float randB = Random.Range(0f, 1f);
+			PlanetColor.Value = new Color(randR, randG, randB);
+		}
+
 		foreach (MeshFilter mesh in meshFilters)
 		{
-			_planetColor = new Color(randR, randG, randB);
-			mesh.GetComponent<MeshRenderer>().sharedMaterial.color = _planetColor;
+			mesh.GetComponent<MeshRenderer>().sharedMaterial.color = PlanetColor.Value;
 		}
 	}
 }

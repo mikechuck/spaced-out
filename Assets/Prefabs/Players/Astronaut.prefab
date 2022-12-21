@@ -97,8 +97,10 @@ GameObject:
   - component: {fileID: 6383815459089429969}
   - component: {fileID: -5046557036663371016}
   - component: {fileID: 4657873050627842468}
-  - component: {fileID: -4149241152784322411}
   - component: {fileID: -8859013145728933718}
+  - component: {fileID: 8083722769973863341}
+  - component: {fileID: 4104985668559153868}
+  - component: {fileID: 1720090052759275213}
   m_Layer: 0
   m_Name: Astronaut
   m_TagString: Player
@@ -159,6 +161,8 @@ MonoBehaviour:
   _cam: {fileID: 3712020928674049837}
   _headAnimationTarget: {fileID: 4234228005869539867}
   _hudPrefab: {fileID: 6586837262861362328, guid: 6b58831236c342a46867007746c00e7c, type: 3}
+  CamRotation:
+    m_InternalValue: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &-5046557036663371016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,24 +190,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameText: {fileID: 8511535641013821208}
---- !u!143 &-4149241152784322411
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2339237254716374016}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &-8859013145728933718
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -218,6 +204,60 @@ CapsuleCollider:
   m_Height: 2.0477633
   m_Direction: 1
   m_Center: {x: 0, y: 1.0201569, z: 0.001144886}
+--- !u!54 &8083722769973863341
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2339237254716374016}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &4104985668559153868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2339237254716374016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
+--- !u!114 &1720090052759275213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2339237254716374016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8243598599554539277
 GameObject:
   m_ObjectHideFlags: 0

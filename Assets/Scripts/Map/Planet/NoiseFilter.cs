@@ -1,49 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Unity.Netcode;
 
 public class NoiseFilter
 {
-	private float _strength;
-	private int _numLayers;
-	private float _baseRoughness;
-	private float _roughness;
-	private float _persistence;
-	private Vector3 _center;
-	private float _minValue;
 	private Noise _noise = new Noise();
+	public NetworkVariable<float> Strength = new NetworkVariable<float>();
+	public NetworkVariable<int> NumLayers = new NetworkVariable<int>();
+	public NetworkVariable<float> BaseRoughness = new NetworkVariable<float>();
+	public NetworkVariable<float> Roughness = new NetworkVariable<float>();
+	public NetworkVariable<float> Persistence = new NetworkVariable<float>();
+	public NetworkVariable<Vector3> Center = new NetworkVariable<Vector3>();
+	public NetworkVariable<float> MinValue = new NetworkVariable<float>();
+
 
 	public NoiseFilter()
 	{
-		this._strength = Random.Range(0.1f, 0.1f);
-		this._numLayers = Random.Range(5, 6);
-		this._baseRoughness = Random.Range(1f, 1.25f);
-		this._roughness = Random.Range(2f, 2.4f);
-		this._persistence = Random.Range(0.4f, 0.5f);
-		this._center = new Vector3(
-			Random.Range(0, 10),
-			Random.Range(0, 10),
-			Random.Range(0, 10)
-		);
-		this._minValue = Random.Range(0.5f, 1f);
+		if (NetworkManager.Singleton.IsServer)
+		{
+			Strength.Value = Random.Range(0.1f, 0.1f);
+			NumLayers.Value = Random.Range(5, 6);
+			BaseRoughness.Value = Random.Range(1f, 1.25f);
+			Roughness.Value = Random.Range(2f, 2.4f);
+			Persistence.Value = Random.Range(0.4f, 0.5f);
+			Center.Value = new Vector3(
+				Random.Range(0, 10),
+				Random.Range(0, 10),
+				Random.Range(0, 10)
+			);
+			MinValue.Value = Random.Range(0.5f, 1f);
+		}
 	}
 
 	public float Evaluate(Vector3 point)
 	{
 		float noiseValue = 0;
-		float frequency = _baseRoughness;
+		float frequency = BaseRoughness.Value;
 		float amplitude = 1;
 
-		for (int i = 0; i < _numLayers; i++)
+		for (int i = 0; i < NumLayers.Value; i++)
 		{
-			float v = _noise.Evaluate(point * frequency + _center);
+			float v = _noise.Evaluate(point * frequency + Center.Value);
 			noiseValue += (v + 1) * 0.5f * amplitude;
-			frequency *= _roughness;
-			amplitude *= _persistence;
+			frequency *= Roughness.Value;
 		}
 		
-		noiseValue = Mathf.Max(0, noiseValue - _minValue);
-		return noiseValue * _strength;
+		noiseValue = Mathf.Max(0, noiseValue - MinValue.Value);
+		return noiseValue * Strength.Value;
 	}
 }

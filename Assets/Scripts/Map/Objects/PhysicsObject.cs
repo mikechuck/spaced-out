@@ -2,17 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 
 public class PhysicsObject : NetworkBehaviour
 {
-	private float _gravityMagnitude = 500f;
+	private float _gravityMagnitude = 9.8f;
 	private Vector3 _worldUp;
+	private Rigidbody _rigidbody;
 	public NetworkVariable<Vector3> Position = new NetworkVariable<Vector3>();
 	public NetworkVariable<Quaternion> Rotation = new NetworkVariable<Quaternion>();
 
 	public override void OnNetworkSpawn()
 	{
+		CheckAndSetComponents();
 		SetInitialPositionServerRpc();
+	}
+
+	private void CheckAndSetComponents()
+	{
+		NetworkTransform networkTransform = GetComponent<NetworkTransform>();
+		NetworkObject networkObject = GetComponent<NetworkObject>();
+		NetworkRigidbody networkRigidbody = GetComponent<NetworkRigidbody>();
+		Rigidbody rigidbody = GetComponent<Rigidbody>();
+
+		if (networkTransform == null || networkObject == null || networkRigidbody == null || rigidbody == null)
+		{
+			Debug.LogError("Physics object missing networking components");
+		}
+		else
+		{
+			_rigidbody = rigidbody;
+		}
 	}
 
 	protected virtual void Update()
@@ -28,21 +48,19 @@ public class PhysicsObject : NetworkBehaviour
 			ApplyGravityServerRpc();
 			ApplyRotationServerRpc();
 		}
-		transform.position = Position.Value;
 		transform.rotation = Rotation.Value;
 	}
 
 	[ServerRpc]
 	private void SetInitialPositionServerRpc()
 	{
-		Position.Value = new Vector3(1000f, 1000f, 1000f);
+		transform.position = new Vector3(0f, 1000f, 0f);
 	}
 
 	[ServerRpc]
 	private void ApplyGravityServerRpc(ServerRpcParams rpcParams = default)
 	{
-		Vector3 newPosition = -_worldUp * _gravityMagnitude * Time.deltaTime;
-		Position.Value += newPosition;
+		_rigidbody.AddForce(-_worldUp * _gravityMagnitude);
 	}
 
 	[ServerRpc]
