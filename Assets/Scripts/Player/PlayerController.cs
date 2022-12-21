@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class PlayerController: PhysicsObject
 {
+
+	#region Fields
+
 	[SerializeField] private Camera _cam;
 	[SerializeField] private GameObject _headAnimationTarget;
 	[SerializeField] private GameObject _hudPrefab;
@@ -23,9 +26,21 @@ public class PlayerController: PhysicsObject
 	private float _yRotate = 0.0f;
 	private float _itemInteractionDistance = 10f;
 	private bool _canMovePlayer = true;
+	private bool _isGrounded1;
+	private bool _isGrounded2;
 
-	private void Start() {
-		// if (!IsOwner) return;
+	#endregion
+
+	#region Network Variables
+
+	public NetworkVariable<Quaternion> CamRotation = new NetworkVariable<Quaternion>();
+
+	#endregion
+
+	#region Lifecyles
+
+	private void Start()
+	{
 		_characterController = GetComponent<CharacterController>();
 		_animator = gameObject.transform.GetChild(1).GetComponent<Animator>();
 		_gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -33,38 +48,28 @@ public class PlayerController: PhysicsObject
 		SetHudManager();
 	}
 
-	public override void OnNetworkSpawn()
+	protected override void Update()
 	{
-		if (IsClient)
-		{
-			Rotation.OnValueChanged += UpdatePlayerRotation;
-		}
-	}
-
-	private void Update()
-	{
+		base.Update();
 		// if (!IsOwner) return;
-		// DisablePlayerCams();
-		// SetInitialPosition();
-		CheckMovementInput();
+		// CheckMovementInput();
 		// CheckItemInteraction();
+
+		// TODO: fix method to disable other player cams
+		// DisablePlayerCams();
 	}
 
-	// public override void OnNetworkSpawn()
-	// {
-	// 	SetInitialPosition();
-	// }
+	public void OnCollisionEnter(Collision collision)
+	{
+		// Debug.Log("collision");
+	}
 
-	// public void SetInitialPosition()
-	// {
-	// 	if (IsOwner)
-	// 	{
-	// 		SetInitialPositionServerRpc();
-	// 	}
-	// 	transform.position = Position.Value;
-	// }
+	#endregion
 
-	private void SetHudManager() {
+	#region Methods
+
+	private void SetHudManager()
+	{
 		if (_hudPrefab != null) {
 			_hud = Instantiate(this._hudPrefab);
 			_hudManager = _hud.GetComponent<HUDManager>();
@@ -90,22 +95,47 @@ public class PlayerController: PhysicsObject
 		}
 	}
 
-	private void CheckMovementInput() {
+	private void CheckMovementInput()
+	{
+		// Player and Camera Rotation
+		_xRotate += Input.GetAxis("Mouse X") * _horizontalSpeed;
+		_yRotate -= Input.GetAxis("Mouse Y") * _verticalSpeed;
+
+		// Player movement
+		_horizontalInput = Input.GetAxis("Horizontal");
+		_verticalInput = Input.GetAxis("Vertical");
+
+		RotatePlayer();
+		HandleJumpInput();
+		HandleMovementInput();
+		AnimatePlayer();
+
+		Vector3 movementVector = transform.position + (transform.right * _horizontalInput + transform.forward * _verticalInput) * _movementSpeed * Time.deltaTime;
+		Vector3 newVelocity = _velocity + movementVector;
+		// MovePlayerServerRpc(movementVector);
+		// Debug.Log("transform.position (playercontroller): " + transform.position);
+		transform.position = Position.Value;
+	}
+
+	private void HandleJumpInput()
+	{
+		// TODO: fix this to only have one bool check (after player is on top of planet)
 		// Gravity + Jump force
 		RaycastHit hitData;
 		// Separate checks: one for velocity floor, one for letting rapid jumps
-		bool isGrounded1 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.5f);
-		bool isGrounded2 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.3f);
-		if (isGrounded1) {
+		_isGrounded1 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.5f);
+		_isGrounded2 = Physics.Raycast(transform.position, -transform.up, out hitData, 3.3f);
+		if (_isGrounded1)
+		{
 			float velocityForward = _animator.GetFloat("VelocityForward");
 			bool allowJump = velocityForward >= 0f;
 			if (Input.GetKeyDown(KeyCode.Space) && allowJump) {
 				_animator.SetTrigger("Jumping");
 				_velocity.y += Mathf.Sqrt(_jumpForce * -50f);
-				// _characterController.Move(_velocity * Time.deltaTime);
 			}
 		}
-		if (isGrounded2) {
+		if (_isGrounded2)
+		{
 			if (_velocity.y < 0) {
 				_velocity.y = 0f;
 			}
@@ -113,13 +143,12 @@ public class PlayerController: PhysicsObject
 		} else {
 			_canMovePlayer = false;
 		}
+	}
 
-        _characterController.Move(_velocity * Time.deltaTime);
-
-		if (_canMovePlayer) {
-			_horizontalInput = Input.GetAxis("Horizontal");
-			_verticalInput = Input.GetAxis("Vertical");
-
+	private void HandleMovementInput()
+	{
+		if (_canMovePlayer)
+		{
 			// Sprinting
 			if (Input.GetKey(KeyCode.LeftShift) && _verticalInput > 0) {
 				_verticalInput *= 2f;
@@ -130,58 +159,47 @@ public class PlayerController: PhysicsObject
 				_verticalInput /= 1.5f;
 			}
 		}
-		_characterController.Move((transform.right * _horizontalInput * _movementSpeed + transform.forward * _verticalInput * _movementSpeed) * Time.deltaTime);
+	}
 
-
-		// Camera movement
-		_xRotate += Input.GetAxis("Mouse X") * _horizontalSpeed;
-		_yRotate -= Input.GetAxis("Mouse Y") * _verticalSpeed;
-		
-		RotatePlayer();
-		RotateCamera();
-		// Move head aim target as well (vertical)
+	private void RotatePlayer()
+	{
+		if (IsOwner)
+		{
+			RotatePlayerServerRpc(_xRotate, _yRotate);
+		}
+		transform.rotation = Rotation.Value;
+		_cam.transform.rotation = CamRotation.Value;
+		// TODO: hook up head animation once rigging is done
 		// _headAnimationTarget.transform.position = Camera.main.ScreenToWorldPoint( new Vector3(Screen.width/2, Screen.height/2, 50) );
-	
-		// Animating
-		if (isGrounded1) {
+	}
+
+	private void AnimatePlayer()
+	{
+		if (_isGrounded1)
+		{
 			_animator.SetFloat("VelocityForward", _verticalInput, 0.1f, Time.deltaTime);
 			_animator.SetFloat("VelocitySide", _horizontalInput, 0.1f, Time.deltaTime);
 		}
 	}
 
-	private void RotatePlayer()
+	private void CheckItemInteraction()
 	{
-		if (IsOwner) {
-			Debug.Log("sending update message: " + _xRotate);
-			RotatePlayerServerRpc(_xRotate);
-		}
-	}
-
-	private void UpdatePlayerRotation(Quaternion previous, Quaternion current)
-	{
-		transform.rotation = Quaternion.Slerp(previous, current, Time.time * 0.01f);;
-	}
-
-	private void RotateCamera()
-	{
-		_yRotate = Mathf.Clamp (_yRotate, -80, 60);
-		_cam.transform.eulerAngles = new Vector3 (_yRotate, _xRotate, 0.0f);
-	}
-
-	private void CheckItemInteraction() {
 		GameObject hitObject = CastRay();
-		if (hitObject) {
+		if (hitObject)
+		{
 			HandleObjectHit(hitObject);
 		} else {
 			// _hudManager.ShowItemInfo("");
 		}
 	}
 
-	private GameObject CastRay() {
+	private GameObject CastRay()
+	{
 		Ray ray = new Ray(_cam.transform.position, transform.forward);
 		Debug.DrawRay(_cam.transform.position, transform.forward, Color.green);
 		RaycastHit hitData;
-        if (Physics.Raycast(ray, out hitData)) {
+        if (Physics.Raycast(ray, out hitData))
+		{
 			if (hitData.collider.gameObject.layer == 6) {
 				if (hitData.distance <= _itemInteractionDistance) {
 					return hitData.collider.gameObject;
@@ -191,7 +209,8 @@ public class PlayerController: PhysicsObject
 		return null;
 	}
 
-	private void HandleObjectHit(GameObject hitObject) {
+	private void HandleObjectHit(GameObject hitObject)
+	{
 		Transform parent = hitObject.gameObject.transform.parent;
 		// _hudManager.ShowItemInfo(parent.name);
 
@@ -207,28 +226,26 @@ public class PlayerController: PhysicsObject
 		}
 	}
 
+	#endregion
+
 	#region RPC connections
+
 	[ServerRpc]
-	private void SetInitialPositionServerRpc()
+	private void MovePlayerServerRpc(Vector3 playerPosition)
 	{
-		Position.Value = new Vector3(100f, 100f, 100f);
+		Position.Value = playerPosition;
 	}
 
 	[ServerRpc]
-	private void RotatePlayerServerRpc(float xRotate)
+	private void RotatePlayerServerRpc(float xRotate, float yRotate)
 	{
-		// Debug.Log("xRotate:" + xRotate);
-		// Rotation.Value = new Vector3 (0.0f, _xRotate, 0.0f);
 		Rotation.Value = Quaternion.Euler(0f, xRotate, 0f);
-		Debug.Log("changing rotation:");
-		Debug.Log(Rotation.Value);
-		// Debug.Log(Rotation.Value);
+		CamRotation.Value = Quaternion.Euler(yRotate, xRotate, 0f);
 	}
+
 	#endregion
 }
 
 // leftoff: need to finish implementing initial position (to start planet spawning)
 // try Start again, onnetworkspawn didn't work... look for other lifecycle methods?
 // after that, fix movement inputs
-
-// leftoff: lag is coming from second rotation from camera, need to fix this or combine into one single update. then continue organizing player script

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class MainSceneManager : MonoBehaviour
+public class MainSceneManager : NetworkBehaviour
 {
-	
 	[SerializeField] private List<Material> skyboxOptions;
 	[SerializeField] private PlanetManager planetManager;
 	private SpawnPlayer spawnPlayer;
+	public NetworkVariable<int> SkyboxIndex = new NetworkVariable<int>();
 
 	#region UI
 	void OnGUI()
@@ -27,11 +27,15 @@ public class MainSceneManager : MonoBehaviour
 	#endregion
 	
     void Start()
-	{	
+	{
 		CreateClientConnection();
 		EnableServerDebugging();
-		StartSceneCreation();
     }
+
+	public override void OnNetworkSpawn()
+	{
+		StartSceneCreation();
+	}
 
 	private void CreateClientConnection()
 	{
@@ -51,23 +55,24 @@ public class MainSceneManager : MonoBehaviour
 
 	private void StartSceneCreation()
 	{	
-		if (NetworkManager.Singleton.IsServer)
-		{
-			SetSkybox();
-			planetManager.GeneratePlanet();
-			// spawn launchpad
-			// spawn chests
-			// spawn enemies
-		}
+		
+		SetSkybox();
+		planetManager.GeneratePlanet();
+		// spawn launchpad
+		// spawn chests
+		// spawn enemies
 	}
 
 	private void SetSkybox()
 	{
-		System.Random r = new System.Random();
-		int randomInt = r.Next(skyboxOptions.Count - 1);
-		RenderSettings.skybox = skyboxOptions[randomInt];
-		// todo: skyboxes are not matching up between client and server,
-		// need to set network variable with skybox index and use it on client side
+		if (NetworkManager.Singleton.IsServer)
+		{
+			System.Random r = new System.Random();
+			int randomInt = r.Next(skyboxOptions.Count - 1);
+
+			SkyboxIndex.Value = Random.Range(0, skyboxOptions.Count -1);
+		}
+		RenderSettings.skybox = skyboxOptions[SkyboxIndex.Value];
 	}
 }
 

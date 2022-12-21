@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Build.Reporting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,17 +14,22 @@ public class BuildUtility
 	[MenuItem("BuildUtility/Build and Start Server")]
 	static void BuildPlayer ()
 	{
+		string playerPath = "Builds/Windows/Spaced Out.exe";
 		BuildTarget buildTarget = BuildTarget.StandaloneWindows;
-		string path = GetProjectFolderPath() + "/Builds/";
-		var splitPaths = path.Split('/');
-		var filename = splitPaths[splitPaths.Length-1];
-		string buildPath = path + filename  + "/";
-		string playerPath = buildPath + "Spaced Out.exe";
+		BuildOptions buildOptions = BuildOptions.None;
+		BuildReport report = BuildPipeline.BuildPlayer(GetScenePaths(), playerPath, buildTarget, buildOptions);
+		BuildSummary summary = report.summary;
 
-		EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, buildTarget);
-		BuildPipeline.BuildPlayer(GetScenePaths(), playerPath, buildTarget, BuildOptions.None);
+		if (summary.result == BuildResult.Succeeded)
+        {
+            Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
+			StartServer();
+        }
 
-		StartServer();
+        if (summary.result == BuildResult.Failed)
+        {
+            Debug.Log("Build failed");
+        }
 	}
 
 	static string[] GetScenePaths()

@@ -98,3 +98,9 @@ Prototype:
 - continue with chest/enemy interaction
 - economy, player stats, hud, etc...
 - add sun with directional light (can be the same for all maps)
+
+
+Skybox:
+- change directional skybox light depending on the index (realistic direction)
+Planet:
+- make sure color and noise is synced with server

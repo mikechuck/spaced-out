@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Unity.Netcode;
 
 public class ShapeGenerator
 {
-	private float _planetRadius;
 	private int _numNoiseLayers;
 	private NoiseFilter[] _noiseFilters;
+	public NetworkVariable<int> PlanetRadius = new NetworkVariable<int>();
+
 
 	public ShapeGenerator()
 	{
-		_planetRadius = Random.Range(550f, 850f);
+		if (NetworkManager.Singleton.IsServer)
+		{
+			this.PlanetRadius.Value = Random.Range(550, 850);
+		}
 		_numNoiseLayers = Random.Range(3, 5);
 		CreateNoiseFilters();
 	}
@@ -37,6 +41,6 @@ public class ShapeGenerator
 		{
 			elevation += _noiseFilters[i].Evaluate(pointOnUnitSphere) * firstLayerValue;
 		}
-		return pointOnUnitSphere * _planetRadius * (1 + elevation);
+		return pointOnUnitSphere * PlanetRadius.Value * (1 + elevation);
 	}
 }
