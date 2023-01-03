@@ -9,27 +9,10 @@ public class MainSceneManager : NetworkBehaviour
 	[SerializeField] private PlanetManager planetManager;
 	private SpawnPlayer spawnPlayer;
 	public NetworkVariable<int> SkyboxIndex = new NetworkVariable<int>();
-
-	#region UI
-	void OnGUI()
-	{
-		GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-		StatusLabels();
-		GUILayout.EndArea();
-	}
-
-	static void StatusLabels()
-	{
-		var mode = NetworkManager.Singleton.IsHost ? "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
-		GUILayout.Label("Transport: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
-		GUILayout.Label("Mode: " + mode);
-	}
-	#endregion
 	
     void Start()
 	{
 		CreateClientConnection();
-		EnableServerDebugging();
     }
 
 	public override void OnNetworkSpawn()
@@ -42,14 +25,6 @@ public class MainSceneManager : NetworkBehaviour
 		if (!NetworkManager.Singleton.IsServer)
 		{
 			NetworkManager.Singleton.StartClient();
-		}
-	}
-
-	private void EnableServerDebugging()
-	{
-		if (NetworkManager.Singleton.IsServer) 
-		{
-			gameObject.GetComponent<DebugStuff>().enabled = true;
 		}
 	}
 

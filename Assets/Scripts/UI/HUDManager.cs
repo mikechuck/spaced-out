@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
@@ -9,25 +8,24 @@ using UnityEngine.SceneManagement;
 
 public class HUDManager : MonoBehaviour
 {
-	public TextMeshProUGUI itemNameText;
-	public TextMeshProUGUI playerNameText;
-	public TextMeshProUGUI playerCoordXText;
-	public TextMeshProUGUI playerCoordYText;
-	public GameObject minimapContent;
-	//leftoff: add logic for minimap pings and info
-	public int inventorySize = 8;
-	public float inventoryScale = 1f;
-	private Sprite[] inventorySprites;
-	private int selectedInventorySlot = 0;
-	private GameObject[] inventorySlots;
-	private Item[] playerInventory;
-	private InventoryManager inventoryManager;
-	private PlayerController playerController;
+	[SerializeField] private TextMeshProUGUI _playersInGameText;
+	[SerializeField] private TextMeshProUGUI _itemNameText;
+	[SerializeField] private TextMeshProUGUI _playerNameText;
+	[SerializeField] private TextMeshProUGUI _playerCoordXText;
+	[SerializeField] private TextMeshProUGUI _playerCoordYText;
+	[SerializeField] private int _inventorySize = 8;
+	private int _selectedInventorySlot = 0;
+	private GameObject[] _inventorySlots;
+	private Item[] _playerInventory;
+	private InventoryManager _inventoryManager;
+	private PlayerController _playerController;
 
 	// UI Colors
-	public Color inventorySlotColor = new Color32(91, 75, 56, 225);
-	public Color inventorySlotBorderColor = new Color32(56, 42, 30, 225);
-	public Color selectedInventorySlotBorderColor = new Color32(255, 255, 255, 225);
+	[SerializeField] private Color _inventorySlotColor = new Color32(91, 75, 56, 225);
+	[SerializeField] private Color _inventorySlotBorderColor = new Color32(56, 42, 30, 225);
+	[SerializeField] private Color _selectedInventorySlotBorderColor = new Color32(255, 255, 255, 225);
+
+	#region Lifecycle
 
 	private void Awake() {
 		this.transform.SetParent(GameObject.Find("Canvas").GetComponent<Transform>(), false);
@@ -35,67 +33,62 @@ public class HUDManager : MonoBehaviour
 
 	void Update() {
 		ScrollHandler();
-		DrawPlayerIcons();
-		if (playerController == null) {
+		UpdatePlayerCount();
+		if (_playerController == null) {
 			Destroy(this.gameObject);
 			return;
 		}
 	}
 
+	#endregion
+
 	public void SetPlayerCoordinates(float coordX, float coordY) {
-		playerCoordXText.SetText(((int)coordX).ToString());
-		playerCoordYText.SetText(((int)coordY).ToString());
+		_playerCoordXText.SetText(((int)coordX).ToString());
+		_playerCoordYText.SetText(((int)coordY).ToString());
 	}
 
-	public void DrawPlayerIcons() {
-		// foreach (var player in PhotonNetwork.PlayerList) {
-		// 	// Debug.Log(player.NickName);
-		// }
-		// get list of players from PUN
-		// get coord data from list
+	public void SetPlayerController(PlayerController playerController) {
+		_playerController = playerController;
 	}
 
-	public void SetPlayerController(PlayerController _playerController) {
-		playerController = _playerController;
-		if (playerNameText != null) {
-			// playerNameText.text = playerController.photonView.Owner.NickName;
-			playerNameText.text = "playernametext";
-		}
+	public void SetInventoryManager(InventoryManager inventoryManager) {
+		_inventoryManager = inventoryManager;
 	}
 
-	public void SetInventoryManager(InventoryManager _inventoryManager) {
-		inventoryManager = _inventoryManager;
+	public void SetPlayerName(string playerName)
+	{
+		_playerNameText.text = playerName;
 	}
 
 	private void ScrollHandler() {
 		int scrollValue = -(int)Input.mouseScrollDelta.y;
-		int previousSelectorValue = selectedInventorySlot;
+		int previousSelectorValue = _selectedInventorySlot;
 
 		if (scrollValue != 0) {
-			if (selectedInventorySlot == 0 && scrollValue != -1) {
-				selectedInventorySlot += (int)scrollValue;
-			} else if (selectedInventorySlot == inventorySize - 1 && scrollValue != 1) {
-				selectedInventorySlot += (int)scrollValue;
-			} else if (selectedInventorySlot > 0 && selectedInventorySlot < inventorySize - 1){
-				selectedInventorySlot += (int)scrollValue;
+			if (_selectedInventorySlot == 0 && scrollValue != -1) {
+				_selectedInventorySlot += (int)scrollValue;
+			} else if (_selectedInventorySlot == _inventorySize - 1 && scrollValue != 1) {
+				_selectedInventorySlot += (int)scrollValue;
+			} else if (_selectedInventorySlot > 0 && _selectedInventorySlot < _inventorySize - 1){
+				_selectedInventorySlot += (int)scrollValue;
 			}
-			inventorySlots[previousSelectorValue].transform.GetChild(0).GetComponent<Image>().color = inventorySlotBorderColor;
-			inventorySlots[selectedInventorySlot].transform.GetChild(0).GetComponent<Image>().color = selectedInventorySlotBorderColor;
+			_inventorySlots[previousSelectorValue].transform.GetChild(0).GetComponent<Image>().color = _inventorySlotBorderColor;
+			_inventorySlots[_selectedInventorySlot].transform.GetChild(0).GetComponent<Image>().color = _selectedInventorySlotBorderColor;
 
-			Item selectedItem = playerInventory[selectedInventorySlot];
+			Item selectedItem = _playerInventory[_selectedInventorySlot];
 			if (selectedItem != null) {
-				inventoryManager.SpawnSelectedItem(selectedItem);
+				_inventoryManager.SpawnSelectedItem(selectedItem);
 			}
 		}
 	}
 
 	public void DrawInventoryHud(Item[] inventory) {
-		playerInventory = inventory;
-		inventorySlots = GameObject.FindGameObjectsWithTag("Inventory Slot");
+		_playerInventory = inventory;
+		_inventorySlots = GameObject.FindGameObjectsWithTag("Inventory Slot");
 
-		for (int i = 0; i < inventorySlots.Length; i++) {
-			Image currentSlot = inventorySlots[i].transform.GetChild(1).GetComponent<Image>();
-			TMP_Text quantityText = inventorySlots[i].transform.GetChild(2).GetComponent<TMP_Text>();
+		for (int i = 0; i < _inventorySlots.Length; i++) {
+			Image currentSlot = _inventorySlots[i].transform.GetChild(1).GetComponent<Image>();
+			TMP_Text quantityText = _inventorySlots[i].transform.GetChild(2).GetComponent<TMP_Text>();
 			if (inventory[i] != null) {
 				currentSlot.enabled = true;
         		currentSlot.sprite = inventory[i].itemData.itemImage;
@@ -106,13 +99,18 @@ public class HUDManager : MonoBehaviour
 					quantityText.text = "";
 				}
 			} else {
-				currentSlot.color = inventorySlotColor;
+				currentSlot.color = _inventorySlotColor;
 				quantityText.text = "";
 			}
 		}
 	}
 
 	public void ShowItemInfo(string itemName) {
-		itemNameText.SetText(itemName);
+		_itemNameText.SetText(itemName);
+	}
+
+	private void UpdatePlayerCount()
+	{
+		_playersInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
 	}
 }
