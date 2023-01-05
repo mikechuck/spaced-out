@@ -26,6 +26,7 @@ public class PlayerController: PhysicsObject
 	private float _yRotate = 0.0f;
 	private float _itemInteractionDistance = 10f;
 	private bool _canMovePlayer = true;
+	private Vector3 _playerLastPosition = new Vector3(0f, 0f, 0f);
 
 	#endregion
 
@@ -40,8 +41,8 @@ public class PlayerController: PhysicsObject
 
 	public override void OnNetworkSpawn()
 	{
-		if (!IsOwner) return;
 		base.OnNetworkSpawn();
+		DisableOtherPlayerCams();
 		SetInitialPosition();
 	}
 
@@ -57,8 +58,7 @@ public class PlayerController: PhysicsObject
 
 	private void Update()
 	{
-		if (!IsOwner) return;
-		// CheckMovementInput();
+		MovePlayer();
 	}
 
 	#endregion
@@ -83,15 +83,29 @@ public class PlayerController: PhysicsObject
 		_hudManager.SetPlayerName(_playerName.Value);
 	}
 
+	private void DisableOtherPlayerCams()
+	{
+		if (!IsOwner)
+		{
+			GameObject cam = GameObject.Find("Player Camera");
+			cam.SetActive(false);
+		}
+	}
+
 	private void SetInitialPosition()
 	{
 		float randomZ = Random.Range(0f, 5f);
 		float randomX = Random.Range(0f, 5f);
 		Vector3 newPosition = new Vector3(randomX, 800f, randomZ);
-		SetInitialPositionServerRpc(newPosition);
+		if (IsClient && IsOwner)
+		{
+			Debug.Log("sending initial position to server");
+			Debug.Log(newPosition);
+			SetInitialPositionServerRpc(newPosition);
+		}
 	}
 
-	private void CheckMovementInput()
+	private void MovePlayer()
 	{
 		// Player and Camera Rotation
 		_xRotate += Input.GetAxis("Mouse X") * _horizontalSpeed;
@@ -100,17 +114,29 @@ public class PlayerController: PhysicsObject
 		// Player movement
 		_horizontalInput = Input.GetAxis("Horizontal");
 		_verticalInput = Input.GetAxis("Vertical");
+		ApplyPlayerMovement();
+	}
+
+	private void ApplyPlayerMovement()
+	{
+		Vector3 newPosition = transform.position + (transform.right * _horizontalInput + transform.forward * _verticalInput) * _movementSpeed * Time.deltaTime;
+		// Only update position if it's changed
+		if (newPosition != transform.position)
+		{
+			if (IsServer)
+			{
+				transform.position = _playerLastPosition;
+			}
+			else if (IsClient && IsOwner)
+			{
+				ApplyPlayerMovementServerRpc(newPosition);
+			}
+		}
 	}
 
 	#endregion
 
 	#region RPC connections
-
-	[ServerRpc]
-	private void MovePlayerServerRpc(Vector3 playerPosition)
-	{
-		// Position.Value = playerPosition;
-	}
 
 	[ServerRpc]
 	private void RotatePlayerServerRpc(float xRotate, float yRotate)
@@ -120,17 +146,23 @@ public class PlayerController: PhysicsObject
 	}
 
 	[ServerRpc]
-	private void SetInitialPositionServerRpc(Vector3 position)
+	private void SetInitialPositionServerRpc(Vector3 initialPosition)
 	{
-		transform.position = position;
+		transform.position = initialPosition;
+		_playerLastPosition = initialPosition;
+	}
+
+	[ServerRpc]
+	private void ApplyPlayerMovementServerRpc(Vector3 newPosition)
+	{
+		_playerLastPosition = newPosition;
 	}
 
 	[ServerRpc]
 	private void PlayerJumpServerRpc()
 	{
-		// Debug.Log("jumping server");
-		// _rigidbody.AddForce(_worldUp * _jumpForce);
-		// Position.Value = transform.position;
+		Debug.Log("jumping server");
+		_rigidbody.AddForce(_worldUp * _jumpForce);
 	}
 
 	#endregion

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-	public string playerName = "";
+	public string playerName = "Player Name (GM)";
 	public string levelSeed = "";
 	
     void Awake() {

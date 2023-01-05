@@ -2669,17 +2669,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b57764c881be0d439b9f890373269dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playersInGameText: {fileID: 6209660897956650982}
-  itemNameText: {fileID: 8597564147926987345}
-  playerNameText: {fileID: 2166543873854280316}
-  playerCoordXText: {fileID: 4373591983657380464}
-  playerCoordYText: {fileID: 2080408288808421078}
-  minimapContent: {fileID: 683298126420714270}
-  inventorySize: 8
-  inventoryScale: 1
-  inventorySlotColor: {r: 0.35686275, g: 0.29411766, b: 0.21960784, a: 0.88235295}
-  inventorySlotBorderColor: {r: 0.21960784, g: 0.16470589, b: 0.11764706, a: 0.88235295}
-  selectedInventorySlotBorderColor: {r: 1, g: 1, b: 1, a: 0.88235295}
+  _playersInGameText: {fileID: 6209660897956650982}
+  _itemNameText: {fileID: 8597564147926987345}
+  _playerNameText: {fileID: 2166543873854280316}
+  _playerCoordXText: {fileID: 4373591983657380464}
+  _playerCoordYText: {fileID: 2080408288808421078}
+  _inventorySize: 8
+  _inventorySlotColor: {r: 0.35686275, g: 0.29411766, b: 0.21960784, a: 0.88235295}
+  _inventorySlotBorderColor: {r: 0.21960784, g: 0.16470589, b: 0.11764706, a: 0.88235295}
+  _selectedInventorySlotBorderColor: {r: 1, g: 1, b: 1, a: 0.88235295}
 --- !u!225 &1184161611479411035
 CanvasGroup:
   m_ObjectHideFlags: 0
