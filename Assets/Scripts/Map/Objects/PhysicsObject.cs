@@ -9,10 +9,12 @@ public class PhysicsObject : NetworkBehaviour
 	private float _gravityMagnitude = 9.8f;
 	protected Rigidbody _rigidbody;
 	protected Vector3 _worldUp;
-	private bool _isGrounded = false;
+	// private bool _isGrounded = false;
 	public NetworkVariable<Vector3> Position = new NetworkVariable<Vector3>();
 	public NetworkVariable<Quaternion> Rotation = new NetworkVariable<Quaternion>();
-	public NetworkVariable<bool> IsGrounded = new NetworkVariable<bool>();
+	protected NetworkVariable<bool> IsGrounded = new NetworkVariable<bool>();
+
+	#region Lifecycle
 
 	public override void OnNetworkSpawn()
 	{
@@ -21,48 +23,63 @@ public class PhysicsObject : NetworkBehaviour
 
 	private void FixedUpdate()
 	{
-		// if (!IsOwner) return;
-		// ApplyPhysics();
+		if (IsServer)
+		{
+			UpdateServer();
+		}
+		if (IsOwner && IsClient)
+		{
+			UpdateClient();
+		}
 	}
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		_isGrounded = true;
-		// IsGrounded.Value = true;
+		IsGrounded.Value = true;
 	}
 
 	private void OnCollisionExit(Collision collision)
 	{
-		_isGrounded = false;
-		// IsGrounded.Value = false;
+		IsGrounded.Value = false;
 	}
 
-	private void ApplyPhysics()
+	#endregion
+
+	#region Methods
+
+	private void UpdateServer()
 	{
-		_worldUp = transform.position.normalized;
-		if (!_isGrounded)
-		{
-			_rigidbody.AddForce(-_worldUp * _gravityMagnitude);
-		}
-		// ApplyGravityServerRpc();
-		ApplyRotationServerRpc();
-		// transform.position = Position.Value;
+		transform.position = Position.Value;
 		transform.rotation = Rotation.Value;
 	}
 
-	// [ServerRpc]
-	// private void ApplyGravityServerRpc(ServerRpcParams rpcParams = default)
-	// {
-	// 	if (!IsGrounded.Value)
-	// 	{
-	// 		_rigidbody.AddForce(-_worldUp * _gravityMagnitude * Time.deltaTime);
-	// 		// Position.Value = transform.position;
-	// 	}
-	// }
+	private void UpdateClient()
+	{
+		_worldUp = transform.position.normalized;
+		if (!IsGrounded.Value)
+		{
+			Vector3 gravityMovementVector = -_worldUp * _gravityMagnitude * 0.05f;
+			ApplyGravityServerRpc(gravityMovementVector);
+		}
+		ApplyRotationServerRpc(_worldUp);
+	}
+
+	#endregion
+
+	#region Server RPC methods
 
 	[ServerRpc]
-	private void ApplyRotationServerRpc(ServerRpcParams rpcParams = default)
+	private void ApplyGravityServerRpc(Vector3 gravityForce)
 	{
-		Rotation.Value = Quaternion.FromToRotation(Vector3.up, _worldUp);
+		// TODO: need to find way to sync this while still using Position network variables
+		// _rigidbody.AddForce(gravityForce);
 	}
+
+	[ServerRpc]
+	private void ApplyRotationServerRpc(Vector3 worldUp)
+	{
+		// Rotation.Value = Quaternion.FromToRotation(Vector3.up, worldUp);
+	}
+
+	#endregion
 }

@@ -16,17 +16,14 @@ public class PlayerController: PhysicsObject
 	private CharacterController _characterController;
 	private Animator _animator;
 	private Vector3 _velocity;
-	private float _movementSpeed = 5f;
+	[SerializeField] private float _movementSpeed = 5f;
 	private float _jumpForce = 2000f;
-	private float _horizontalInput;
-	private float _verticalInput;
 	private float _horizontalSpeed = 1f;
 	private float _verticalSpeed = 1f;
 	private float _xRotate = 0.0f;
 	private float _yRotate = 0.0f;
 	private float _itemInteractionDistance = 10f;
 	private bool _canMovePlayer = true;
-	private Vector3 _playerLastPosition = new Vector3(0f, 0f, 0f);
 
 	#endregion
 
@@ -58,12 +55,49 @@ public class PlayerController: PhysicsObject
 
 	private void Update()
 	{
-		MovePlayer();
+		if (IsServer)
+		{
+			UpdateServer();
+		}
+
+		if (IsClient && IsOwner)
+		{
+			UpdateClient();
+		}
 	}
 
 	#endregion
 
 	#region Methods
+
+	private void UpdateServer()
+	{
+		// transform.position = Position.Value;
+		// _cam.transform.rotation = _camRotation.Value;
+	}
+
+	private void UpdateClient()
+	{
+		// Player and Camera Rotation
+		_xRotate += Input.GetAxis("Mouse X") * _horizontalSpeed;
+		_yRotate -= Input.GetAxis("Mouse Y") * _verticalSpeed;
+
+		// Player movement
+		float horizontalInput = Input.GetAxis("Horizontal");
+		float verticalInput = Input.GetAxis("Vertical");
+
+		Vector3 movementVector = (transform.right * horizontalInput + transform.forward * verticalInput) * _movementSpeed * Time.deltaTime;
+		if (movementVector != Vector3.zero)
+		{
+			Vector3 newPosition = transform.position + movementVector;
+			ApplyPlayerMovementServerRpc(newPosition);
+		}
+		if (_xRotate != 0f && _yRotate != 0f)
+		{
+			// _cam.transform.rotation = _camRotation.Value;
+			RotatePlayerServerRpc(_xRotate, _yRotate);
+		}
+	}
 
 	private void SetHudManager()
 	{
@@ -94,43 +128,12 @@ public class PlayerController: PhysicsObject
 
 	private void SetInitialPosition()
 	{
-		float randomZ = Random.Range(0f, 5f);
-		float randomX = Random.Range(0f, 5f);
-		Vector3 newPosition = new Vector3(randomX, 800f, randomZ);
+		float randomZ = Random.Range(0f, 500f);
+		float randomX = Random.Range(0f, 500f);
+		Vector3 newPosition = new Vector3(randomX, 700f, randomZ);
 		if (IsClient && IsOwner)
 		{
-			Debug.Log("sending initial position to server");
-			Debug.Log(newPosition);
 			SetInitialPositionServerRpc(newPosition);
-		}
-	}
-
-	private void MovePlayer()
-	{
-		// Player and Camera Rotation
-		_xRotate += Input.GetAxis("Mouse X") * _horizontalSpeed;
-		_yRotate -= Input.GetAxis("Mouse Y") * _verticalSpeed;
-
-		// Player movement
-		_horizontalInput = Input.GetAxis("Horizontal");
-		_verticalInput = Input.GetAxis("Vertical");
-		ApplyPlayerMovement();
-	}
-
-	private void ApplyPlayerMovement()
-	{
-		Vector3 newPosition = transform.position + (transform.right * _horizontalInput + transform.forward * _verticalInput) * _movementSpeed * Time.deltaTime;
-		// Only update position if it's changed
-		if (newPosition != transform.position)
-		{
-			if (IsServer)
-			{
-				transform.position = _playerLastPosition;
-			}
-			else if (IsClient && IsOwner)
-			{
-				ApplyPlayerMovementServerRpc(newPosition);
-			}
 		}
 	}
 
@@ -139,23 +142,23 @@ public class PlayerController: PhysicsObject
 	#region RPC connections
 
 	[ServerRpc]
-	private void RotatePlayerServerRpc(float xRotate, float yRotate)
-	{
-		Rotation.Value = Quaternion.Euler(0f, xRotate, 0f);
-		// _camRotation.Value = Quaternion.Euler(yRotate, xRotate, 0f);
-	}
-
-	[ServerRpc]
 	private void SetInitialPositionServerRpc(Vector3 initialPosition)
 	{
 		transform.position = initialPosition;
-		_playerLastPosition = initialPosition;
+		Position.Value = initialPosition;
+	}
+
+	[ServerRpc]
+	private void RotatePlayerServerRpc(float xRotate, float yRotate)
+	{
+		Rotation.Value = Quaternion.Euler(0f, xRotate, 0f);;
+		_camRotation.Value = Quaternion.Euler(yRotate, yRotate, 0f);
 	}
 
 	[ServerRpc]
 	private void ApplyPlayerMovementServerRpc(Vector3 newPosition)
 	{
-		_playerLastPosition = newPosition;
+		Position.Value = newPosition;
 	}
 
 	[ServerRpc]
@@ -170,5 +173,6 @@ public class PlayerController: PhysicsObject
 
 // leftoff: finish hooking up playername to hud (should be good, just test)
 
-// leftoff: need to finish implementing initial position (to start planet spawning)
-// - FIRST: switch away from network transform/rigidbody and go back to pure networkvariables (best performance)
+// leftoff: fix gravity
+
+// leftoff: complete cam rotation
