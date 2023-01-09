@@ -12,11 +12,14 @@ public class MainSceneManager : NetworkBehaviour
 	
     void Start()
 	{
+		Debug.Log("start");
 		CreateClientConnection();
+		// StartSceneCreation();
     }
 
 	public override void OnNetworkSpawn()
 	{
+		Debug.Log("network spawn");
 		StartSceneCreation();
 	}
 
@@ -24,13 +27,14 @@ public class MainSceneManager : NetworkBehaviour
 	{
 		if (!NetworkManager.Singleton.IsServer)
 		{
+			Debug.Log("creating client connection");
 			NetworkManager.Singleton.StartClient();
 		}
 	}
 
 	private void StartSceneCreation()
 	{	
-		
+		Debug.Log("starting scene creation");
 		SetSkybox();
 		planetManager.GeneratePlanet();
 		// spawn launchpad

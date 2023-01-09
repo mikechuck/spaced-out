@@ -55,6 +55,7 @@ public class PlayerController: PhysicsObject
 
 	private void Update()
 	{
+		base.Update();
 		if (IsServer)
 		{
 			UpdateServer();
@@ -72,15 +73,17 @@ public class PlayerController: PhysicsObject
 
 	private void UpdateServer()
 	{
-		// transform.position = Position.Value;
+		// Debug.Log(_camRotation.Value);
 		// _cam.transform.rotation = _camRotation.Value;
 	}
 
 	private void UpdateClient()
 	{
 		// Player and Camera Rotation
-		_xRotate += Input.GetAxis("Mouse X") * _horizontalSpeed;
-		_yRotate -= Input.GetAxis("Mouse Y") * _verticalSpeed;
+		float horizontalRotation = Input.GetAxis("Mouse X");
+		float verticalRotation = Input.GetAxis("Mouse Y");
+		_xRotate += horizontalRotation * _horizontalSpeed;
+		_yRotate -= verticalRotation * _verticalSpeed;
 
 		// Player movement
 		float horizontalInput = Input.GetAxis("Horizontal");
@@ -92,9 +95,8 @@ public class PlayerController: PhysicsObject
 			Vector3 newPosition = transform.position + movementVector;
 			ApplyPlayerMovementServerRpc(newPosition);
 		}
-		if (_xRotate != 0f && _yRotate != 0f)
+		if (horizontalRotation != 0f && verticalRotation != 0f)
 		{
-			// _cam.transform.rotation = _camRotation.Value;
 			RotatePlayerServerRpc(_xRotate, _yRotate);
 		}
 	}
@@ -151,8 +153,9 @@ public class PlayerController: PhysicsObject
 	[ServerRpc]
 	private void RotatePlayerServerRpc(float xRotate, float yRotate)
 	{
-		Rotation.Value = Quaternion.Euler(0f, xRotate, 0f);;
-		_camRotation.Value = Quaternion.Euler(yRotate, yRotate, 0f);
+		Rotation.Value = Quaternion.Euler(0f, xRotate, 0f);
+		// Debug.Log("rotation1.Value: " + Rotation.Value);
+		_camRotation.Value = Quaternion.Euler(yRotate, xRotate, 0f);
 	}
 
 	[ServerRpc]
@@ -165,7 +168,7 @@ public class PlayerController: PhysicsObject
 	private void PlayerJumpServerRpc()
 	{
 		Debug.Log("jumping server");
-		_rigidbody.AddForce(_worldUp * _jumpForce);
+		_rigidbody.AddForce(WorldUp.Value * _jumpForce);
 	}
 
 	#endregion
@@ -175,4 +178,4 @@ public class PlayerController: PhysicsObject
 
 // leftoff: fix gravity
 
-// leftoff: complete cam rotation
+// leftoff: complete cam rotation (set timing of player and cam rotation to happen at the saem time, player is behind a frame)

@@ -12,7 +12,7 @@ spawn mesh instead of creating mesh
 
 public class PlanetManager : MonoBehaviour
 {
-	public int _resolution = 100;
+	private int _resolution = 10;
 	private ShapeGenerator _shapeGenerator;
 	[SerializeField] GameObject meshPrefab;
 
@@ -25,6 +25,7 @@ public class PlanetManager : MonoBehaviour
 
 	public void GeneratePlanet()
 	{
+		Debug.Log("generating planet");
 		Initialize();
 		GenerateMesh();
 		GenerateColors();
