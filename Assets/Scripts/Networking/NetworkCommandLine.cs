@@ -12,7 +12,11 @@ public class NetworkCommandLine : MonoBehaviour
 	{
 		netManager = GetComponentInParent<NetworkManager>();
 
-		if (Application.isEditor) return;
+		if (Application.isEditor)
+		{
+			Debug.Log("creating client connection");
+			netManager.StartClient();
+		}
 
 		var args = GetCommandlineArgs();
 

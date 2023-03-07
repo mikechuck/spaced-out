@@ -51,7 +51,15 @@ public class PhysicsObject : NetworkBehaviour
 		// Quaternion.FromToRotation(Vector3.up, WorldUp.Value);
 		// Debug.Log("WorldUp.Value: " + WorldUp.Value);
 		// Debug.Log("transform.pos: " + transform.position.normalized);
-		WorldUp.Value = transform.position.normalized;
+		Vector3 currentRotation = transform.position.normalized;
+		Quaternion rotationDifference = Quaternion.FromToRotation(WorldUp.Value, currentRotation);
+		WorldUp.Value = currentRotation;
+
+		// get rotation from origin (maybe 0,1,0) to worldup, returns quaternion
+		// rotate first to where we wanna be, then do actual rotation
+		// Rotation.Value = Rotation.Value * rotationDifference;
+		Debug.DrawRay(transform.position, Rotation.Value.eulerAngles * 20, Color.green);
+		Debug.DrawRay(transform.position, rotationDifference.eulerAngles, Color.red);
 
 		if (!IsGrounded.Value)
 		{
@@ -65,18 +73,6 @@ public class PhysicsObject : NetworkBehaviour
 
 	private void UpdateClient()
 	{
-		Quaternion rotationDifference = Quaternion.FromToRotation(Vector3.up, WorldUp.Value);
-		// Debug.Log("transform.up: " + transform.up);
-		// Debug.Log("Rotation.Value: " + Rotation.Value.eulerAngles);
-		Debug.DrawRay(transform.position, WorldUp.Value * 20, Color.green);
-		Debug.DrawRay(transform.position, Rotation.Value.eulerAngles, Color.red);
-		// Quaternion newRotation = Rotation
-		// Debug.DrawRay(transform.position, newPosition2.eulerAngles, Color.yellow);
-		// Debug.DrawRay(transform.position, newPosition3.eulerAngles, Color.white);
-		
-
-		// Quaternion dotPosition = Quaternion.Dot(Rotation.Value, rotationChange);
-
 		// if (!IsGrounded.Value)
 		// {
 		// 	Vector3 gravityMovementVector = - worldUp * _gravityMagnitude * 0.05f;
@@ -95,9 +91,9 @@ public class PhysicsObject : NetworkBehaviour
 		
 	}
 
-	// [ServerRpc]
-	// private void ApplyRotationServerRpc(Vector3 worldUp)
-	// {
+	[ServerRpc]
+	private void ApplyRotationServerRpc(Vector3 worldUp)
+	{
 		// Rotation.Value = Quaternion.FromToRotation(Vector3.up, worldUp);
 
 		// Rotation.Value = Quaternion.LookRotation(transform.forward, worldUp);
@@ -111,7 +107,7 @@ public class PhysicsObject : NetworkBehaviour
 		// Debug.Log("transform.up: " + transform.up);
 		// Debug.Log("Rotation.Value: " + Rotation.Value.eulerAngles);
 		// WorldUp.Value = worldUp;
-	// }
+	}
 
 	#endregion
 }

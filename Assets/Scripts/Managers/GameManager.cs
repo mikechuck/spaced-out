@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,8 +14,6 @@ public class GameManager : MonoBehaviour
     }
 
 	void Start() {
-		// if (SceneManager.GetActiveScene().name != "Loading") {
-		// 	SceneManager.LoadScene("Loading");
-		// }
+		Debug.Log("game manager start");
 	}
 }

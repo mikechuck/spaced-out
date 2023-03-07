@@ -1,91 +1,6 @@
-Map:
-- grass
-  - only render a certain distance from player
-- make slightly smaller scale
-- add more small-wave noise
-- vary tree height + tilt slightly
-
-Player:
-- inventory
-  - UI
-    - larger inventory display
-  - state management
-  - display selected item on screen
-	- on item select (and once on load), call player script to spawn prefab usign itemData passed in from HUD script
-  - current item is visible to other players
-  - animation for item use
-- player state
-  - HP
-  - name
-- HUD
-  - HP
-  - name
-  - fix dynamic location of hud items for different screen sizes
-- interact with trees + rocks with items
-
-Animals:
-- Chicken
-- Penguin
-
-Players:
-- Player1
-- Player2
-- Player3
-- Player4
-
-Scenery:
-- Tree1
-- Tree2
-- Tree3
-- Grass1
-- Grass2
-
-Design:
-- play with coloring (scenery, items, text, etc)
-
-Distance fog
-
-Custom Skybox:
-- clouds
-- stars
-- sun
-
-Water
-- low poly waves near shore
-
-
-Worflow:
-- add AssetBundle workflow to dynamically create resources folder from refabs (for Photon use)
-- implement event systems for all cross-script resource sharing
-
-Animations:
-- add new layer for item animations (will move arms, custom animation)
-	- each item should have its own animation state in blend tree
-	- will need to have hand contraint to player rig, similar to moving head
-
-LEFTOFF:
-- add icons to minimap
-- coordinates
-- add new rig that will hold item in one place (new animation layer)
-
-
-new network framework
-- networkmanager object, lists all objects being spawned (no need for Resources!)
-- objects need networkobject component
-- set up networkcommandline component so you can cmd spawn server, client, and host
-	"Hello World.exe" -logfile log-server.txt -mlapi server (...client, host, etc)
-
-
-Space upgrade:
-- new player models
-- create flat launch pad in middle of map, have player spawn there every time
-	- stop trees from spawning in circle
-- add rocketry:
-	- spawn rocket on launchpad
-	- create control panel with launch button
-	- add physics, particle effects, and sound
-	- reset rocket after certain amount of time (blow it up maybe?)
-
+Visuals:
+- Distance fog
+- Add custom lighting for each skybox (match direction with image)
 
 Prototype:
 - prodedural planets with noise, nothing else
@@ -99,8 +14,34 @@ Prototype:
 - economy, player stats, hud, etc...
 - add sun with directional light (can be the same for all maps)
 
+Networking flow:
+- Do not create client/server connections right away
+- Menu scene: 
+	- Main Menu UI:
+		- Player Name
+		- Start Server
+			- On click:
+				- Create new Server instance 
+				- send "host" client id so only they can start it up
+				- return info (IP, connection info), save info to GameManager
+				- once server is started, run CreateClient to connect this player
+		- Join Server
+			- Server IP
 
-Skybox:
-- change directional skybox light depending on the index (realistic direction)
-Planet:
-- make sure color and noise is synced with server
+	- Lobby UI:
+		- Display server menu 
+		- Display players in lobby
+		- Start Game button
+			- onclick: 
+				- send rpc to server to have server load main scene
+				- this should tell all connected clients to load main scene as well
+				- on server side:
+					- make sure to wait for all players to finish loading scene
+
+- Main scene
+	- Spawn player prefab on each client
+
+
+
+
+leftoff: create the "server lobby" ui prefab ^^

@@ -154,7 +154,6 @@ public class PlayerController: PhysicsObject
 	private void RotatePlayerServerRpc(float xRotate, float yRotate)
 	{
 		Rotation.Value = Quaternion.Euler(0f, xRotate, 0f);
-		// Debug.Log("rotation1.Value: " + Rotation.Value);
 		_camRotation.Value = Quaternion.Euler(yRotate, xRotate, 0f);
 	}
 
