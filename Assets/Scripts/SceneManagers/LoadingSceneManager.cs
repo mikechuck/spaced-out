@@ -4,14 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
 
-public class LoadingSceneManager : NetworkBehaviour
+public class LoadingSceneManager : MonoBehaviour
 {
-	public override void OnNetworkSpawn()
+	public void Start()
 	{
-		if (IsServer)
-		{
-			NetworkManager.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
-		}
+		SceneManager.LoadScene("Home");
 	}
 }
 

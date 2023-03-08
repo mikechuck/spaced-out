@@ -14,34 +14,63 @@ Prototype:
 - economy, player stats, hud, etc...
 - add sun with directional light (can be the same for all maps)
 
-Networking flow:
-- Do not create client/server connections right away
-- Menu scene: 
-	- Main Menu UI:
-		- Player Name
-		- Start Server
-			- On click:
-				- Create new Server instance 
-				- send "host" client id so only they can start it up
-				- return info (IP, connection info), save info to GameManager
-				- once server is started, run CreateClient to connect this player
-		- Join Server
-			- Server IP
 
-	- Lobby UI:
-		- Display server menu 
-		- Display players in lobby
-		- Start Game button
-			- onclick: 
-				- send rpc to server to have server load main scene
-				- this should tell all connected clients to load main scene as well
-				- on server side:
-					- make sure to wait for all players to finish loading scene
 
-- Main scene
-	- Spawn player prefab on each client
+- Gamelogic only runs on client (code is non existent for server)
+- on update, IF SERVER, transmit state to clients
+- IF return is pressed, _client.READY is called
+- when all clients are "ready", flip flag on server setting "isPlaying" to true;
+	- then server will transmit state to all clients to start game
+
+- when game is over (certain condition is met, checked on update) server will transmit state telling clients to end
 
 
 
 
-leftoff: create the "server lobby" ui prefab ^^
+- when a client connects, 
+
+
+Game Flow:
+Scene 1: MainMenu
+- HomeSceneManager:
+	- Two views:
+		- Main Menu
+			- Create prefab
+			- create ui script
+		- JoinGame
+			- Create prefab
+				- inputs: IP, password
+				- button: join
+			- create ui script
+				- -> button press will save connection details and call StartClient and load Lobby UI
+		- CreateGame
+			- create prefab
+				- set password field
+				- button: create
+			- create script
+				- => button press will grab user IP, save connection details (IP and pwd) and call StartHost
+		- Lobby
+			- create prefab
+				- display IP and password
+				- display connected users
+				- start game button
+			- create script
+				- button press: networkmanager.scenemanager load game scene
+
+
+Scene 1: GameScene
+- GameManager component will have:
+	- NetworkClient
+		- this will call TryConnect and connect to the server
+	- NetworkServer
+		- this will set up listeners for client messages
+	- (class only) NetworkProtocol
+		- this will handle sending and receiving messages
+- Right now we will only connect clients and display number on screen
+
+
+
+leftoff:
+- add password input and hook up to scipt to save
+- change button to "create game" and run StartHost
+- save connection details

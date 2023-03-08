@@ -12,26 +12,26 @@ public class NetworkCommandLine : MonoBehaviour
 	{
 		netManager = GetComponentInParent<NetworkManager>();
 
-		if (Application.isEditor)
-		{
-			Debug.Log("creating client connection");
-			netManager.StartClient();
-		}
+		// if (Application.isEditor)
+		// {
+		// 	Debug.Log("creating client connection");
+		// 	netManager.StartClient();
+		// }
 
 		var args = GetCommandlineArgs();
 
-		if (args.TryGetValue("-mode", out string mlapiValue))
-		{
-			switch (mlapiValue)
-			{
-				case "server":
-					netManager.StartServer();
-					break;
-				case "client":
-					netManager.StartClient();
-					break;
-			}
-		}
+		// if (args.TryGetValue("-mode", out string mlapiValue))
+		// {
+		// 	switch (mlapiValue)
+		// 	{
+		// 		case "server":
+		// 			netManager.StartServer();
+		// 			break;
+		// 		case "client":
+		// 			netManager.StartClient();
+		// 			break;
+		// 	}
+		// }
 	}
 
 	private Dictionary<string, string> GetCommandlineArgs()
