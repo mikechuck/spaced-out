@@ -85,8 +85,7 @@ public class HomeSceneManager : NetworkBehaviour
 		NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = _userIpAddress;
 		NetworkManager.Singleton.StartHost();
 		ShowLobbyScreen();
-
-		// LEFTOFF: load lobby and display all connected users + connection info with a "start game" button that will use networkmanager to change scenes for all clients
+		
 		// TODO For pwd authenticated sessions, see https://docs-multiplayer.unity3d.com/netcode/current/basics/connection-approval/index.html
 	}
 }
