@@ -1,34 +1,31 @@
 using UnityEngine;
 using JetBrains.Annotations;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using TMPro;
+
 
 public class CreateGameScreen : MonoBehaviour
 {
 	public delegate void MenuActionDelegate();
+	public delegate void CreateGameActionDelegate(string password);
 	private MenuActionDelegate _onBackButton;
-	private string _userIpAddress;
-	[SerializeField] private TMP_Text _ipText;
+	private CreateGameActionDelegate _onCreateGameButton;
 
-	private void Awake()
-	{
-		var host = Dns.GetHostEntry(Dns.GetHostName());
-		foreach (var ip in host.AddressList)
-         {
-             if (ip.AddressFamily == AddressFamily.InterNetwork)
-             {
-                 _userIpAddress = ip.ToString();
-				 _ipText.text = _userIpAddress;
-				 break;
-             }
-         }
-	}
+	[SerializeField] private TMP_Text _ipText;
+	[SerializeField] private TMP_Text _passwordText;
 
 	public void SetBackButtonAction(MenuActionDelegate action)
 	{
 		_onBackButton = action;
+	}
+
+	public void SetCreateGameButtonAction(CreateGameActionDelegate action)
+	{
+		_onCreateGameButton = action;
+	}
+
+	public void SetIpAddress(string ipAddress)
+	{
+		_ipText.text = ipAddress;
 	}
 
 	[UsedImplicitly]
@@ -36,6 +33,13 @@ public class CreateGameScreen : MonoBehaviour
 	{
 		_onBackButton();
 	}
+
+	[UsedImplicitly]
+	public void OnCreateGame()
+	{	
+		_onCreateGameButton(_passwordText.text);
+	}
+
 	public void Show()
 	{
 		if (!this) return;
@@ -47,4 +51,6 @@ public class CreateGameScreen : MonoBehaviour
 		if (!this) return;
 		gameObject.SetActive(false);
 	}
+
+	
 }

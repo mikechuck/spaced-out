@@ -25,11 +25,6 @@ Prototype:
 - when game is over (certain condition is met, checked on update) server will transmit state telling clients to end
 
 
-
-
-- when a client connects, 
-
-
 Game Flow:
 Scene 1: MainMenu
 - HomeSceneManager:
@@ -67,10 +62,3 @@ Scene 1: GameScene
 	- (class only) NetworkProtocol
 		- this will handle sending and receiving messages
 - Right now we will only connect clients and display number on screen
-
-
-
-leftoff:
-- add password input and hook up to scipt to save
-- change button to "create game" and run StartHost
-- save connection details
