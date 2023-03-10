@@ -44,6 +44,7 @@ Scene 1: MainMenu
 				- button: create
 			- create script
 				- => button press will grab user IP, save connection details (IP and pwd) and call StartHost
+				TODO: need to use callback to wait for server to be started before switching scenes
 		- Lobby
 			- create prefab
 				- display IP and password

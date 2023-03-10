@@ -1,6 +1,6 @@
 using UnityEngine;
-// using Unity.Netcode;
 using JetBrains.Annotations;
+using System.Collections;
 
 public class LobbyScreen : MonoBehaviour
 {
@@ -11,9 +11,15 @@ public class LobbyScreen : MonoBehaviour
 
 	private void Start()
 	{
+		PlayersManager.OnClientConnectedCallback += UpdatePlayersList;
 		// get players list from playerManager
 		// loop through and instantiate name per player
 		// set player name text
+
+		//LEFTOFF: start lobby loading set to true (display loading message)
+		// When callbacks are finished in playermanager (server started or client connected),
+		// then ifnish loading message
+		// display "Disconnecting, lost connection to server" message on disconect callback
 	}
 
 	public void SetBackButtonAction(MenuActionDelegate action)
@@ -44,5 +50,10 @@ public class LobbyScreen : MonoBehaviour
 	{
 		if (!this) return;
 		gameObject.SetActive(false);
+	}
+	
+	private void UpdatePlayersList(ulong playerId)
+	{
+		Debug.Log("new player connected: " + playerId);
 	}
 }

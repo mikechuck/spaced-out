@@ -2,7 +2,6 @@ using UnityEngine;
 using JetBrains.Annotations;
 using TMPro;
 
-
 public class CreateGameScreen : MonoBehaviour
 {
 	public delegate void MenuActionDelegate();

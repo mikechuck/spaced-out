@@ -26,6 +26,7 @@ namespace CustomSingletons
                         _instance = obj.AddComponent<T>();
                     }
                 }
+				Debug.Log("PM instance set");
                 return _instance;
             }
         }

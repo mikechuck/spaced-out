@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -45,29 +46,44 @@ public class HomeSceneManager : NetworkBehaviour
 		_mainMenuScreen.Show();
 		Debug.Log("show mainmenu screen");
 	}
+
 	public void ShowJoinGameScreen()
 	{
 		HideAllScreens();
 		_joinGameScreen = _joinGameScreen != null ? _joinGameScreen : Instantiate(_joinGameScreenPrefab, _mainCanvas.transform);
 		_joinGameScreen.SetBackButtonAction(ShowMainMenuScreen);
+		_joinGameScreen.SetJoinGameButtonAction(StartClient);
 		_joinGameScreen.Show();
 		Debug.Log("showing join game screen");
 	}
+
 	public void ShowCreateGameScreen()
 	{
 		HideAllScreens();
 		_createGameScreen = _createGameScreen != null ? _createGameScreen : Instantiate(_createGameScreenPrefab, _mainCanvas.transform);
 		_createGameScreen.SetBackButtonAction(ShowMainMenuScreen);
-		_createGameScreen.SetCreateGameButtonAction(StartHostServer);
+		_createGameScreen.SetCreateGameButtonAction(StartHost);
 		_createGameScreen.SetIpAddress(_userIpAddress);
 		_createGameScreen.Show();
 		Debug.Log("showing create game screen");
 	}
+
 	public void ShowLobbyScreen()
 	{
 		HideAllScreens();
 		_lobbyScreen = _lobbyScreen != null ? _lobbyScreen : Instantiate(_lobbyScreenPrefab, _mainCanvas.transform);
-		_lobbyScreen.SetBackButtonAction(ShowMainMenuScreen);
+		_lobbyScreen.SetBackButtonAction(() =>
+		{
+			if (IsHost)
+			{
+				NetworkManager.Singleton.Shutdown();
+			}
+			else
+			{
+				NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+			}
+			ShowMainMenuScreen();
+		});
 		_lobbyScreen.Show();
 		Debug.Log("showing lobby screen");
 	}
@@ -80,12 +96,30 @@ public class HomeSceneManager : NetworkBehaviour
 		if (_lobbyScreen != null) _lobbyScreen.Hide();
 	}
 
-	public void StartHostServer(string password)
+	public void StartHost(string password)
 	{
 		NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = _userIpAddress;
 		NetworkManager.Singleton.StartHost();
 		ShowLobbyScreen();
-		
+
 		// TODO For pwd authenticated sessions, see https://docs-multiplayer.unity3d.com/netcode/current/basics/connection-approval/index.html
+	}
+
+	public void StartClient(string ipAddress, string password)
+	{
+		NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = ipAddress;
+		if (password != null)
+		{
+			ushort val = 0;
+			if (ushort.TryParse(password, out val))
+			{
+				NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Port = val;
+
+			}
+		}
+
+		NetworkManager.Singleton.StartClient();
+		ShowLobbyScreen();
+
 	}
 }
