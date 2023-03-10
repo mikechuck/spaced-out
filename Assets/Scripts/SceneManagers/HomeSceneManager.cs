@@ -44,7 +44,6 @@ public class HomeSceneManager : NetworkBehaviour
 		_mainMenuScreen.SetJoinGameAction(ShowJoinGameScreen);
 		_mainMenuScreen.SetCreateGameAction(ShowCreateGameScreen);
 		_mainMenuScreen.Show();
-		Debug.Log("show mainmenu screen");
 	}
 
 	public void ShowJoinGameScreen()
@@ -54,7 +53,6 @@ public class HomeSceneManager : NetworkBehaviour
 		_joinGameScreen.SetBackButtonAction(ShowMainMenuScreen);
 		_joinGameScreen.SetJoinGameButtonAction(StartClient);
 		_joinGameScreen.Show();
-		Debug.Log("showing join game screen");
 	}
 
 	public void ShowCreateGameScreen()
@@ -65,7 +63,6 @@ public class HomeSceneManager : NetworkBehaviour
 		_createGameScreen.SetCreateGameButtonAction(StartHost);
 		_createGameScreen.SetIpAddress(_userIpAddress);
 		_createGameScreen.Show();
-		Debug.Log("showing create game screen");
 	}
 
 	public void ShowLobbyScreen()
@@ -85,7 +82,6 @@ public class HomeSceneManager : NetworkBehaviour
 			ShowMainMenuScreen();
 		});
 		_lobbyScreen.Show();
-		Debug.Log("showing lobby screen");
 	}
 
 	private void HideAllScreens()
@@ -117,9 +113,7 @@ public class HomeSceneManager : NetworkBehaviour
 
 			}
 		}
-
 		NetworkManager.Singleton.StartClient();
 		ShowLobbyScreen();
-
 	}
 }

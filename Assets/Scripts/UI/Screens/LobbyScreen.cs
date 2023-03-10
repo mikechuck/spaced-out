@@ -1,6 +1,7 @@
 using UnityEngine;
 using JetBrains.Annotations;
 using System.Collections;
+using Unity.Netcode;
 
 public class LobbyScreen : MonoBehaviour
 {
@@ -8,18 +9,37 @@ public class LobbyScreen : MonoBehaviour
 	private MenuActionDelegate _onBackButton;
 	[SerializeField] private GameObject _playersContainer;
 	[SerializeField] private GameObject _playerRow;
+	[SerializeField] private GameObject _loadingMessagePrefab;
 
-	private void Start()
+	private void OnEnable()
 	{
-		PlayersManager.OnClientConnectedCallback += UpdatePlayersList;
+		if (NetworkManager.Singleton.IsHost)
+		{
+			ToastService.Instance.DisplayToast("Creating Game...");
+			NetworkManager.Singleton.OnServerStarted += () =>
+			{
+				ToastService.Instance.RemoveToast();	
+			};
+		}
+		else
+		{
+			ToastService.Instance.DisplayToast("Connecting to Game...");
+			NetworkManager.Singleton.OnClientConnectedCallback += (id) =>
+			{
+				ToastService.Instance.RemoveToast();	
+			};
+			NetworkManager.Singleton.OnClientDisconnectCallback += (id) =>
+			{
+				ToastService.Instance.DisplayToast("Unable to connect to host.");
+				StartCoroutine(ReturnToMenus());
+			};
+		}
+
+		NetworkManager.Singleton.OnClientConnectedCallback += UpdatePlayersList;
+		
 		// get players list from playerManager
 		// loop through and instantiate name per player
 		// set player name text
-
-		//LEFTOFF: start lobby loading set to true (display loading message)
-		// When callbacks are finished in playermanager (server started or client connected),
-		// then ifnish loading message
-		// display "Disconnecting, lost connection to server" message on disconect callback
 	}
 
 	public void SetBackButtonAction(MenuActionDelegate action)
@@ -55,5 +75,10 @@ public class LobbyScreen : MonoBehaviour
 	private void UpdatePlayersList(ulong playerId)
 	{
 		Debug.Log("new player connected: " + playerId);
+	}
+
+	private IEnumerator ReturnToMenus()
+	{
+		yield return new WaitForSeconds(5);
 	}
 }
