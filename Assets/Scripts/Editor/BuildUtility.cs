@@ -11,7 +11,7 @@ using System.IO.Compression;
 
 public class BuildUtility
 {
-	[MenuItem("BuildUtility/Build and Start Server")]
+	[MenuItem("BuildUtility/Build and Run Client")]
 	static void BuildPlayer ()
 	{
 		string playerPath = "Builds/Windows/Spaced Out.exe";
@@ -23,7 +23,7 @@ public class BuildUtility
 		if (summary.result == BuildResult.Succeeded)
         {
             Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
-			StartServer();
+			RunClient();
         }
 
         if (summary.result == BuildResult.Failed)
@@ -47,14 +47,14 @@ public class BuildUtility
 		return s;
 	}
 
-	[MenuItem("BuildUtility/Start Server")]
-	private static void StartServer()
+	[MenuItem("BuildUtility/Run Client")]
+	private static void RunClient()
 	{
 		System.Diagnostics.Process process = new System.Diagnostics.Process();
 		System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
 		startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 		startInfo.FileName = "cmd.exe";
-		startInfo.Arguments = "/C npm run start-server";
+		startInfo.Arguments = "/C npm run start-client";
 		process.StartInfo = startInfo;
 		process.Start();
 	}

@@ -1,3 +1,13 @@
+V2.6.4
+Addition 0143: Added suggestor tag: [Suggestions] - credit to Richard Osborn (Monsoonexe)
+Addition 0144: New command action: ReadLine - credit to Richard Osborn (Monsoonexe)
+Addition 0145: New command action: ReadValue<T>
+Addition 0146: QC now reports a warning if the EventSystem is not configured correctly
+Addition 0147: Added an IsFocused property to QC
+Change 0073: Improved autocomplete behaviour when suggestions have whitespace in them
+Change 0074: Optimized internal text processing utilities to reduce GC load
+Bug Fix 0083: Fixed a bug where setting the max log size to -1 would not allow infinitely sized logs
+
 V2.6.3
 Addition 0141: Added Quantum Localization object for configuring the messaging/localization throughout QC
 Addition 0142: New core command: clear-registry

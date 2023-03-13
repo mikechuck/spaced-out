@@ -22,10 +22,9 @@ public class ToastService : Singleton<ToastService>
 
 	public void RemoveToast()
 	{
-		// LEFTOFF: remove toast not triggering properly
 		if (_toastMessage != null)
 		{
-			Destroy(_toastMessage);
+			Destroy(_toastMessage.gameObject);
 		}
 	}
 }

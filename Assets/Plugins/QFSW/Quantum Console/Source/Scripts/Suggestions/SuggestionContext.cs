@@ -73,5 +73,24 @@ namespace QFSW.QC
 
             throw new KeyNotFoundException($"No tags of type {typeof(T)} could be found.");
         }
+
+        /// <summary>
+        /// Gets all instances of the specified tag from the context.
+        /// </summary>
+        /// <typeparam name="T">The tag to get from the context.</typeparam>
+        /// <returns>The tags in the context.</returns>
+        public IEnumerable<T> GetTags<T>() where T : IQcSuggestorTag
+        {
+            if (Tags != null)
+            {
+                foreach (IQcSuggestorTag tag in Tags)
+                {
+                    if (tag is T foundTag)
+                    {
+                        yield return foundTag;
+                    }
+                }
+            }
+        }
     }
 }

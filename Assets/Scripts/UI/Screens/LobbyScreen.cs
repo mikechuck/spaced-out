@@ -11,32 +11,26 @@ public class LobbyScreen : MonoBehaviour
 	[SerializeField] private GameObject _playerRow;
 	[SerializeField] private GameObject _loadingMessagePrefab;
 
-	private void OnEnable()
+	private void Start()
 	{
-		if (NetworkManager.Singleton.IsHost)
+		if (!NetworkManager.Singleton.IsHost)
 		{
-			ToastService.Instance.DisplayToast("Creating Game...");
-			NetworkManager.Singleton.OnServerStarted += () =>
-			{
-				ToastService.Instance.RemoveToast();	
-			};
-		}
-		else
-		{
-			ToastService.Instance.DisplayToast("Connecting to Game...");
+			ToastService.Instance.DisplayToast("Connecting to game...");
 			NetworkManager.Singleton.OnClientConnectedCallback += (id) =>
 			{
 				ToastService.Instance.RemoveToast();	
 			};
+
 			NetworkManager.Singleton.OnClientDisconnectCallback += (id) =>
 			{
-				ToastService.Instance.DisplayToast("Unable to connect to host.");
-				StartCoroutine(ReturnToMenus());
+				ToastService.Instance.DisplayToast("Unable to connect to host");
 			};
 		}
 
-		NetworkManager.Singleton.OnClientConnectedCallback += UpdatePlayersList;
+		// NetworkManager.Singleton.OnClientConnectedCallback += UpdatePlayersList;
+		// NetworkManager.Singleton.OnClientDisconnectCallback += UpdatePlayersList;
 		
+		// LEFTOFF: on start, add own player name if host
 		// get players list from playerManager
 		// loop through and instantiate name per player
 		// set player name text
@@ -74,11 +68,8 @@ public class LobbyScreen : MonoBehaviour
 	
 	private void UpdatePlayersList(ulong playerId)
 	{
-		Debug.Log("new player connected: " + playerId);
-	}
-
-	private IEnumerator ReturnToMenus()
-	{
-		yield return new WaitForSeconds(5);
+		// on player connect, add player to networkvariables list
+		// on updateplayerlist, grab netvar value and display in ui
+		Debug.Log("Players data changed: " + PlayersManager.Instance.PlayersData);
 	}
 }

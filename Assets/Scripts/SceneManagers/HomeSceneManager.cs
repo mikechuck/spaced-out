@@ -71,14 +71,7 @@ public class HomeSceneManager : NetworkBehaviour
 		_lobbyScreen = _lobbyScreen != null ? _lobbyScreen : Instantiate(_lobbyScreenPrefab, _mainCanvas.transform);
 		_lobbyScreen.SetBackButtonAction(() =>
 		{
-			if (IsHost)
-			{
-				NetworkManager.Singleton.Shutdown();
-			}
-			else
-			{
-				NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
-			}
+			NetworkManager.Singleton.Shutdown();
 			ShowMainMenuScreen();
 		});
 		_lobbyScreen.Show();
@@ -94,25 +87,12 @@ public class HomeSceneManager : NetworkBehaviour
 
 	public void StartHost(string password)
 	{
-		NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = _userIpAddress;
 		NetworkManager.Singleton.StartHost();
 		ShowLobbyScreen();
-
-		// TODO For pwd authenticated sessions, see https://docs-multiplayer.unity3d.com/netcode/current/basics/connection-approval/index.html
 	}
 
 	public void StartClient(string ipAddress, string password)
 	{
-		NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = ipAddress;
-		if (password != null)
-		{
-			ushort val = 0;
-			if (ushort.TryParse(password, out val))
-			{
-				NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Port = val;
-
-			}
-		}
 		NetworkManager.Singleton.StartClient();
 		ShowLobbyScreen();
 	}

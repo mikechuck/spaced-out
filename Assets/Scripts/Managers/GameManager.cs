@@ -10,10 +10,13 @@ public class GameManager : MonoBehaviour
 	public string levelSeed = "";
 	
     void Awake() {
+		Application.runInBackground = true;
+		Application.targetFrameRate = 60;
+		Screen.SetResolution(1400, 800, FullScreenMode.Windowed);
 		DontDestroyOnLoad(gameObject);
     }
 
 	void Start() {
-		Debug.Log("game manager start");
+		
 	}
 }

@@ -96,7 +96,8 @@ namespace QFSW.QC.Suggestors
         {
             UpdateCurrentCache(context.Prompt);
 
-            bool emptyPromptEnd = context.Prompt.EndsWith(" ");
+            // We want to consider this a new prompt if we've hit whitespace and we're not in an incomplete scope
+            bool emptyPromptEnd = context.Prompt.EndsWith(" ") && context.Prompt.GetMaxScopeDepthAtEnd() == 0;
             string[] promptParts = context.Prompt
                 .SplitScoped(' ')
                 .Where(x => !string.IsNullOrWhiteSpace(x))
