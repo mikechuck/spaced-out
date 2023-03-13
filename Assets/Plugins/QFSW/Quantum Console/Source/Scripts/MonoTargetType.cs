@@ -16,7 +16,7 @@
         All = 1,
 
         /// <summary>
-        /// Targets all instances registered in the QuantumConsoleProcessor registry. Instances can be added using <c>QFSW.QC.QuantumConsoleProcessor.RegisterObject</c>.
+        /// Targets all instances registered in the QuantumRegistry. Instances can be added using <c>QFSW.QC.QuantumRegistry.RegisterObject</c>.
         /// The only supported target type for non MonoBehaviour commands
         /// </summary>
         Registry = 2,

@@ -43,6 +43,8 @@ namespace QFSW.QC
         /// <returns>The sorted and filtered suggestions for the provided context.</returns>
         public IEnumerable<IQcSuggestion> GetSuggestions(SuggestionContext context, SuggestorOptions options)
         {
+            PreprocessContext(ref context);
+
             // Get and filter suggestions
             IEnumerable<IQcSuggestion> suggestions = 
                 _suggestors
@@ -73,6 +75,17 @@ namespace QFSW.QC
 
             // Return suggestions to user
             return sortedSuggestions;
+        }
+
+        private void PreprocessContext(ref SuggestionContext context)
+        {
+            // Strip the scope on the provided prompt in the context to improve suggestions
+            // We want to allow incomplete scope reduction on the prompt so that you get suggestions
+            // as if you had finished the scope properly
+            TextProcessing.ReduceScopeOptions options = TextProcessing.ReduceScopeOptions.Default;
+            options.ReduceIncompleteScope = true;
+
+            context.Prompt = context.Prompt.ReduceScope(options);
         }
 
         private bool IsSuggestionPermitted(IQcSuggestion suggestion, SuggestionContext context)

@@ -1,4 +1,4 @@
-﻿using QFSW.QC.Pooling;
+using QFSW.QC.Pooling;
 using QFSW.QC.Utilities;
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace QFSW.QC
@@ -136,9 +137,10 @@ namespace QFSW.QC
         public event Action<SuggestionSet> OnSuggestionSetGenerated;
         #endregion
 
-        private bool IsBlockedByAsync => _blockOnAsync
+        private bool IsBlockedByAsync => (_blockOnAsync
                                          && _currentTasks.Count > 0
-                                         || _currentActions.Count > 0;
+                                         || _currentActions.Count > 0) 
+                                         && !_isHandlingUserResponse;
 
         private readonly QuantumSerializer _serializer = new QuantumSerializer();
 
@@ -147,6 +149,7 @@ namespace QFSW.QC
         private ILogQueue _logQueue;
 
         public bool IsActive { get; private set; }
+        public bool IsFocused => IsActive && _consoleInput && _consoleInput.isFocused;
 
         /// <summary>
         /// If any actions are currently executing
@@ -163,6 +166,9 @@ namespace QFSW.QC
         private string _previousInput;
         private bool _isGeneratingTable;
         private bool _consoleRequiresFlush;
+        private bool _isHandlingUserResponse = false;
+        private ResponseConfig _currentResponseConfig;
+        private Action<string> _onSubmitResponseCallback;
 
         private TextMeshProUGUI[] _textComponents;
 
@@ -262,7 +268,7 @@ namespace QFSW.QC
                     OnInputChange();
                 }
 
-                if (!IsBlockedByAsync)
+                else if (!IsBlockedByAsync)
                 {
                     if (InputHelper.GetKeyDown(_keyConfig.SubmitCommandKey)) { InvokeCommand(); }
                     if (_storeCommandHistory) { ProcessCommandHistory(); }
@@ -279,7 +285,7 @@ namespace QFSW.QC
                 FlushToConsoleText();
             }
         }
-
+        
         private string GetTableGenerationText()
         {
             string text = string.Format(_localization.InitializationProgress, QuantumConsoleProcessor.LoadedCommandCount);
@@ -319,6 +325,14 @@ namespace QFSW.QC
 
         private void UpdateSuggestions()
         {
+            // don't show suggestions when the user is responding to a prompt
+            if (_isHandlingUserResponse)
+            {
+                ClearSuggestions();
+                ClearPopup();
+                return;
+            }
+
             SuggestorOptions options = new SuggestorOptions
             {
                 CaseSensitive = _caseSensitiveSearch,
@@ -537,13 +551,47 @@ namespace QFSW.QC
         /// </summary>
         public void InvokeCommand()
         {
-            if (!string.IsNullOrWhiteSpace(_consoleInput.text))
+            string userInput = _consoleInput.text;
+
+            // invoke command
+            if (!string.IsNullOrWhiteSpace(userInput))
             {
-                string command = _consoleInput.text.Trim();
-                InvokeCommand(command);
-                OverrideConsoleInput(string.Empty);
+                string command = userInput.Trim();
+                
+                if (_isHandlingUserResponse)
+                {
+                    HandleUserResponse(command);
+                }
+                else
+                {
+                    InvokeCommand(command);
+                    OverrideConsoleInput(string.Empty);
+                    StoreCommand(command);
+                }
+            }
+        }
+
+        private void HandleUserResponse(string command)
+        {
+            if (_currentResponseConfig.LogInput)
+            {
+                LogUserInput(command);
                 StoreCommand(command);
             }
+
+            // reset state to accept a command as usual
+            _onSubmitResponseCallback(command); // pushes the input back to user code
+            _onSubmitResponseCallback = null;
+            _consoleInput.interactable = false;
+            _isHandlingUserResponse = false;
+
+            OnStateChange?.Invoke();
+        }
+
+        private void LogUserInput(string input)
+        {
+            ILog commandLog = GenerateCommandLog(input);
+            LogToConsole(commandLog);
         }
 
         protected ILog GenerateCommandLog(string command)
@@ -578,8 +626,7 @@ namespace QFSW.QC
             object commandResult = null;
             if (!string.IsNullOrWhiteSpace(command))
             {
-                ILog commandLog = GenerateCommandLog(command);
-                LogToConsole(commandLog);
+                LogUserInput(command);
 
                 string logTrace = string.Empty;
                 try
@@ -731,6 +778,37 @@ namespace QFSW.QC
         }
 
         /// <summary>
+        /// Begin accepting text input from the user as a response.
+        /// </summary>
+        /// <param name="onSubmitResponseCallback">Method that will provide the submitted response text when it is submitted.</param>
+        /// <param name="config">The configuration to use for this response.</param>
+        /// <exception cref="ArgumentNullException"/>
+        public void BeginResponse(Action<string> onSubmitResponseCallback, ResponseConfig config)
+        {
+            // validate args
+            if (onSubmitResponseCallback == null)
+            {
+                throw new ArgumentNullException(nameof(onSubmitResponseCallback));
+            }
+
+            // update internal state
+            _onSubmitResponseCallback = onSubmitResponseCallback;
+            _currentResponseConfig = config;
+            _isHandlingUserResponse = true;
+
+            OnStateChange?.Invoke();
+
+            // change state of input text to allow for response
+            _consoleInput.interactable = true;
+            if (_inputPlaceholderText)
+            {
+                _inputPlaceholderText.text = _currentResponseConfig.InputPrompt;
+            }
+
+            FocusConsoleInput();
+        }
+
+        /// <summary>
         /// Starts executing an action.
         /// </summary>
         /// <param name="action">The action to start.</param>
@@ -849,7 +927,7 @@ namespace QFSW.QC
 
         private ILog TruncateLog(ILog log)
         {
-            if (log.Text.Length <= _maxLogSize && _maxLogSize >= 0)
+            if (log.Text.Length <= _maxLogSize || _maxLogSize < 0)
             {
                 return log;
             }
@@ -1052,6 +1130,11 @@ namespace QFSW.QC
             IsActive = true;
             _containerRect.gameObject.SetActive(true);
             OverrideConsoleInput(string.Empty, shouldFocus);
+
+            if (!EventSystem.current)
+            {
+                Debug.LogWarning("Quantum Console's UI requires an EventSystem in the scene but there were none present.");
+            }
 
             OnActivate?.Invoke();
         }

@@ -29,7 +29,10 @@ namespace QFSW.QC.Parsers
 
         public override object Parse(string value, Type type)
         {
-            string[] inputParts = value.ReduceScope('(', ')').SplitScoped(',', MaxFlatTupleSize);
+            TextProcessing.ScopedSplitOptions options = TextProcessing.ScopedSplitOptions.Default;
+            options.MaxCount = MaxFlatTupleSize;
+
+            string[] inputParts = value.ReduceScope('(', ')').SplitScoped(',', options);
             Type[] elementTypes = type.GetGenericArguments();
 
             if (elementTypes.Length != inputParts.Length)
