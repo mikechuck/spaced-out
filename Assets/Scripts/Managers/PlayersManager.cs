@@ -1,79 +1,61 @@
 using Unity.Netcode;
 using UnityEngine;
-using System;
-using System.Collections.Generic;
 using CustomSingletons;
+using CustomNetworkVariables;
 
 public class PlayersManager : Singleton<PlayersManager>
 {
-
-	public struct PlayerInfo : INetworkSerializable
-	{
-		private string _playerName;
-		private bool _isReady;
-		public PlayerInfo(string playerName)
-		{
-			_playerName = playerName;
-			_isReady = false;
-		}
-		public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-		{
-			serializer.SerializeValue(ref _playerName);
-			serializer.SerializeValue(ref _isReady);
-		}
-		// LEFTOFF: continue to create a usable data type, try NetworkList instead?
-	}
-
-	private NetworkVariable<Dictionary<ulong, PlayerInfo>> _playersData = new NetworkVariable<Dictionary<ulong, PlayerInfo>>();
+	private NetworkList<PlayerInfoNetVar> _playersData;
 
     public int PlayersInGame
     {
         get
         {
-            return _playersData.Value.Count;
+            return _playersData.Count;
         }
     }
 
-	public Dictionary<ulong, PlayerInfo> PlayersData
+	public NetworkList<PlayerInfoNetVar> PlayersData
 	{
 		get
 		{
-			return _playersData.Value;
+			return _playersData;
 		}
 	}
 
     void Awake() {
 		DontDestroyOnLoad(gameObject);
-		
+		_playersData = new NetworkList<PlayerInfoNetVar>();
     }
 
     public override void OnNetworkSpawn()
     {
 		if (!IsHost) return;
 
-		_playersData.Value = new Dictionary<ulong, PlayerInfo>();
-		// _playersData.Value.Add(Convert.ToUInt64(0), new PlayerInfo("Player 0"));
-
 		NetworkManager.Singleton.OnServerStarted += () =>
 		{
-			Debug.Log("Server started, adding host to players list");
-			_playersData.Value.Add(Convert.ToUInt64(0), new PlayerInfo("Player 0"));
-			Debug.Log("PlayersData: " + _playersData.Value);
+			_playersData.Clear();
+			_playersData.Add(new PlayerInfoNetVar(0, "Player 0"));
 		};
 
         NetworkManager.Singleton.OnClientConnectedCallback += (id) =>
         {
 			Debug.Log($"Player {id} connected.");
-			_playersData.Value.Add(id, new PlayerInfo("Player " + id));
-			Debug.Log("PlayersData: " + _playersData.Value);
-
+			_playersData.Add(new PlayerInfoNetVar(id, "Player " + id));
+			
         };
 
         NetworkManager.Singleton.OnClientDisconnectCallback += (id) =>
         {
 			Debug.Log($"Player {id} disconnected.");
-			_playersData.Value.Remove(id);
-			Debug.Log("PlayersData: " + _playersData.Value);
+			for (int i = 0; i < _playersData.Count; i++)
+			{
+				PlayerInfoNetVar playerInfo = _playersData[i];
+				if (playerInfo.PlayerId == id)
+				{
+					_playersData.RemoveAt(i);
+				}
+			}
         };
     }
 }

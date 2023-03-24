@@ -1004,9 +1004,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dbca778139512740b161ff635f795b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playersContainer: {fileID: 4911187027600667686}
-  _playerRow: {fileID: 4661059650514559033, guid: 28afab5fbed9f6440b20a07735dff59a, type: 3}
-  _loadingMessagePrefab: {fileID: 6211603927597173641, guid: ec06243ddc2d8164dbf68e93404a62b8, type: 3}
+  _playersLayoutGroup: {fileID: 7961520831466186275}
+  _playerRow: {fileID: 3246432831369395655, guid: 28afab5fbed9f6440b20a07735dff59a, type: 3}
 --- !u!1 &7743066461761298924
 GameObject:
   m_ObjectHideFlags: 0

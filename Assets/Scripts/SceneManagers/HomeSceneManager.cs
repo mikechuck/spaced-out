@@ -72,6 +72,7 @@ public class HomeSceneManager : NetworkBehaviour
 		_lobbyScreen.SetBackButtonAction(() =>
 		{
 			NetworkManager.Singleton.Shutdown();
+			Debug.Log("calling network shutdown");
 			ShowMainMenuScreen();
 		});
 		_lobbyScreen.Show();
